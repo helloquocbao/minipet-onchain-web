@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://minipet.vercel.app/sitemap.xml
