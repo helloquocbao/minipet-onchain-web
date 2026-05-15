@@ -1,13 +1,14 @@
 import { useState } from 'react';
 import { useCurrentAccount, useSignAndExecuteTransaction } from '@mysten/dapp-kit';
 import { Transaction } from '@mysten/sui/transactions';
-import { PACKAGE_ID, GLOBAL_CONFIG_ID, ADMIN_CAP_ID, FUNCTIONS, MODULES } from '../services/blockchain/sui';
+import { PACKAGE_ID, GLOBAL_CONFIG_ID, ADMIN_CAP_ID, FUNCTIONS, MODULES, TREASURY_CAP_ID, PET_TOKEN_PACKAGE_ID } from '../services/blockchain/sui';
 import { WalrusService } from '../services/walrus';
-import { Settings, Plus, Info, Activity, Upload, Loader2, Check } from 'lucide-react';
+import { Settings, Plus, Info, Activity, Upload, Loader2, Check, Coins } from 'lucide-react';
 
 export default function AdminPage() {
   const account = useCurrentAccount();
   const { mutate: signAndExecuteTransaction } = useSignAndExecuteTransaction();
+  const [activeTab, setActiveTab] = useState<'dashboard' | 'store' | 'economy' | 'settings'>('dashboard');
   
   const [template, setTemplate] = useState({
     name: '', 
@@ -15,19 +16,27 @@ export default function AdminPage() {
     image_blob_id: '',
     sprite_url: '', 
     sprite_blob_id: '',
-    price: '1000000000' // 1 SUI
+    price: '1000000000' 
   });
 
   const [uploading, setUploading] = useState({ image: false, sprite: false });
   const [uploadDone, setUploadDone] = useState({ image: false, sprite: false });
 
+  const [tokenMint, setTokenMint] = useState({
+    amount: '1000000000000', 
+    recipient: ''
+  });
+
+  const [config, setConfig] = useState({
+    baseFee: '10000000000000', 
+    treasury: ''
+  });
+
   const handleFileUpload = async (file: File, type: 'image' | 'sprite') => {
     try {
       setUploading(prev => ({ ...prev, [type]: true }));
       setUploadDone(prev => ({ ...prev, [type]: false }));
-      
       const { blobId, blobObjectId } = await WalrusService.uploadFile(file);
-      
       setTemplate(prev => ({
         ...prev,
         [type === 'image' ? 'image_url' : 'sprite_url']: blobId,
@@ -36,16 +45,11 @@ export default function AdminPage() {
       setUploadDone(prev => ({ ...prev, [type]: true }));
     } catch (error) {
       console.error('Walrus upload failed:', error);
-      alert('Failed to upload to Walrus. Check console.');
+      alert('Failed to upload to Walrus.');
     } finally {
       setUploading(prev => ({ ...prev, [type]: false }));
     }
   };
-
-  const [config, setConfig] = useState({
-    baseFee: '10000000000000', // 10,000 MIPET
-    treasury: ''
-  });
 
   const handleCreateTemplate = () => {
     if (!account) return;
@@ -62,10 +66,26 @@ export default function AdminPage() {
         tx.pure.u64(template.price),
       ],
     });
-
     signAndExecuteTransaction({ transaction: tx }, {
-      onSuccess: (result) => console.log('Template created:', result),
-      onError: (error) => console.error('Error creating template:', error),
+      onSuccess: () => alert('Template created successfully!'),
+      onError: (error) => console.error('Error:', error),
+    });
+  };
+
+  const handleMintToken = () => {
+    if (!account || !tokenMint.recipient) return;
+    const tx = new Transaction();
+    tx.moveCall({
+      target: `${PET_TOKEN_PACKAGE_ID}::pet_token::mint`,
+      arguments: [
+        tx.object(TREASURY_CAP_ID),
+        tx.pure.u64(tokenMint.amount),
+        tx.pure.address(tokenMint.recipient),
+      ],
+    });
+    signAndExecuteTransaction({ transaction: tx }, {
+      onSuccess: () => alert('Tokens minted!'),
+      onError: (error) => console.error('Error:', error),
     });
   };
 
@@ -80,10 +100,9 @@ export default function AdminPage() {
         tx.pure.address(config.treasury),
       ],
     });
-
     signAndExecuteTransaction({ transaction: tx }, {
-      onSuccess: (result) => console.log('Treasury updated:', result),
-      onError: (error) => console.error('Error updating treasury:', error),
+      onSuccess: () => alert('Treasury updated!'),
+      onError: (error) => console.error('Error:', error),
     });
   };
 
@@ -98,152 +117,279 @@ export default function AdminPage() {
         tx.pure.u64(config.baseFee),
       ],
     });
-
     signAndExecuteTransaction({ transaction: tx }, {
-      onSuccess: (result) => console.log('Config updated:', result),
-      onError: (error) => console.error('Error updating config:', error),
+      onSuccess: () => alert('Config updated!'),
+      onError: (error) => console.error('Error:', error),
     });
   };
 
   return (
-    <div className="pt-32 pb-20 min-h-screen container mx-auto px-4">
-      <div className="flex items-center gap-3 mb-10">
-        <div className="w-12 h-12 rounded-2xl bg-indigo-600 flex items-center justify-center text-white shadow-lg">
-          <Settings size={24} />
-        </div>
-        <div>
-          <h1 className="text-3xl font-black tracking-tight">Admin Dashboard</h1>
-          <p className="text-gray-500 font-medium">Manage MiniPet ecosystem parameters</p>
-        </div>
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        {/* Create Template */}
-        <div className="card p-8">
-          <h2 className="text-xl font-bold mb-6 flex items-center gap-2">
-            <Plus size={20} className="text-indigo-500" /> Create Pet Template
-          </h2>
-          <div className="space-y-4">
-            <div>
-              <label className="block text-sm font-bold text-gray-500 mb-1 uppercase tracking-wider">Pet Name</label>
-              <input 
-                type="text" 
-                className="w-full bg-gray-50 dark:bg-gray-800 border-none rounded-xl p-3 font-semibold focus:ring-2 focus:ring-indigo-500"
-                value={template.name}
-                onChange={(e) => setTemplate({...template, name: e.target.value})}
-              />
+    <div className="pt-28 pb-20 min-h-screen bg-gray-50 dark:bg-[#0a0a0b]">
+      <div className="container mx-auto px-4 lg:px-8">
+        {/* Header Section */}
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10">
+          <div className="flex items-center gap-4">
+            <div className="w-14 h-14 rounded-2xl bg-indigo-600 flex items-center justify-center text-white shadow-xl shadow-indigo-500/20">
+              <Settings size={28} />
             </div>
             <div>
-              <label className="block text-sm font-bold text-gray-500 mb-1 uppercase tracking-wider">Image (Upload to Walrus)</label>
-              <div className="flex gap-2">
-                <input 
-                  type="text" 
-                  className="flex-1 bg-gray-50 dark:bg-gray-800 border-none rounded-xl p-3 font-semibold focus:ring-2 focus:ring-indigo-500"
-                  placeholder="Blob ID will appear here"
-                  value={template.image_url}
-                  onChange={(e) => setTemplate({...template, image_url: e.target.value})}
-                />
-                <label className={`cursor-pointer w-12 h-12 rounded-xl flex items-center justify-center transition-all ${uploadDone.image ? 'bg-green-100 text-green-600' : 'bg-indigo-600 text-white hover:bg-indigo-700'}`}>
-                  {uploading.image ? <Loader2 size={20} className="animate-spin" /> : (uploadDone.image ? <Check size={20} /> : <Upload size={20} />)}
-                  <input type="file" className="hidden" accept="image/*" onChange={(e) => e.target.files?.[0] && handleFileUpload(e.target.files[0], 'image')} />
-                </label>
-              </div>
-              {template.image_url && (
-                <div className="mt-2 p-2 bg-gray-50 dark:bg-gray-800 rounded-xl inline-block border border-gray-100 dark:border-gray-700">
-                  <img 
-                    src={template.image_url.startsWith('http') ? template.image_url : WalrusService.getBlobUrl(template.image_url)} 
-                    className="h-20 w-20 object-contain pixel-art"
-                    alt="Preview"
-                  />
-                </div>
-              )}
+              <h1 className="text-3xl font-black tracking-tight text-gray-900 dark:text-white">Admin Hub</h1>
+              <p className="text-gray-500 font-semibold dark:text-gray-400">Manage the MiniPet ecosystem</p>
             </div>
-            <div>
-              <label className="block text-sm font-bold text-gray-500 mb-1 uppercase tracking-wider">Sprite (Upload to Walrus)</label>
-              <div className="flex gap-2">
-                <input 
-                  type="text" 
-                  className="flex-1 bg-gray-50 dark:bg-gray-800 border-none rounded-xl p-3 font-semibold focus:ring-2 focus:ring-indigo-500"
-                  placeholder="Blob ID will appear here"
-                  value={template.sprite_url}
-                  onChange={(e) => setTemplate({...template, sprite_url: e.target.value})}
-                />
-                <label className={`cursor-pointer w-12 h-12 rounded-xl flex items-center justify-center transition-all ${uploadDone.sprite ? 'bg-green-100 text-green-600' : 'bg-indigo-600 text-white hover:bg-indigo-700'}`}>
-                  {uploading.sprite ? <Loader2 size={20} className="animate-spin" /> : (uploadDone.sprite ? <Check size={20} /> : <Upload size={20} />)}
-                  <input type="file" className="hidden" accept="image/*" onChange={(e) => e.target.files?.[0] && handleFileUpload(e.target.files[0], 'sprite')} />
-                </label>
-              </div>
-            </div>
-            <div>
-              <label className="block text-sm font-bold text-gray-500 mb-1 uppercase tracking-wider">Price (MIST)</label>
-              <input 
-                type="number" 
-                className="w-full bg-gray-50 dark:bg-gray-800 border-none rounded-xl p-3 font-semibold focus:ring-2 focus:ring-indigo-500"
-                value={template.price}
-                onChange={(e) => setTemplate({...template, price: e.target.value})}
-              />
-            </div>
-            <button 
-              onClick={handleCreateTemplate}
-              className="btn-dark w-full !justify-center !py-4 mt-4"
-            >
-              Create Template
-            </button>
+          </div>
+          
+          <div className="flex bg-white dark:bg-gray-900 p-1.5 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800">
+            {[
+              { id: 'dashboard', icon: Activity, label: 'Overview' },
+              { id: 'store', icon: Plus, label: 'Store' },
+              { id: 'economy', icon: Coins, label: 'Economy' },
+              { id: 'settings', icon: Settings, label: 'System' }
+            ].map((tab) => (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id as any)}
+                className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold transition-all cursor-pointer border-none ${
+                  activeTab === tab.id 
+                    ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-500/20' 
+                    : 'text-gray-500 hover:text-gray-900 dark:hover:text-white bg-transparent'
+                }`}
+              >
+                <tab.icon size={16} />
+                <span className="hidden sm:inline">{tab.label}</span>
+              </button>
+            ))}
           </div>
         </div>
 
-        {/* Global Config */}
-        <div className="space-y-8">
-          <div className="card p-8">
-            <h2 className="text-xl font-bold mb-6 flex items-center gap-2">
-              <Activity size={20} className="text-pink-500" /> Global Configuration
-            </h2>
-            <div className="space-y-6">
-              <div>
-                <label className="block text-sm font-bold text-gray-500 mb-1 uppercase tracking-wider">Base Slot Fee (MIPET)</label>
-                <div className="flex gap-2">
-                  <input 
-                    type="number" 
-                    className="flex-1 bg-gray-50 dark:bg-gray-800 border-none rounded-xl p-3 font-semibold focus:ring-2 focus:ring-pink-500"
-                    value={config.baseFee}
-                    onChange={(e) => setConfig({...config, baseFee: e.target.value})}
-                  />
-                  <button 
-                    onClick={handleUpdateConfig}
-                    className="btn-dark !bg-pink-600 hover:!bg-pink-700 !px-6"
-                  >
-                    Update
-                  </button>
+        {/* Content Area */}
+        <div className="grid grid-cols-1 gap-8">
+          {activeTab === 'dashboard' && (
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+              <div className="card p-6 bg-white dark:bg-gray-900">
+                <p className="text-sm font-bold text-gray-400 uppercase mb-1">Package ID</p>
+                <p className="font-mono text-xs break-all text-indigo-500">{PACKAGE_ID}</p>
+              </div>
+              <div className="card p-6 bg-white dark:bg-gray-900">
+                <p className="text-sm font-bold text-gray-400 uppercase mb-1">MIPET Token</p>
+                <p className="font-mono text-xs break-all text-amber-500">{PET_TOKEN_PACKAGE_ID}</p>
+              </div>
+              <div className="card p-6 bg-white dark:bg-gray-900">
+                <p className="text-sm font-bold text-gray-400 uppercase mb-1">Admin Status</p>
+                <div className="flex items-center gap-2 text-green-500 font-black">
+                  <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+                  AUTHORIZED
+                </div>
+              </div>
+              
+              <div className="md:col-span-3 card p-12 bg-indigo-600 text-white flex flex-col items-center text-center">
+                <div className="w-20 h-20 bg-white/20 rounded-3xl flex items-center justify-center mb-6">
+                  <Activity size={40} />
+                </div>
+                <h2 className="text-3xl font-black mb-4">Welcome back, Admin</h2>
+                <p className="text-indigo-100 max-w-lg font-medium">
+                  Use the navigation above to manage the Pet Store, mint MIPET tokens, or adjust global system parameters like fees and limits.
+                </p>
+              </div>
+            </div>
+          )}
+
+          {activeTab === 'store' && (
+            <div className="max-w-3xl mx-auto w-full animate-in fade-in slide-in-from-bottom-4 duration-500">
+              <div className="card p-8 bg-white dark:bg-gray-900">
+                <div className="flex items-center gap-3 mb-8 border-b border-gray-50 dark:border-gray-800 pb-6">
+                  <div className="w-10 h-10 rounded-xl bg-indigo-100 dark:bg-indigo-900/30 flex items-center justify-center text-indigo-600">
+                    <Plus size={20} />
+                  </div>
+                  <h2 className="text-xl font-bold">Add New Pet Template</h2>
+                </div>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                  <div className="space-y-6">
+                    <div>
+                      <label className="block text-xs font-black text-gray-400 mb-2 uppercase">Pet Name</label>
+                      <input 
+                        type="text" 
+                        placeholder="e.g. Pixel Dragon"
+                        className="w-full bg-gray-50 dark:bg-gray-800 border-none rounded-xl p-3.5 font-bold focus:ring-2 focus:ring-indigo-500"
+                        value={template.name}
+                        onChange={(e) => setTemplate({...template, name: e.target.value})}
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-black text-gray-400 mb-2 uppercase">Price (MIPET)</label>
+                      <input 
+                        type="number" 
+                        className="w-full bg-gray-50 dark:bg-gray-800 border-none rounded-xl p-3.5 font-bold focus:ring-2 focus:ring-indigo-500"
+                        value={Number(template.price) / 1000000000}
+                        onChange={(e) => setTemplate({...template, price: (Number(e.target.value) * 1000000000).toString()})}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="space-y-6">
+                    <div>
+                      <label className="block text-xs font-black text-gray-400 mb-2 uppercase">Main Image (PNG)</label>
+                      <div className="relative group">
+                        <input 
+                          type="file" 
+                          onChange={(e) => e.target.files && handleFileUpload(e.target.files[0], 'image')}
+                          className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                        />
+                        <div className={`p-4 rounded-xl border-2 border-dashed transition-all flex flex-col items-center justify-center gap-2 ${
+                          uploadDone.image ? 'border-green-500 bg-green-50 dark:bg-green-950/20' : 'border-gray-200 dark:border-gray-800 hover:border-indigo-500'
+                        }`}>
+                          {uploading.image ? <Loader2 className="animate-spin text-indigo-500" /> : uploadDone.image ? <Check className="text-green-500" /> : <Upload className="text-gray-400" />}
+                          <span className="text-xs font-bold text-gray-500">{uploading.image ? 'Uploading...' : uploadDone.image ? 'Uploaded' : 'Choose File'}</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div>
+                      <label className="block text-xs font-black text-gray-400 mb-2 uppercase">Sprite Sheet (PNG)</label>
+                      <div className="relative group">
+                        <input 
+                          type="file" 
+                          onChange={(e) => e.target.files && handleFileUpload(e.target.files[0], 'sprite')}
+                          className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                        />
+                        <div className={`p-4 rounded-xl border-2 border-dashed transition-all flex flex-col items-center justify-center gap-2 ${
+                          uploadDone.sprite ? 'border-green-500 bg-green-50 dark:bg-green-950/20' : 'border-gray-200 dark:border-gray-800 hover:border-indigo-500'
+                        }`}>
+                          {uploading.sprite ? <Loader2 className="animate-spin text-indigo-500" /> : uploadDone.sprite ? <Check className="text-green-500" /> : <Upload className="text-gray-400" />}
+                          <span className="text-xs font-bold text-gray-500">{uploading.sprite ? 'Uploading...' : uploadDone.sprite ? 'Uploaded' : 'Choose File'}</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <button 
+                  onClick={handleCreateTemplate}
+                  disabled={!uploadDone.image || !uploadDone.sprite || !template.name}
+                  className="btn-dark w-full !justify-center !py-4 mt-10 shadow-xl shadow-indigo-500/20 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  Confirm and Add to Store
+                </button>
+              </div>
+            </div>
+          )}
+
+          {activeTab === 'economy' && (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+              <div className="card p-8 bg-white dark:bg-gray-900 border-l-4 border-l-amber-500">
+                <h2 className="text-xl font-bold mb-8 flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center text-amber-600">
+                    <Coins size={20} />
+                  </div>
+                  Mint MIPET Tokens
+                </h2>
+                <div className="space-y-6">
+                  <div>
+                    <label className="block text-xs font-black text-gray-400 mb-2 uppercase">Recipient Address</label>
+                    <input 
+                      type="text" 
+                      placeholder="0x..."
+                      className="w-full bg-gray-50 dark:bg-gray-800 border-none rounded-xl p-3.5 font-bold focus:ring-2 focus:ring-amber-500"
+                      value={tokenMint.recipient}
+                      onChange={(e) => setTokenMint({...tokenMint, recipient: e.target.value})}
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-black text-gray-400 mb-2 uppercase">Amount (MIPET)</label>
+                    <div className="flex gap-3">
+                      <input 
+                        type="number" 
+                        className="flex-1 bg-gray-50 dark:bg-gray-800 border-none rounded-xl p-3.5 font-bold focus:ring-2 focus:ring-amber-500"
+                        value={Number(tokenMint.amount) / 1000000000}
+                        onChange={(e) => setTokenMint({...tokenMint, amount: (Number(e.target.value) * 1000000000).toString()})}
+                      />
+                      <button 
+                        onClick={handleMintToken}
+                        className="btn-dark !bg-amber-600 hover:!bg-amber-700 !px-8 shadow-lg shadow-amber-500/20"
+                      >
+                        Mint
+                      </button>
+                    </div>
+                  </div>
                 </div>
               </div>
 
-              <div className="pt-4 border-t border-gray-100 dark:border-gray-800">
-                <label className="block text-sm font-bold text-gray-500 mb-1 uppercase tracking-wider">Treasury Address</label>
-                <div className="flex gap-2">
-                  <input 
-                    type="text" 
-                    placeholder="0x..."
-                    className="flex-1 bg-gray-50 dark:bg-gray-800 border-none rounded-xl p-3 font-semibold focus:ring-2 focus:ring-indigo-500"
-                    value={config.treasury}
-                    onChange={(e) => setConfig({...config, treasury: e.target.value})}
-                  />
-                  <button 
-                    onClick={handleUpdateTreasury}
-                    className="btn-dark !px-6"
-                  >
-                    Update
-                  </button>
+              <div className="card p-8 bg-white dark:bg-gray-900 border-l-4 border-l-purple-500">
+                <h2 className="text-xl font-bold mb-8 flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center text-purple-600">
+                    <Info size={20} />
+                  </div>
+                  Treasury Management
+                </h2>
+                <div className="space-y-6">
+                  <div>
+                    <label className="block text-xs font-black text-gray-400 mb-2 uppercase">New Treasury Address</label>
+                    <div className="flex gap-3">
+                      <input 
+                        type="text" 
+                        placeholder="0x..."
+                        className="flex-1 bg-gray-50 dark:bg-gray-800 border-none rounded-xl p-3.5 font-bold focus:ring-2 focus:ring-purple-500"
+                        value={config.treasury}
+                        onChange={(e) => setConfig({...config, treasury: e.target.value})}
+                      />
+                      <button 
+                        onClick={handleUpdateTreasury}
+                        className="btn-dark !bg-purple-600 hover:!bg-purple-700 !px-8 shadow-lg shadow-purple-500/20"
+                      >
+                        Update
+                      </button>
+                    </div>
+                  </div>
+                  <p className="text-sm text-gray-500 font-medium bg-purple-50 dark:bg-purple-900/10 p-4 rounded-xl italic">
+                    Note: This address will receive all fees from Store purchases and Custom Slot sales.
+                  </p>
                 </div>
               </div>
             </div>
-          </div>
+          )}
 
-          <div className="bg-indigo-50 dark:bg-indigo-900/10 rounded-3xl p-6 border border-indigo-100 dark:border-indigo-800 flex gap-4">
-            <Info className="text-indigo-500 shrink-0" size={20} />
-            <p className="text-sm text-indigo-900 dark:text-indigo-300 leading-relaxed">
-              <strong>Note:</strong> You must have the <code>AdminCap</code> in your wallet to perform these actions. Actions are permanent on the blockchain.
-            </p>
-          </div>
+          {activeTab === 'settings' && (
+            <div className="max-w-2xl mx-auto w-full animate-in fade-in slide-in-from-bottom-4 duration-500">
+              <div className="card p-8 bg-white dark:bg-gray-900 border-t-4 border-t-pink-500">
+                <h2 className="text-xl font-bold mb-8 flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-pink-100 dark:bg-pink-900/30 flex items-center justify-center text-pink-600">
+                    <Activity size={20} />
+                  </div>
+                  System Configuration
+                </h2>
+                <div className="space-y-8">
+                  <div>
+                    <label className="block text-xs font-black text-gray-400 mb-2 uppercase">Base Custom Slot Fee (MIPET)</label>
+                    <div className="flex gap-3">
+                      <input 
+                        type="number" 
+                        className="flex-1 bg-gray-50 dark:bg-gray-800 border-none rounded-xl p-3.5 font-bold focus:ring-2 focus:ring-pink-500"
+                        value={Number(config.baseFee) / 1000000000}
+                        onChange={(e) => setConfig({...config, baseFee: (Number(e.target.value) * 1000000000).toString()})}
+                      />
+                      <button 
+                        onClick={handleUpdateConfig}
+                        className="btn-dark !bg-pink-600 hover:!bg-pink-700 !px-8 shadow-lg shadow-pink-500/20"
+                      >
+                        Save Changes
+                      </button>
+                    </div>
+                  </div>
+                  
+                  <div className="p-6 bg-pink-50 dark:bg-pink-900/10 rounded-2xl border border-pink-100 dark:border-pink-900/30">
+                    <div className="flex gap-3 text-pink-700 dark:text-pink-400">
+                      <Info size={20} className="shrink-0" />
+                      <div className="text-sm">
+                        <p className="font-black mb-1">Warning</p>
+                        <p className="font-medium opacity-80 leading-relaxed">
+                          Adjusting these parameters affects the entire economy. Changes are immediate on the blockchain.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>

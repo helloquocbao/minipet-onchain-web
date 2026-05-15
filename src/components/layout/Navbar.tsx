@@ -3,8 +3,9 @@ import { Globe, ChevronDown, Menu, X, Download } from 'lucide-react';
 import { FaGithub } from 'react-icons/fa';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { ConnectButton } from '@mysten/dapp-kit';
-import { Sun, Moon } from 'lucide-react';
+import { ConnectButton, useCurrentAccount, useDisconnectWallet, useSuiClientQuery } from '@mysten/dapp-kit';
+import { Sun, Moon, User, LayoutDashboard, LogOut, Sparkles } from 'lucide-react';
+import { PACKAGE_ID, MODULES } from '../../services/blockchain/sui';
 
 interface NavbarProps {
   isDark: boolean;
@@ -19,10 +20,24 @@ export const Navbar = ({ isDark, toggleTheme }: NavbarProps) => {
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
   const location = useLocation();
+  const account = useCurrentAccount();
+  const { mutate: disconnect } = useDisconnectWallet();
+  
   const [langOpen, setLangOpen] = React.useState(false);
   const [menuOpen, setMenuOpen] = React.useState(false);
+  const [userDropdownOpen, setUserDropdownOpen] = React.useState(false);
+  
   const langRef = React.useRef<HTMLDivElement>(null);
   const menuRef = React.useRef<HTMLDivElement>(null);
+  const userRef = React.useRef<HTMLDivElement>(null);
+
+  // Check if user is Admin by querying for AdminCap
+  const { data: adminCaps } = useSuiClientQuery('getOwnedObjects', {
+    owner: account?.address || '',
+    filter: { StructType: `${PACKAGE_ID}::${MODULES.PET_NFT}::AdminCap` }
+  }, { enabled: !!account });
+
+  const isAdmin = adminCaps?.data && adminCaps.data.length > 0;
 
   React.useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -32,6 +47,9 @@ export const Navbar = ({ isDark, toggleTheme }: NavbarProps) => {
       if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
         setMenuOpen(false);
       }
+      if (userRef.current && !userRef.current.contains(event.target as Node)) {
+        setUserDropdownOpen(false);
+      }
     };
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
@@ -39,20 +57,16 @@ export const Navbar = ({ isDark, toggleTheme }: NavbarProps) => {
 
   const handleNavClick = (l: string) => {
     setMenuOpen(false);
-    if (l === 'Custom Pets') {
-      navigate('/custom-pet');
-    } else {
-      const id = l === 'Features' ? 'features' : l.toLowerCase();
-      if (location.pathname !== '/') {
-        navigate('/');
-        setTimeout(() => {
-          const el = document.getElementById(id);
-          if (el) el.scrollIntoView({ behavior: 'smooth' });
-        }, 100);
-      } else {
+    const id = l === 'Features' ? 'features' : l.toLowerCase();
+    if (location.pathname !== '/') {
+      navigate('/');
+      setTimeout(() => {
         const el = document.getElementById(id);
         if (el) el.scrollIntoView({ behavior: 'smooth' });
-      }
+      }, 100);
+    } else {
+      const el = document.getElementById(id);
+      if (el) el.scrollIntoView({ behavior: 'smooth' });
     }
   };
 
@@ -78,21 +92,12 @@ export const Navbar = ({ isDark, toggleTheme }: NavbarProps) => {
           {/* Logo */}
           <Link
             to="/"
-            aria-label="Back to home"
-            title="MiniPet Home"
-            className="flex items-center gap-2 mr-auto cursor-pointer bg-transparent border-none p-0 group no-underline"
+            className="flex items-center gap-2 mr-auto cursor-pointer no-underline group"
           >
-            <div className="w-7 h-7 rounded-lg bg-[#111827] dark:bg-white flex items-center justify-center transition-transform group-hover:scale-105 overflow-hidden border border-white/10 shadow-sm">
-              <img
-                src="/icons/icon.png"
-                alt="MiniPet Logo"
-                className="w-full h-full object-cover pixel-art"
-                loading="eager"
-                width="28"
-                height="28"
-              />
+            <div className="w-7 h-7 rounded-lg bg-[#111827] dark:bg-white flex items-center justify-center transition-transform group-hover:scale-105 border border-white/10 shadow-sm">
+              <img src="/icons/icon.png" alt="Logo" className="w-full h-full object-cover pixel-art" />
             </div>
-            <span className="text-[13px] sm:text-[13.5px] font-extrabold text-[#111827] dark:text-white tracking-tight">MiniPet</span>
+            <span className="text-[13px] font-extrabold text-[#111827] dark:text-white tracking-tight">MiniPet</span>
           </Link>
 
           {/* Desktop Nav links */}
@@ -110,22 +115,66 @@ export const Navbar = ({ isDark, toggleTheme }: NavbarProps) => {
             >
               Market
             </Link>
-            <Link
-              to="/custom-pet"
-              className="text-[13px] font-bold text-gray-600 dark:text-gray-300 hover:text-[#111827] dark:hover:text-white transition-colors no-underline"
-            >
-              {t('nav.docs')}
-            </Link>
-            <Link
-              to="/admin"
-              className="text-[13px] font-bold text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 transition-colors no-underline"
-            >
-              Admin
-            </Link>
           </nav>
 
           <div className="flex items-center gap-1.5 sm:gap-3">
-            <ConnectButton className="!rounded-xl !text-xs !font-black !px-4 !py-1.5" />
+            {!account ? (
+              <ConnectButton className="!rounded-xl !text-xs !font-black !px-4 !py-1.5" />
+            ) : (
+              <div className="relative" ref={userRef}>
+                <button
+                  onClick={() => setUserDropdownOpen(!userDropdownOpen)}
+                  className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-1.5 rounded-xl transition-all shadow-md cursor-pointer"
+                >
+                  <User size={14} />
+                  <span className="text-[11px] font-black hidden sm:inline">
+                    {account.address.slice(0, 4)}...{account.address.slice(-4)}
+                  </span>
+                  <ChevronDown size={10} className={`transition-transform ${userDropdownOpen ? 'rotate-180' : ''}`} />
+                </button>
+
+                {userDropdownOpen && (
+                  <div className="absolute top-full right-0 mt-2 w-48 bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 rounded-2xl shadow-2xl p-2 z-[60]">
+                    {isAdmin ? (
+                      <>
+                        <button 
+                          onClick={() => { navigate('/admin'); setUserDropdownOpen(false); }}
+                          className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-[12px] font-bold text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-900/20 transition-all border-none cursor-pointer"
+                        >
+                          <LayoutDashboard size={14} /> Admin Menu
+                        </button>
+                      </>
+                    ) : (
+                      <>
+                        <button 
+                          onClick={() => { /* Profile logic */ setUserDropdownOpen(false); }}
+                          className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-[12px] font-bold text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 transition-all border-none cursor-pointer"
+                        >
+                          <User size={14} /> Profile
+                        </button>
+                        <button 
+                          onClick={() => { navigate('/custom-pet'); setUserDropdownOpen(false); }}
+                          className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-[12px] font-bold text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 transition-all border-none cursor-pointer"
+                        >
+                          <Sparkles size={14} /> Mint Custom
+                        </button>
+                      </>
+                    )}
+                    <div className="h-px bg-gray-100 dark:bg-gray-800 my-1 mx-2" />
+                    <button 
+                      onClick={() => { 
+                        disconnect(); 
+                        setUserDropdownOpen(false);
+                        navigate('/'); 
+                      }}
+                      className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-[12px] font-bold text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-all border-none cursor-pointer"
+                    >
+                      <LogOut size={14} /> Logout
+                    </button>
+                  </div>
+                )}
+              </div>
+            )}
             {/* Language Switcher Dropdown */}
             <div className="relative" ref={langRef}>
               <button
@@ -214,11 +263,11 @@ export const Navbar = ({ isDark, toggleTheme }: NavbarProps) => {
                 {t('nav.features')}
               </a>
               <Link
-                to="/custom-pet"
+                to="/market"
                 onClick={() => setMenuOpen(false)}
                 className="w-full text-left px-5 py-4 rounded-2xl text-[14px] font-bold text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-[#111827] dark:hover:text-white transition-all no-underline"
               >
-                {t('nav.docs')}
+                Market
               </Link>
               <div className="h-px bg-gray-100 dark:bg-gray-800 my-2 mx-5" />
               <a
