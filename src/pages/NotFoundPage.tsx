@@ -1,9 +1,11 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Home, AlertCircle } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 const NotFoundPage: React.FC = () => {
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   return (
     <div className="min-h-screen bg-[#0f172a] flex items-center justify-center p-4">
@@ -20,10 +22,10 @@ const NotFoundPage: React.FC = () => {
         <div className="space-y-4">
           <div className="flex items-center justify-center space-x-2 text-blue-400">
             <AlertCircle size={24} />
-            <h2 className="text-2xl font-semibold">Page Not Found</h2>
+            <h2 className="text-2xl font-semibold">{t('not_found.title')}</h2>
           </div>
           <p className="text-slate-400">
-            Oops! The pet you're looking for has wandered off into the digital wilderness.
+            {t('not_found.desc')}
           </p>
         </div>
 
@@ -32,7 +34,7 @@ const NotFoundPage: React.FC = () => {
           className="group relative inline-flex items-center justify-center px-8 py-3 font-semibold text-white transition-all duration-200 bg-blue-600 rounded-full hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-600 focus:ring-offset-[#0f172a]"
         >
           <Home className="w-5 h-5 mr-2 transition-transform group-hover:-translate-y-1" />
-          Return Home
+          {t('not_found.back_home')}
         </button>
 
         <div className="pt-8">

@@ -5,6 +5,7 @@ import { PACKAGE_ID, FUNCTIONS, MODULES, suiClient, GLOBAL_CONFIG_ID, PET_TOKEN_
 import { WalrusService } from '../services/walrus';
 import { ShoppingBag, Sparkles, Download, ArrowRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 interface PetTemplate {
   id: string;
@@ -17,6 +18,7 @@ interface PetTemplate {
 export default function MarketPage() {
   const navigate = useNavigate();
   const account = useCurrentAccount();
+  const { t } = useTranslation();
   const { mutate: signAndExecuteTransaction } = useSignAndExecuteTransaction();
   const [templates, setTemplates] = useState<PetTemplate[]>([]);
   const [, setLoading] = useState(true);
@@ -82,7 +84,7 @@ export default function MarketPage() {
     });
 
     if (coins.data.length === 0) {
-      alert('You need MIPET tokens to buy a mint slot!');
+      alert(t('market.alerts.need_mipet'));
       return;
     }
 
@@ -107,11 +109,11 @@ export default function MarketPage() {
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
         <div>
           <div className="flex items-center gap-2 text-indigo-500 font-bold uppercase tracking-widest text-sm mb-2">
-            <ShoppingBag size={16} /> Official Store
+            <ShoppingBag size={16} /> {t('market.nav_badge')}
           </div>
-          <h1 className="text-4xl md:text-5xl font-black tracking-tight mb-4">Adopt a Companion</h1>
+          <h1 className="text-4xl md:text-5xl font-black tracking-tight mb-4">{t('market.title')}</h1>
           <p className="text-gray-500 max-w-xl text-lg">
-            Choose from our official collection of pixel pets. Each one is a unique NFT on the Sui blockchain.
+            {t('market.desc')}
           </p>
         </div>
         
@@ -120,8 +122,8 @@ export default function MarketPage() {
           className="card bg-indigo-600 border-none p-6 flex items-center gap-6 text-white group cursor-pointer hover:bg-indigo-700"
         >
           <div>
-            <h3 className="font-bold text-lg">Custom Pet Slot</h3>
-            <p className="text-indigo-100 text-sm">Design your own pixel friend</p>
+            <h3 className="font-bold text-lg">{t('market.custom_slot.title')}</h3>
+            <p className="text-indigo-100 text-sm">{t('market.custom_slot.desc')}</p>
           </div>
           <div className="w-12 h-12 rounded-xl bg-white/20 flex items-center justify-center group-hover:scale-110 transition-transform">
             <Sparkles size={24} />
@@ -151,13 +153,13 @@ export default function MarketPage() {
                 </div>
               </div>
               <p className="text-gray-500 text-sm mb-6 leading-relaxed">
-                A loyal companion with {pet.name === 'Wukong' ? 'mythical powers' : 'fluffy energy'}. Ready to brighten up your workspace!
+                {t('market.pet_card.loyal_companion', { energy: pet.name === 'Wukong' ? t('market.pet_card.mythical_powers') : t('market.pet_card.fluffy_energy') })}
               </p>
               <button 
                 onClick={() => handleBuyPet(pet.id, pet.price)}
                 className="btn-dark w-full !justify-between !py-3.5 group/btn"
               >
-                <span>Adopt Now</span>
+                <span>{t('market.pet_card.adopt_btn')}</span>
                 <ArrowRight size={18} className="group-hover/btn:translate-x-1 transition-transform" />
               </button>
             </div>
@@ -167,18 +169,18 @@ export default function MarketPage() {
 
       <div className="mt-20 card p-10 bg-gradient-to-br from-indigo-50 to-pink-50 dark:from-indigo-950/20 dark:to-pink-950/20 border-indigo-100 dark:border-indigo-900/50 flex flex-col md:flex-row items-center gap-10">
         <div className="flex-1">
-          <h2 className="text-3xl font-black mb-4">Not finding your perfect pet?</h2>
+          <h2 className="text-3xl font-black mb-4">{t('market.mint_section.title')}</h2>
           <p className="text-gray-600 dark:text-gray-400 text-lg mb-8 max-w-lg">
-            Purchase a Mint Slot and upload your own spritesheet to create a truly one-of-a-kind companion that only you own.
+            {t('market.mint_section.desc')}
           </p>
           <div className="flex flex-wrap gap-4">
             <button 
               onClick={handleBuyMintSlot}
               className="btn-dark"
             >
-              Buy Mint Slot
+              {t('market.mint_section.buy_btn')}
             </button>
-            <button className="btn-ghost !bg-white">View Guide</button>
+            <button className="btn-ghost !bg-white">{t('market.mint_section.view_guide')}</button>
           </div>
         </div>
         <div className="w-64 h-64 bg-white dark:bg-gray-900 rounded-3xl shadow-2xl flex items-center justify-center p-8 relative rotate-3">

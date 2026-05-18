@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { useCurrentAccount, useSignAndExecuteTransaction } from '@mysten/dapp-kit';
 import { Transaction } from '@mysten/sui/transactions';
 import { 
@@ -23,6 +24,7 @@ import {
 export const CustomPetPage = () => {
   const navigate = useNavigate();
   const account = useCurrentAccount();
+  const { t } = useTranslation();
   const { mutate: signAndExecuteTransaction } = useSignAndExecuteTransaction();
 
   const [petData, setPetData] = useState({
@@ -73,7 +75,7 @@ export const CustomPetPage = () => {
       }));
     } catch (error) {
       console.error('Upload failed:', error);
-      alert('Failed to upload to Walrus. Please try again.');
+      alert(t('custom.alerts.upload_failed'));
     } finally {
       setUploading(prev => ({ ...prev, [type]: false }));
     }
@@ -117,14 +119,14 @@ export const CustomPetPage = () => {
       // 2. User ký và thực hiện (Lúc này Admin đã ký phần Gas/Storage)
       signAndExecuteTransaction({ transaction: tx }, {
         onSuccess: () => {
-          alert('Custom Pet Minted! Sponsored by Admin ✨');
+          alert(t('custom.alerts.mint_success'));
           navigate('/market');
         },
         onError: (err) => console.error('Mint failed:', err)
       });
     } catch (err) {
       console.error('Sponsorship failed:', err);
-      alert('Admin sponsorship is currently unavailable.');
+      alert(t('custom.alerts.sponsor_unavailable'));
     }
   };
 
@@ -135,7 +137,7 @@ export const CustomPetPage = () => {
           onClick={() => navigate(-1)}
           className="flex items-center gap-2 text-gray-500 mb-8 hover:text-indigo-600 transition-colors font-bold uppercase text-xs tracking-widest"
         >
-          <ArrowLeft size={16} /> Back
+          <ArrowLeft size={16} /> {t('custom.back')}
         </button>
 
         <div className="bg-white dark:bg-gray-900 rounded-[2.5rem] p-10 shadow-2xl shadow-indigo-500/5 border border-gray-100 dark:border-gray-800">
@@ -144,8 +146,8 @@ export const CustomPetPage = () => {
               <Dna size={28} />
             </div>
             <div>
-              <h1 className="text-3xl font-black tracking-tight">Mint Custom Pet</h1>
-              <p className="text-gray-500 font-medium">Create your unique decentralized pet</p>
+              <h1 className="text-3xl font-black tracking-tight">{t('custom.title')}</h1>
+              <p className="text-gray-500 font-medium">{t('custom.subtitle')}</p>
             </div>
           </div>
 
@@ -153,13 +155,13 @@ export const CustomPetPage = () => {
             <div className="mb-8 p-4 bg-amber-50 dark:bg-amber-900/10 border border-amber-100 dark:border-amber-800 rounded-2xl flex gap-3 text-amber-700 dark:text-amber-400">
               <AlertCircle size={20} className="shrink-0" />
               <div className="text-sm">
-                <p className="font-bold">No Mint Slot Found</p>
-                <p>You need to purchase a Mint Slot in the Market first.</p>
+                <p className="font-bold">{t('custom.no_slot.title')}</p>
+                <p>{t('custom.no_slot.desc')}</p>
                 <button 
                   onClick={() => navigate('/market')}
                   className="mt-2 text-indigo-600 dark:text-indigo-400 font-bold hover:underline"
                 >
-                  Go to Market &rarr;
+                  {t('custom.no_slot.go_market')} &rarr;
                 </button>
               </div>
             </div>
@@ -168,10 +170,10 @@ export const CustomPetPage = () => {
           <div className="space-y-8">
             {/* Pet Name */}
             <div>
-              <label className="block text-sm font-bold text-gray-500 mb-2 uppercase tracking-wider">Pet Name</label>
+              <label className="block text-sm font-bold text-gray-500 mb-2 uppercase tracking-wider">{t('custom.form.name_label')}</label>
               <input 
                 type="text" 
-                placeholder="Ex: Cyber Kitty"
+                placeholder={t('custom.form.name_placeholder')}
                 className="w-full bg-gray-50 dark:bg-gray-800 border-none rounded-2xl p-4 font-bold focus:ring-2 focus:ring-indigo-500 transition-all"
                 value={petData.name}
                 onChange={(e) => setPetData({...petData, name: e.target.value})}
@@ -181,7 +183,7 @@ export const CustomPetPage = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {/* Image Upload */}
               <div>
-                <label className="block text-sm font-bold text-gray-500 mb-2 uppercase tracking-wider">Avatar Image</label>
+                <label className="block text-sm font-bold text-gray-500 mb-2 uppercase tracking-wider">{t('custom.form.avatar_label')}</label>
                 <div className="relative group">
                   <div className={`aspect-square rounded-3xl border-2 border-dashed flex flex-col items-center justify-center transition-all ${petData.imageBlob ? 'border-green-500 bg-green-50/50 dark:bg-green-900/10' : 'border-gray-200 dark:border-gray-700 group-hover:border-indigo-400'}`}>
                     {uploading.image ? (
@@ -189,12 +191,12 @@ export const CustomPetPage = () => {
                     ) : petData.imageBlob ? (
                       <div className="text-center p-4">
                         <Check className="mx-auto text-green-500 mb-2" size={32} />
-                        <p className="text-xs font-bold text-green-600 uppercase">Uploaded to Walrus</p>
+                        <p className="text-xs font-bold text-green-600 uppercase">{t('custom.form.uploaded_hint')}</p>
                       </div>
                     ) : (
                       <>
                         <Upload className="text-gray-400 group-hover:text-indigo-400 mb-2" size={32} />
-                        <p className="text-xs font-bold text-gray-400 uppercase">Choose File</p>
+                        <p className="text-xs font-bold text-gray-400 uppercase">{t('custom.form.upload_hint')}</p>
                       </>
                     )}
                     <input 
@@ -209,7 +211,7 @@ export const CustomPetPage = () => {
 
               {/* Sprite Upload */}
               <div>
-                <label className="block text-sm font-bold text-gray-500 mb-2 uppercase tracking-wider">Animation Sheet</label>
+                <label className="block text-sm font-bold text-gray-500 mb-2 uppercase tracking-wider">{t('custom.form.sprite_label')}</label>
                 <div className="relative group">
                   <div className={`aspect-square rounded-3xl border-2 border-dashed flex flex-col items-center justify-center transition-all ${petData.spriteBlob ? 'border-green-500 bg-green-50/50 dark:bg-green-900/10' : 'border-gray-200 dark:border-gray-700 group-hover:border-indigo-400'}`}>
                     {uploading.sprite ? (
@@ -217,12 +219,12 @@ export const CustomPetPage = () => {
                     ) : petData.spriteBlob ? (
                       <div className="text-center p-4">
                         <Check className="mx-auto text-green-500 mb-2" size={32} />
-                        <p className="text-xs font-bold text-green-600 uppercase">Uploaded to Walrus</p>
+                        <p className="text-xs font-bold text-green-600 uppercase">{t('custom.form.uploaded_hint')}</p>
                       </div>
                     ) : (
                       <>
                         <Upload className="text-gray-400 group-hover:text-indigo-400 mb-2" size={32} />
-                        <p className="text-xs font-bold text-gray-400 uppercase">Choose File</p>
+                        <p className="text-xs font-bold text-gray-400 uppercase">{t('custom.form.upload_hint')}</p>
                       </>
                     )}
                     <input 
@@ -240,7 +242,7 @@ export const CustomPetPage = () => {
               <div className="flex gap-4">
                 <Sparkles className="text-indigo-500 shrink-0" size={20} />
                 <p className="text-xs text-indigo-900 dark:text-indigo-300 font-medium leading-relaxed">
-                  <strong>Admin Sponsored:</strong> Your upload fees are covered! Your pet will be stored on Walrus permanently.
+                  <strong>{t('custom.form.sponsor_badge')}:</strong> {t('custom.form.sponsor_desc')}
                 </p>
               </div>
             </div>
@@ -251,7 +253,7 @@ export const CustomPetPage = () => {
               className="w-full bg-black dark:bg-white dark:text-black text-white rounded-2xl py-5 font-black text-lg shadow-xl hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-50 disabled:hover:scale-100 flex items-center justify-center gap-3"
             >
               <Sparkles size={24} />
-              Mint Custom Pet
+              {t('custom.form.mint_btn')}
             </button>
           </div>
         </div>

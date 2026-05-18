@@ -48,7 +48,8 @@ const resources = {
         custom: {
           title: 'PetDex & Custom Pets',
           desc: 'Import from our massive PetDex library or upload your own pixel art to create a truly unique companion.'
-        }
+        },
+        focus_mode: 'Focus mode'
       },
       download: {
         title: 'Ready to meet your companion?',
@@ -57,6 +58,8 @@ const resources = {
         winExeDesc: 'Standard installer for Windows',
         winZipDesc: 'Portable version (No install)',
         btn: 'Download',
+        coming_soon: 'Coming Soon',
+        version: 'Version',
         troubleshooting: {
           macTitle: 'Getting "App is damaged" or "Unidentified Developer" on Mac?',
           macStep1: 'Don\'t worry! It\'s because the app is unsigned. To open it:',
@@ -101,6 +104,114 @@ const resources = {
         disclaimer: 'Disclaimer:',
         disclaimer_text: 'This application only provides tools; we do not own and are not responsible for content/images uploaded by users or linked from external sources.',
         copyright: 'Open Source Project.'
+      },
+      market: {
+        nav_badge: 'Official Store',
+        title: 'Adopt a Companion',
+        desc: 'Choose from our official collection of pixel pets. Each one is a unique NFT on the Sui blockchain.',
+        custom_slot: {
+          title: 'Custom Pet Slot',
+          desc: 'Design your own pixel friend'
+        },
+        pet_card: {
+          loyal_companion: 'A loyal companion with {{energy}}. Ready to brighten up your workspace!',
+          mythical_powers: 'mythical powers',
+          fluffy_energy: 'fluffy energy',
+          adopt_btn: 'Adopt Now'
+        },
+        mint_section: {
+          title: 'Not finding your perfect pet?',
+          desc: 'Purchase a Mint Slot and upload your own spritesheet to create a truly one-of-a-kind companion that only you own.',
+          buy_btn: 'Buy Mint Slot',
+          view_guide: 'View Guide'
+        },
+        alerts: {
+          need_mipet: 'You need MIPET tokens to buy a mint slot!'
+        }
+      },
+      custom: {
+        back: 'Back',
+        title: 'Mint Custom Pet',
+        subtitle: 'Create your unique decentralized pet',
+        no_slot: {
+          title: 'No Mint Slot Found',
+          desc: 'You need to purchase a Mint Slot in the Market first.',
+          go_market: 'Go to Market'
+        },
+        form: {
+          name_label: 'Pet Name',
+          name_placeholder: 'Ex: Cyber Kitty',
+          avatar_label: 'Avatar Image',
+          sprite_label: 'Animation Sheet',
+          upload_hint: 'Choose File',
+          uploaded_hint: 'Uploaded to Walrus',
+          sponsor_badge: 'Admin Sponsored',
+          sponsor_desc: 'Your upload fees are covered! Your pet will be stored on Walrus permanently.',
+          mint_btn: 'Mint Custom Pet'
+        },
+        alerts: {
+          mint_success: 'Custom Pet Minted! Sponsored by Admin ✨',
+          upload_failed: 'Failed to upload to Walrus. Please try again.',
+          sponsor_unavailable: 'Admin sponsorship is currently unavailable.'
+        }
+      },
+      admin: {
+        title: 'Admin Hub',
+        subtitle: 'Manage the MiniPet ecosystem',
+        tabs: {
+          overview: 'Overview',
+          store: 'Store',
+          economy: 'Economy',
+          system: 'System'
+        },
+        dashboard: {
+          package_id: 'Package ID',
+          mipet_token: 'MIPET Token',
+          status: 'Admin Status',
+          authorized: 'AUTHORIZED',
+          welcome: 'Welcome back, Admin',
+          welcome_desc: 'Use the navigation above to manage the Pet Store, mint MIPET tokens, or adjust global system parameters like fees and limits.'
+        },
+        store: {
+          add_title: 'Add New Pet Template',
+          pet_name: 'Pet Name',
+          price: 'Price (MIPET)',
+          main_image: 'Main Image (PNG)',
+          sprite_sheet: 'Sprite Sheet (PNG)',
+          uploading: 'Uploading...',
+          uploaded: 'Uploaded',
+          choose_file: 'Choose File',
+          confirm_btn: 'Confirm and Add to Store'
+        },
+        economy: {
+          mint_title: 'Mint MIPET Tokens',
+          recipient: 'Recipient Address',
+          amount: 'Amount (MIPET)',
+          mint_btn: 'Mint',
+          treasury_title: 'Treasury Management',
+          new_treasury: 'New Treasury Address',
+          update_btn: 'Update',
+          treasury_note: 'Note: This address will receive all fees from Store purchases and Custom Slot sales.'
+        },
+        system: {
+          title: 'System Configuration',
+          fee_label: 'Base Custom Slot Fee (MIPET)',
+          save_btn: 'Save Changes',
+          warning: 'Warning',
+          warning_desc: 'Adjusting these parameters affects the entire economy. Changes are immediate on the blockchain.'
+        },
+        alerts: {
+          template_success: 'Template created successfully!',
+          tokens_minted: 'Tokens minted!',
+          treasury_updated: 'Treasury updated!',
+          config_updated: 'Config updated!',
+          upload_failed: 'Failed to upload to Walrus.'
+        }
+      },
+      not_found: {
+        title: 'Page Not Found',
+        desc: 'Oops! The pet you\'re looking for has wandered off into the digital wilderness.',
+        back_home: 'Return Home'
       }
     }
   },
@@ -114,7 +225,12 @@ const resources = {
       nav: {
         features: 'Tính năng',
         docs: 'Custom Pets',
-        download: 'Tải miễn phí'
+        download: 'Tải miễn phí',
+        market: 'Cửa hàng',
+        admin: 'Quản trị',
+        profile: 'Cá nhân',
+        mint_custom: 'Tạo Pet mới',
+        logout: 'Đăng xuất'
       },
       hero: {
         title1: 'Gặp gỡ những',
@@ -140,7 +256,7 @@ const resources = {
         },
         multi: {
           title: 'Hỗ trợ nhiều Pet',
-          desc: 'Tại sao phải chọn một? Nuôi nhiều pet với cá tính riêng biệt và xem chúng tương tác với nhau.'
+          desc: 'Tại sao phải chọn một? Nuôi nhiều pet với cá cá tính riêng biệt và xem chúng tương tác với nhau.'
         },
         eating: {
           title: 'Hệ thống ăn File',
@@ -149,7 +265,8 @@ const resources = {
         custom: {
           title: 'PetDex & Custom Pets',
           desc: 'Nhập từ thư viện PetDex khổng lồ hoặc tải lên pixel art của riêng bạn để tạo ra một người bạn thực sự độc đáo.'
-        }
+        },
+        focus_mode: 'Chế độ tập trung'
       },
       download: {
         title: 'Sẵn sàng gặp gỡ bạn đồng hành?',
@@ -158,6 +275,8 @@ const resources = {
         winExeDesc: 'Bản cài đặt tiêu chuẩn cho Windows',
         winZipDesc: 'Bản Portable (Không cần cài đặt)',
         btn: 'Tải về',
+        coming_soon: 'Sắp ra mắt',
+        version: 'Phiên bản',
         troubleshooting: {
           macTitle: 'Gặp lỗi "App is damaged" hoặc "Unidentified Developer" trên Mac?',
           macStep1: 'Đừng lo! Đó là vì ứng dụng chưa được ký xác thực. Để mở:',
@@ -202,6 +321,114 @@ const resources = {
         disclaimer: 'Miễn trừ trách nhiệm:',
         disclaimer_text: 'Ứng dụng này chỉ cung cấp công cụ; chúng tôi không sở hữu và không chịu trách nhiệm về nội dung/hình ảnh do người dùng tải lên hoặc liên kết từ các nguồn bên ngoài.',
         copyright: 'Dự án Mã nguồn mở.'
+      },
+      market: {
+        nav_badge: 'Cửa hàng chính thức',
+        title: 'Nhận nuôi bạn đồng hành',
+        desc: 'Chọn từ bộ sưu tập thú cưng pixel chính thức của chúng tôi. Mỗi con là một NFT duy nhất trên blockchain Sui.',
+        custom_slot: {
+          title: 'Ô tạo Pet tùy chỉnh',
+          desc: 'Tự thiết kế người bạn pixel của riêng bạn'
+        },
+        pet_card: {
+          loyal_companion: 'Một người bạn trung thành với {{energy}}. Sẵn sàng làm bừng sáng không gian làm việc của bạn!',
+          mythical_powers: 'năng lượng thần thoại',
+          fluffy_energy: 'năng lượng mềm mại',
+          adopt_btn: 'Nhận nuôi ngay'
+        },
+        mint_section: {
+          title: 'Không tìm thấy thú cưng ưng ý?',
+          desc: 'Mua một ô đúc (Mint Slot) và tải lên spritesheet của riêng bạn để tạo ra một người bạn đồng hành thực sự độc nhất vô nhị mà chỉ bạn sở hữu.',
+          buy_btn: 'Mua ô đúc (Mint Slot)',
+          view_guide: 'Xem hướng dẫn'
+        },
+        alerts: {
+          need_mipet: 'Bạn cần token MIPET để mua ô đúc!'
+        }
+      },
+      custom: {
+        back: 'Quay lại',
+        title: 'Đúc Pet tùy chỉnh',
+        subtitle: 'Tạo người bạn phi tập trung độc nhất của bạn',
+        no_slot: {
+          title: 'Không tìm thấy ô đúc',
+          desc: 'Bạn cần mua một Ô đúc (Mint Slot) trong Cửa hàng trước.',
+          go_market: 'Đến Cửa hàng'
+        },
+        form: {
+          name_label: 'Tên thú cưng',
+          name_placeholder: 'Ví dụ: Cyber Kitty',
+          avatar_label: 'Ảnh đại diện',
+          sprite_label: 'Bảng hoạt ảnh (Sprite Sheet)',
+          upload_hint: 'Chọn tệp',
+          uploaded_hint: 'Đã tải lên Walrus',
+          sponsor_badge: 'Admin tài trợ',
+          sponsor_desc: 'Phí tải lên của bạn đã được bao trả! Thú cưng của bạn sẽ được lưu trữ vĩnh viễn trên Walrus.',
+          mint_btn: 'Đúc Pet tùy chỉnh'
+        },
+        alerts: {
+          mint_success: 'Đã đúc Pet tùy chỉnh thành công! Được tài trợ bởi Admin ✨',
+          upload_failed: 'Tải lên Walrus thất bại. Vui lòng thử lại.',
+          sponsor_unavailable: 'Dịch vụ tài trợ của Admin hiện không khả dụng.'
+        }
+      },
+      admin: {
+        title: 'Trung tâm Quản trị',
+        subtitle: 'Quản lý hệ sinh thái MiniPet',
+        tabs: {
+          overview: 'Tổng quan',
+          store: 'Cửa hàng',
+          economy: 'Kinh tế',
+          system: 'Hệ thống'
+        },
+        dashboard: {
+          package_id: 'ID Gói (Package ID)',
+          mipet_token: 'Token MIPET',
+          status: 'Trạng thái Quản trị',
+          authorized: 'ĐÃ XÁC THỰC',
+          welcome: 'Chào mừng trở lại, Admin',
+          welcome_desc: 'Sử dụng thanh điều hướng phía trên để quản lý Cửa hàng, đúc token MIPET hoặc điều chỉnh các thông số hệ thống toàn cầu như phí và giới hạn.'
+        },
+        store: {
+          add_title: 'Thêm mẫu Pet mới',
+          pet_name: 'Tên thú cưng',
+          price: 'Giá (MIPET)',
+          main_image: 'Ảnh chính (PNG)',
+          sprite_sheet: 'Bảng hoạt ảnh (PNG)',
+          uploading: 'Đang tải lên...',
+          uploaded: 'Đã tải lên',
+          choose_file: 'Chọn tệp',
+          confirm_btn: 'Xác nhận và Thêm vào Cửa hàng'
+        },
+        economy: {
+          mint_title: 'Đúc token MIPET',
+          recipient: 'Địa chỉ người nhận',
+          amount: 'Số lượng (MIPET)',
+          mint_btn: 'Đúc',
+          treasury_title: 'Quản lý Kho bạc',
+          new_treasury: 'Địa chỉ Kho bạc mới',
+          update_btn: 'Cập nhật',
+          treasury_note: 'Lưu ý: Địa chỉ này sẽ nhận tất cả các khoản phí từ việc mua hàng trong Cửa hàng và bán Ô đúc tùy chỉnh.'
+        },
+        system: {
+          title: 'Cấu hình Hệ thống',
+          fee_label: 'Phí Ô đúc tùy chỉnh cơ bản (MIPET)',
+          save_btn: 'Lưu thay đổi',
+          warning: 'Cảnh báo',
+          warning_desc: 'Việc điều chỉnh các thông số này ảnh hưởng đến toàn bộ nền kinh tế. Các thay đổi có hiệu lực ngay lập tức trên blockchain.'
+        },
+        alerts: {
+          template_success: 'Đã tạo mẫu thành công!',
+          tokens_minted: 'Đã đúc token thành công!',
+          treasury_updated: 'Đã cập nhật kho bạc!',
+          config_updated: 'Đã cập nhật cấu hình!',
+          upload_failed: 'Tải lên Walrus thất bại.'
+        }
+      },
+      not_found: {
+        title: 'Không tìm thấy trang',
+        desc: 'Rất tiếc! Thú cưng bạn đang tìm kiếm đã đi lạc vào vùng đất hoang kỹ thuật số.',
+        back_home: 'Quay lại Trang chủ'
       }
     }
   },

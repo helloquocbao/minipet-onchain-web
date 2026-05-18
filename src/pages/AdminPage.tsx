@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useCurrentAccount, useSignAndExecuteTransaction } from '@mysten/dapp-kit';
 import { Transaction } from '@mysten/sui/transactions';
 import { PACKAGE_ID, GLOBAL_CONFIG_ID, ADMIN_CAP_ID, FUNCTIONS, MODULES, TREASURY_CAP_ID, PET_TOKEN_PACKAGE_ID } from '../services/blockchain/sui';
@@ -7,6 +8,7 @@ import { Settings, Plus, Info, Activity, Upload, Loader2, Check, Coins } from 'l
 
 export default function AdminPage() {
   const account = useCurrentAccount();
+  const { t } = useTranslation();
   const { mutate: signAndExecuteTransaction } = useSignAndExecuteTransaction();
   const [activeTab, setActiveTab] = useState<'dashboard' | 'store' | 'economy' | 'settings'>('dashboard');
   
@@ -45,7 +47,7 @@ export default function AdminPage() {
       setUploadDone(prev => ({ ...prev, [type]: true }));
     } catch (error) {
       console.error('Walrus upload failed:', error);
-      alert('Failed to upload to Walrus.');
+      alert(t('admin.alerts.upload_failed'));
     } finally {
       setUploading(prev => ({ ...prev, [type]: false }));
     }
@@ -67,7 +69,7 @@ export default function AdminPage() {
       ],
     });
     signAndExecuteTransaction({ transaction: tx }, {
-      onSuccess: () => alert('Template created successfully!'),
+      onSuccess: () => alert(t('admin.alerts.template_success')),
       onError: (error) => console.error('Error:', error),
     });
   };
@@ -84,7 +86,7 @@ export default function AdminPage() {
       ],
     });
     signAndExecuteTransaction({ transaction: tx }, {
-      onSuccess: () => alert('Tokens minted!'),
+      onSuccess: () => alert(t('admin.alerts.tokens_minted')),
       onError: (error) => console.error('Error:', error),
     });
   };
@@ -101,7 +103,7 @@ export default function AdminPage() {
       ],
     });
     signAndExecuteTransaction({ transaction: tx }, {
-      onSuccess: () => alert('Treasury updated!'),
+      onSuccess: () => alert(t('admin.alerts.treasury_updated')),
       onError: (error) => console.error('Error:', error),
     });
   };
@@ -118,7 +120,7 @@ export default function AdminPage() {
       ],
     });
     signAndExecuteTransaction({ transaction: tx }, {
-      onSuccess: () => alert('Config updated!'),
+      onSuccess: () => alert(t('admin.alerts.config_updated')),
       onError: (error) => console.error('Error:', error),
     });
   };
@@ -133,17 +135,17 @@ export default function AdminPage() {
               <Settings size={28} />
             </div>
             <div>
-              <h1 className="text-3xl font-black tracking-tight text-gray-900 dark:text-white">Admin Hub</h1>
-              <p className="text-gray-500 font-semibold dark:text-gray-400">Manage the MiniPet ecosystem</p>
+              <h1 className="text-3xl font-black tracking-tight text-gray-900 dark:text-white">{t('admin.title')}</h1>
+              <p className="text-gray-500 font-semibold dark:text-gray-400">{t('admin.subtitle')}</p>
             </div>
           </div>
           
           <div className="flex bg-white dark:bg-gray-900 p-1.5 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800">
             {[
-              { id: 'dashboard', icon: Activity, label: 'Overview' },
-              { id: 'store', icon: Plus, label: 'Store' },
-              { id: 'economy', icon: Coins, label: 'Economy' },
-              { id: 'settings', icon: Settings, label: 'System' }
+              { id: 'dashboard', icon: Activity, label: t('admin.tabs.overview') },
+              { id: 'store', icon: Plus, label: t('admin.tabs.store') },
+              { id: 'economy', icon: Coins, label: t('admin.tabs.economy') },
+              { id: 'settings', icon: Settings, label: t('admin.tabs.system') }
             ].map((tab) => (
               <button
                 key={tab.id}
@@ -166,18 +168,18 @@ export default function AdminPage() {
           {activeTab === 'dashboard' && (
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
               <div className="card p-6 bg-white dark:bg-gray-900">
-                <p className="text-sm font-bold text-gray-400 uppercase mb-1">Package ID</p>
+                <p className="text-sm font-bold text-gray-400 uppercase mb-1">{t('admin.dashboard.package_id')}</p>
                 <p className="font-mono text-xs break-all text-indigo-500">{PACKAGE_ID}</p>
               </div>
               <div className="card p-6 bg-white dark:bg-gray-900">
-                <p className="text-sm font-bold text-gray-400 uppercase mb-1">MIPET Token</p>
+                <p className="text-sm font-bold text-gray-400 uppercase mb-1">{t('admin.dashboard.mipet_token')}</p>
                 <p className="font-mono text-xs break-all text-amber-500">{PET_TOKEN_PACKAGE_ID}</p>
               </div>
               <div className="card p-6 bg-white dark:bg-gray-900">
-                <p className="text-sm font-bold text-gray-400 uppercase mb-1">Admin Status</p>
+                <p className="text-sm font-bold text-gray-400 uppercase mb-1">{t('admin.dashboard.status')}</p>
                 <div className="flex items-center gap-2 text-green-500 font-black">
                   <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-                  AUTHORIZED
+                  {t('admin.dashboard.authorized')}
                 </div>
               </div>
               
@@ -185,9 +187,9 @@ export default function AdminPage() {
                 <div className="w-20 h-20 bg-white/20 rounded-3xl flex items-center justify-center mb-6">
                   <Activity size={40} />
                 </div>
-                <h2 className="text-3xl font-black mb-4">Welcome back, Admin</h2>
+                <h2 className="text-3xl font-black mb-4">{t('admin.dashboard.welcome')}</h2>
                 <p className="text-indigo-100 max-w-lg font-medium">
-                  Use the navigation above to manage the Pet Store, mint MIPET tokens, or adjust global system parameters like fees and limits.
+                  {t('admin.dashboard.welcome_desc')}
                 </p>
               </div>
             </div>
@@ -200,13 +202,13 @@ export default function AdminPage() {
                   <div className="w-10 h-10 rounded-xl bg-indigo-100 dark:bg-indigo-900/30 flex items-center justify-center text-indigo-600">
                     <Plus size={20} />
                   </div>
-                  <h2 className="text-xl font-bold">Add New Pet Template</h2>
+                  <h2 className="text-xl font-bold">{t('admin.store.add_title')}</h2>
                 </div>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                   <div className="space-y-6">
                     <div>
-                      <label className="block text-xs font-black text-gray-400 mb-2 uppercase">Pet Name</label>
+                      <label className="block text-xs font-black text-gray-400 mb-2 uppercase">{t('admin.store.pet_name')}</label>
                       <input 
                         type="text" 
                         placeholder="e.g. Pixel Dragon"
@@ -216,7 +218,7 @@ export default function AdminPage() {
                       />
                     </div>
                     <div>
-                      <label className="block text-xs font-black text-gray-400 mb-2 uppercase">Price (MIPET)</label>
+                      <label className="block text-xs font-black text-gray-400 mb-2 uppercase">{t('admin.store.price')}</label>
                       <input 
                         type="number" 
                         className="w-full bg-gray-50 dark:bg-gray-800 border-none rounded-xl p-3.5 font-bold focus:ring-2 focus:ring-indigo-500"
@@ -228,7 +230,7 @@ export default function AdminPage() {
 
                   <div className="space-y-6">
                     <div>
-                      <label className="block text-xs font-black text-gray-400 mb-2 uppercase">Main Image (PNG)</label>
+                      <label className="block text-xs font-black text-gray-400 mb-2 uppercase">{t('admin.store.main_image')}</label>
                       <div className="relative group">
                         <input 
                           type="file" 
@@ -239,12 +241,12 @@ export default function AdminPage() {
                           uploadDone.image ? 'border-green-500 bg-green-50 dark:bg-green-950/20' : 'border-gray-200 dark:border-gray-800 hover:border-indigo-500'
                         }`}>
                           {uploading.image ? <Loader2 className="animate-spin text-indigo-500" /> : uploadDone.image ? <Check className="text-green-500" /> : <Upload className="text-gray-400" />}
-                          <span className="text-xs font-bold text-gray-500">{uploading.image ? 'Uploading...' : uploadDone.image ? 'Uploaded' : 'Choose File'}</span>
+                          <span className="text-xs font-bold text-gray-500">{uploading.image ? t('admin.store.uploading') : uploadDone.image ? t('admin.store.uploaded') : t('admin.store.choose_file')}</span>
                         </div>
                       </div>
                     </div>
                     <div>
-                      <label className="block text-xs font-black text-gray-400 mb-2 uppercase">Sprite Sheet (PNG)</label>
+                      <label className="block text-xs font-black text-gray-400 mb-2 uppercase">{t('admin.store.sprite_sheet')}</label>
                       <div className="relative group">
                         <input 
                           type="file" 
@@ -255,7 +257,7 @@ export default function AdminPage() {
                           uploadDone.sprite ? 'border-green-500 bg-green-50 dark:bg-green-950/20' : 'border-gray-200 dark:border-gray-800 hover:border-indigo-500'
                         }`}>
                           {uploading.sprite ? <Loader2 className="animate-spin text-indigo-500" /> : uploadDone.sprite ? <Check className="text-green-500" /> : <Upload className="text-gray-400" />}
-                          <span className="text-xs font-bold text-gray-500">{uploading.sprite ? 'Uploading...' : uploadDone.sprite ? 'Uploaded' : 'Choose File'}</span>
+                          <span className="text-xs font-bold text-gray-500">{uploading.sprite ? t('admin.store.uploading') : uploadDone.sprite ? t('admin.store.uploaded') : t('admin.store.choose_file')}</span>
                         </div>
                       </div>
                     </div>
@@ -267,7 +269,7 @@ export default function AdminPage() {
                   disabled={!uploadDone.image || !uploadDone.sprite || !template.name}
                   className="btn-dark w-full !justify-center !py-4 mt-10 shadow-xl shadow-indigo-500/20 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  Confirm and Add to Store
+                  {t('admin.store.confirm_btn')}
                 </button>
               </div>
             </div>
@@ -280,11 +282,11 @@ export default function AdminPage() {
                   <div className="w-10 h-10 rounded-xl bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center text-amber-600">
                     <Coins size={20} />
                   </div>
-                  Mint MIPET Tokens
+                  {t('admin.economy.mint_title')}
                 </h2>
                 <div className="space-y-6">
                   <div>
-                    <label className="block text-xs font-black text-gray-400 mb-2 uppercase">Recipient Address</label>
+                    <label className="block text-xs font-black text-gray-400 mb-2 uppercase">{t('admin.economy.recipient')}</label>
                     <input 
                       type="text" 
                       placeholder="0x..."
@@ -294,7 +296,7 @@ export default function AdminPage() {
                     />
                   </div>
                   <div>
-                    <label className="block text-xs font-black text-gray-400 mb-2 uppercase">Amount (MIPET)</label>
+                    <label className="block text-xs font-black text-gray-400 mb-2 uppercase">{t('admin.economy.amount')}</label>
                     <div className="flex gap-3">
                       <input 
                         type="number" 
@@ -306,7 +308,7 @@ export default function AdminPage() {
                         onClick={handleMintToken}
                         className="btn-dark !bg-amber-600 hover:!bg-amber-700 !px-8 shadow-lg shadow-amber-500/20"
                       >
-                        Mint
+                        {t('admin.economy.mint_btn')}
                       </button>
                     </div>
                   </div>
@@ -318,11 +320,11 @@ export default function AdminPage() {
                   <div className="w-10 h-10 rounded-xl bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center text-purple-600">
                     <Info size={20} />
                   </div>
-                  Treasury Management
+                  {t('admin.economy.treasury_title')}
                 </h2>
                 <div className="space-y-6">
                   <div>
-                    <label className="block text-xs font-black text-gray-400 mb-2 uppercase">New Treasury Address</label>
+                    <label className="block text-xs font-black text-gray-400 mb-2 uppercase">{t('admin.economy.new_treasury')}</label>
                     <div className="flex gap-3">
                       <input 
                         type="text" 
@@ -335,12 +337,12 @@ export default function AdminPage() {
                         onClick={handleUpdateTreasury}
                         className="btn-dark !bg-purple-600 hover:!bg-purple-700 !px-8 shadow-lg shadow-purple-500/20"
                       >
-                        Update
+                        {t('admin.economy.update_btn')}
                       </button>
                     </div>
                   </div>
                   <p className="text-sm text-gray-500 font-medium bg-purple-50 dark:bg-purple-900/10 p-4 rounded-xl italic">
-                    Note: This address will receive all fees from Store purchases and Custom Slot sales.
+                    {t('admin.economy.treasury_note')}
                   </p>
                 </div>
               </div>
@@ -354,11 +356,11 @@ export default function AdminPage() {
                   <div className="w-10 h-10 rounded-xl bg-pink-100 dark:bg-pink-900/30 flex items-center justify-center text-pink-600">
                     <Activity size={20} />
                   </div>
-                  System Configuration
+                  {t('admin.system.title')}
                 </h2>
                 <div className="space-y-8">
                   <div>
-                    <label className="block text-xs font-black text-gray-400 mb-2 uppercase">Base Custom Slot Fee (MIPET)</label>
+                    <label className="block text-xs font-black text-gray-400 mb-2 uppercase">{t('admin.system.fee_label')}</label>
                     <div className="flex gap-3">
                       <input 
                         type="number" 
@@ -370,7 +372,7 @@ export default function AdminPage() {
                         onClick={handleUpdateConfig}
                         className="btn-dark !bg-pink-600 hover:!bg-pink-700 !px-8 shadow-lg shadow-pink-500/20"
                       >
-                        Save Changes
+                        {t('admin.system.save_btn')}
                       </button>
                     </div>
                   </div>
@@ -379,9 +381,9 @@ export default function AdminPage() {
                     <div className="flex gap-3 text-pink-700 dark:text-pink-400">
                       <Info size={20} className="shrink-0" />
                       <div className="text-sm">
-                        <p className="font-black mb-1">Warning</p>
+                        <p className="font-black mb-1">{t('admin.system.warning')}</p>
                         <p className="font-medium opacity-80 leading-relaxed">
-                          Adjusting these parameters affects the entire economy. Changes are immediate on the blockchain.
+                          {t('admin.system.warning_desc')}
                         </p>
                       </div>
                     </div>

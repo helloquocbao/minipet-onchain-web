@@ -71,10 +71,10 @@ export const DownloadSection = () => {
                   onClick={(e) => { if (d.disabled) e.preventDefault(); }}
                 >
                   <Download size={18} className={d.disabled ? '' : 'group-hover/btn:translate-y-0.5 transition-transform'} />
-                  {d.disabled ? 'Coming Soon' : `${t('download.btn')} ${d.ext}`}
+                  {d.disabled ? t('download.coming_soon') : `${t('download.btn')} ${d.ext}`}
                 </a>
                 <div className="mt-3 text-[11px] font-bold text-gray-400 uppercase tracking-widest">
-                  Version {d.version}
+                  {t('download.version')} {d.version}
                 </div>
               </div>
             </div>

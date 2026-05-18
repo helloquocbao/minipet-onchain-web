@@ -66,7 +66,7 @@ export const Features = () => {
                 <div className="absolute top-3 left-3 bg-rose-500 text-white text-[10px] font-bold px-2.5 py-1 rounded-full shadow flex items-center gap-1">
                   <Clock size={9} /> 25:00
                 </div>
-                <div className="absolute top-3 right-3 bg-white/90 backdrop-blur-sm text-[9px] font-semibold text-gray-600 px-2 py-0.5 rounded-full shadow-sm">Focus mode</div>
+                <div className="absolute top-3 right-3 bg-white/90 backdrop-blur-sm text-[9px] font-semibold text-gray-600 px-2 py-0.5 rounded-full shadow-sm">{t('features.focus_mode')}</div>
               </div>
               {/* Text always at bottom */}
               <div className="p-4 md:p-6 border-t border-gray-100/80">

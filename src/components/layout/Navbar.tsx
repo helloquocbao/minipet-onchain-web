@@ -113,7 +113,7 @@ export const Navbar = ({ isDark, toggleTheme }: NavbarProps) => {
               to="/market"
               className="text-[13px] font-bold text-gray-600 dark:text-gray-300 hover:text-[#111827] dark:hover:text-white transition-colors no-underline"
             >
-              Market
+              {t('nav.market')}
             </Link>
           </nav>
 
@@ -141,7 +141,7 @@ export const Navbar = ({ isDark, toggleTheme }: NavbarProps) => {
                           onClick={() => { navigate('/admin'); setUserDropdownOpen(false); }}
                           className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-[12px] font-bold text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-900/20 transition-all border-none cursor-pointer"
                         >
-                          <LayoutDashboard size={14} /> Admin Menu
+                          <LayoutDashboard size={14} /> {t('nav.admin')}
                         </button>
                       </>
                     ) : (
@@ -150,13 +150,13 @@ export const Navbar = ({ isDark, toggleTheme }: NavbarProps) => {
                           onClick={() => { /* Profile logic */ setUserDropdownOpen(false); }}
                           className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-[12px] font-bold text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 transition-all border-none cursor-pointer"
                         >
-                          <User size={14} /> Profile
+                          <User size={14} /> {t('nav.profile')}
                         </button>
                         <button 
                           onClick={() => { navigate('/custom-pet'); setUserDropdownOpen(false); }}
                           className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-[12px] font-bold text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 transition-all border-none cursor-pointer"
                         >
-                          <Sparkles size={14} /> Mint Custom
+                          <Sparkles size={14} /> {t('nav.mint_custom')}
                         </button>
                       </>
                     )}
@@ -169,7 +169,7 @@ export const Navbar = ({ isDark, toggleTheme }: NavbarProps) => {
                       }}
                       className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-[12px] font-bold text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-all border-none cursor-pointer"
                     >
-                      <LogOut size={14} /> Logout
+                      <LogOut size={14} /> {t('nav.logout')}
                     </button>
                   </div>
                 )}
@@ -267,7 +267,7 @@ export const Navbar = ({ isDark, toggleTheme }: NavbarProps) => {
                 onClick={() => setMenuOpen(false)}
                 className="w-full text-left px-5 py-4 rounded-2xl text-[14px] font-bold text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-[#111827] dark:hover:text-white transition-all no-underline"
               >
-                Market
+                {t('nav.market')}
               </Link>
               <div className="h-px bg-gray-100 dark:bg-gray-800 my-2 mx-5" />
               <a
