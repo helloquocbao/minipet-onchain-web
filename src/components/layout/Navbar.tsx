@@ -80,7 +80,8 @@ export const Navbar = ({ isDark, toggleTheme }: NavbarProps) => {
     { code: 'vi', label: 'Tiếng Việt', short: 'VI' },
     { code: 'zh', label: '中文', short: 'ZH' },
     { code: 'it', label: 'Italiano', short: 'IT' },
-    { code: 'fr', label: 'Français', short: 'FR' }
+    { code: 'fr', label: 'Français', short: 'FR' },
+    { code: 'ko', label: '한국어', short: 'KO' }
   ];
 
   const currentLang = languages.find(l => l.code === i18n.language) || languages[0];

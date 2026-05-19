@@ -13,7 +13,12 @@ const resources = {
       nav: {
         features: 'Features',
         docs: 'Custom Pets',
-        download: 'Download Free'
+        download: 'Download Free',
+        market: 'Market',
+        admin: 'Admin Hub',
+        profile: 'Profile',
+        mint_custom: 'Mint Custom Pet',
+        logout: 'Log Out'
       },
       hero: {
         title1: 'Meet your new',
@@ -126,7 +131,13 @@ const resources = {
           view_guide: 'View Guide'
         },
         alerts: {
-          need_mipet: 'You need MIPET tokens to buy a mint slot!'
+          need_mipet: 'You need MIPET tokens to buy a mint slot!',
+          buy_pet_success: 'Adopted pet successfully! Check your Desktop App or Profile.',
+          buy_slot_success: 'Mint Slot purchased successfully! Redirecting to creator...',
+          buy_custom_slot_success: 'Mint Slot purchased successfully! Redirecting to customize your pet...',
+          has_slot: 'You already have a Mint Slot! Redirecting to customization page...',
+          has_slot_custom: 'You already have a Mint Slot! Redirecting to customization page with this pet pre-filled...',
+          buy_failed: 'Transaction failed or was rejected: {{error}}'
         }
       },
       custom: {
@@ -152,7 +163,19 @@ const resources = {
         alerts: {
           mint_success: 'Custom Pet Minted! Sponsored by Admin ✨',
           upload_failed: 'Failed to upload to Walrus. Please try again.',
-          sponsor_unavailable: 'Admin sponsorship is currently unavailable.'
+          sponsor_unavailable: 'Admin sponsorship is currently unavailable.',
+          mint_failed: 'Failed to mint custom pet: {{error}}'
+        },
+        preview: {
+          title: 'Live Animation Preview',
+          desc: 'Test your pet animations before minting onto the blockchain.',
+          no_sprite: 'No Spritesheet Uploaded',
+          frames_per_row: 'Frames per Row',
+          guidelines_title: 'Spritesheet Guidelines',
+          guide_1: 'The Spritesheet image must contain exactly 9 rows of frames for each character state.',
+          guide_2: 'Every row must have the same number of frames (columns). Default is 4 columns.',
+          guide_3: 'Characters should face Right by default for proper animation alignment.',
+          view_docs: 'View Full Documentation'
         }
       },
       admin: {
@@ -169,13 +192,18 @@ const resources = {
           mipet_token: 'MIPET Token',
           status: 'Admin Status',
           authorized: 'AUTHORIZED',
+          custom_mint_progress: 'Custom Pets Minted',
+          slot_price: 'Custom Slot Price',
+          slot_price_desc: 'Fee required for users to custom mint',
+          treasury_addr: 'Treasury Recipient',
+          treasury_desc: 'Receives all slot purchase fees',
           welcome: 'Welcome back, Admin',
           welcome_desc: 'Use the navigation above to manage the Pet Store, mint MIPET tokens, or adjust global system parameters like fees and limits.'
         },
         store: {
           add_title: 'Add New Pet Template',
           pet_name: 'Pet Name',
-          price: 'Price (MIPET)',
+          price: 'Price (SUI)',
           main_image: 'Main Image (PNG)',
           sprite_sheet: 'Sprite Sheet (PNG)',
           uploading: 'Uploading...',
@@ -197,6 +225,9 @@ const resources = {
           title: 'System Configuration',
           fee_label: 'Base Custom Slot Fee (MIPET)',
           save_btn: 'Save Changes',
+          limit_label: 'Increase Custom Pet Mint Limit',
+          increase_btn: 'Increase Limit',
+          limit_desc: 'Current active limit: {{current}} custom pets.',
           warning: 'Warning',
           warning_desc: 'Adjusting these parameters affects the entire economy. Changes are immediate on the blockchain.'
         },
@@ -205,7 +236,8 @@ const resources = {
           tokens_minted: 'Tokens minted!',
           treasury_updated: 'Treasury updated!',
           config_updated: 'Config updated!',
-          upload_failed: 'Failed to upload to Walrus.'
+          upload_failed: 'Failed to upload to Walrus.',
+          limit_increased: 'Custom pet limit increased successfully!'
         }
       },
       not_found: {
@@ -343,7 +375,13 @@ const resources = {
           view_guide: 'Xem hướng dẫn'
         },
         alerts: {
-          need_mipet: 'Bạn cần token MIPET để mua ô đúc!'
+          need_mipet: 'Bạn cần token MIPET để mua ô đúc!',
+          buy_pet_success: 'Nhận nuôi thú cưng thành công! Hãy kiểm tra Ứng dụng Desktop hoặc trang Cá nhân.',
+          buy_slot_success: 'Mua ô đúc (Mint Slot) thành công! Đang chuyển hướng đến trang tạo...',
+          buy_custom_slot_success: 'Mua ô đúc (Mint Slot) thành công! Đang chuyển hướng đến trang chỉnh sửa...',
+          has_slot: 'Bạn đã có sẵn ô đúc (Mint Slot)! Đang chuyển hướng đến trang tạo...',
+          has_slot_custom: 'Bạn đã có sẵn ô đúc (Mint Slot)! Đang chuyển hướng đến trang chỉnh sửa thú cưng...',
+          buy_failed: 'Giao dịch thất bại hoặc bị từ chối: {{error}}'
         }
       },
       custom: {
@@ -369,7 +407,19 @@ const resources = {
         alerts: {
           mint_success: 'Đã đúc Pet tùy chỉnh thành công! Được tài trợ bởi Admin ✨',
           upload_failed: 'Tải lên Walrus thất bại. Vui lòng thử lại.',
-          sponsor_unavailable: 'Dịch vụ tài trợ của Admin hiện không khả dụng.'
+          sponsor_unavailable: 'Dịch vụ tài trợ của Admin hiện không khả dụng.',
+          mint_failed: 'Đúc Pet tùy chỉnh thất bại: {{error}}'
+        },
+        preview: {
+          title: 'Xem trước hoạt ảnh',
+          desc: 'Kiểm tra chuyển động của Pet trước khi đúc lên Blockchain.',
+          no_sprite: 'Chưa tải lên Spritesheet',
+          frames_per_row: 'Số khung hình / dòng',
+          guidelines_title: 'Quy chuẩn Spritesheet',
+          guide_1: 'Hình ảnh Spritesheet phải được chia làm 9 dòng hoạt ảnh tương ứng với các trạng thái của Pet.',
+          guide_2: 'Tất cả các dòng phải có cùng số lượng khung hình (Cột). Mặc định là 4 cột.',
+          guide_3: 'Nhân vật nên hướng mặt sang bên Phải làm chuẩn.',
+          view_docs: 'Xem tài liệu đầy đủ'
         }
       },
       admin: {
@@ -386,13 +436,18 @@ const resources = {
           mipet_token: 'Token MIPET',
           status: 'Trạng thái Quản trị',
           authorized: 'ĐÃ XÁC THỰC',
+          custom_mint_progress: 'Số Pet Custom đã đúc',
+          slot_price: 'Giá mua Mint Slot',
+          slot_price_desc: 'Mức phí người dùng cần trả để tự đúc Custom Pet',
+          treasury_addr: 'Địa chỉ ví Treasury nhận phí',
+          treasury_desc: 'Nhận tất cả phí thu được từ việc mua slot hoặc mua pet',
           welcome: 'Chào mừng trở lại, Admin',
           welcome_desc: 'Sử dụng thanh điều hướng phía trên để quản lý Cửa hàng, đúc token MIPET hoặc điều chỉnh các thông số hệ thống toàn cầu như phí và giới hạn.'
         },
         store: {
           add_title: 'Thêm mẫu Pet mới',
           pet_name: 'Tên thú cưng',
-          price: 'Giá (MIPET)',
+          price: 'Giá (SUI)',
           main_image: 'Ảnh chính (PNG)',
           sprite_sheet: 'Bảng hoạt ảnh (PNG)',
           uploading: 'Đang tải lên...',
@@ -414,6 +469,9 @@ const resources = {
           title: 'Cấu hình Hệ thống',
           fee_label: 'Phí Ô đúc tùy chỉnh cơ bản (MIPET)',
           save_btn: 'Lưu thay đổi',
+          limit_label: 'Tăng giới hạn đúc Pet Custom',
+          increase_btn: 'Tăng giới hạn',
+          limit_desc: 'Giới hạn kích hoạt hiện tại: {{current}} Pet Custom.',
           warning: 'Cảnh báo',
           warning_desc: 'Việc điều chỉnh các thông số này ảnh hưởng đến toàn bộ nền kinh tế. Các thay đổi có hiệu lực ngay lập tức trên blockchain.'
         },
@@ -422,7 +480,8 @@ const resources = {
           tokens_minted: 'Đã đúc token thành công!',
           treasury_updated: 'Đã cập nhật kho bạc!',
           config_updated: 'Đã cập nhật cấu hình!',
-          upload_failed: 'Tải lên Walrus thất bại.'
+          upload_failed: 'Tải lên Walrus thất bại.',
+          limit_increased: 'Đã tăng giới hạn đúc Pet Custom thành công!'
         }
       },
       not_found: {
@@ -442,7 +501,12 @@ const resources = {
       nav: {
         features: '功能',
         docs: '自定义宠物',
-        download: '免费下载'
+        download: '免费下载',
+        market: '商店',
+        admin: '管理中心',
+        profile: '个人中心',
+        mint_custom: '铸造自定义宠物',
+        logout: '登出'
       },
       hero: {
         title1: '遇见你的新',
@@ -535,7 +599,12 @@ const resources = {
       nav: {
         features: 'Caratteristiche',
         docs: 'Pet Personalizzati',
-        download: 'Scarica Gratis'
+        download: 'Scarica Gratis',
+        market: 'Negozio',
+        admin: 'Pannello Admin',
+        profile: 'Profilo',
+        mint_custom: 'Crea Pet Personalizzato',
+        logout: 'Disconnetti'
       },
       hero: {
         title1: 'Incontra i tuoi',
@@ -628,7 +697,12 @@ const resources = {
       nav: {
         features: 'Fonctionnalités',
         docs: 'Pets Personnalisés',
-        download: 'Télécharger Gratuitement'
+        download: 'Télécharger Gratuitement',
+        market: 'Boutique',
+        admin: 'Espace Admin',
+        profile: 'Profil',
+        mint_custom: 'Créer Pet',
+        logout: 'Se Déconnecter'
       },
       hero: {
         title1: 'Rencontrez vos',
@@ -708,6 +782,239 @@ const resources = {
         disclaimer: 'Clause de non-responsabilité :',
         disclaimer_text: 'Cette application ne fournit que des outils ; nous ne possédons pas et ne sommes pas responsables du contenu ou des images téléchargés par les utilisateurs ou liés à partir de sources externes.',
         copyright: 'Projet Open Source.'
+      }
+    }
+  },
+  ko: {
+    translation: {
+      seo: {
+        title: 'MiniPet - 귀여운 데스크톱 픽셀 동반자',
+        description: 'MiniPet은 작업 공간에 귀여운 픽셀 친구를 데려다주는 가벼운 데스크톱 앱입니다. 포모도로 타이머로 생산성을 높이고 대화형 데스크톱 펫을 즐겨보세요.',
+        keywords: 'minipet, 미니펫, 데스크톱 펫, 픽셀 펫, 포모도로 타이머, 데스크톱 동반자, 가상 펫, 화면 펫, 미니펫 공식'
+      },
+      nav: {
+        features: '기능',
+        docs: '커스텀 펫',
+        download: '무료 다운로드',
+        market: '상점',
+        admin: '관리자 센터',
+        profile: '프로필',
+        mint_custom: '커스텀 펫 만들기',
+        logout: '로그아웃'
+      },
+      hero: {
+        title1: '새로운',
+        title2: '데스크톱',
+        title3: '동반자를 만나보세요.',
+        desc: 'MiniPet은 작업 공간에 귀여운 픽셀 친구를 데려다주는 가벼운 데스크톱 앱입니다. 일하는 동안 걸어 다니고, 말하고, 심지어 원치 않는 파일을 "먹기"도 합니다.',
+        getFree: 'MiniPet 무료 다운로드',
+        source: '소스 코드',
+        noAds: '광고 없음',
+        noAccount: '계정 필요 없음',
+        privacy: '100% 개인정보 보호'
+      },
+      features: {
+        badge: '작은 동반자, 큰 기쁨',
+        desc: '하루 종일 생산성을 유지하고 미소를 짓게 하도록 설계된 간단하고 즐거운 데스크톱 동반자입니다.',
+        companion: {
+          title: '실시간 데스크톱 동반자',
+          desc: '귀하의 픽셀 펫이 화면 위에 직접 살아서 걷고 말하며 모든 작업 세션에 기쁨을 가져다줍니다.'
+        },
+        pomodoro: {
+          title: '포모도로 타이머',
+          desc: '펫과 함께하는 맞춤형 작업/휴식 사이클 — 휴식 시간이 되면 펫이 부드럽게 넛지를 보내줍니다.'
+        },
+        multi: {
+          title: '다중 펫 지원',
+          desc: '왜 하나만 키우나요? 독특한 개성을 가진 여러 펫을 소환하고 서로 상호작용하는 모습을 지켜보세요.'
+        },
+        eating: {
+          title: '파일 먹기 시스템',
+          desc: '작업 공간을 청소하는 재미있고 인터랙티브한 방법입니다. 원하지 않는 파일을 펫에게 드래그하여 사라지는 것을 지켜보세요.'
+        },
+        custom: {
+          title: 'PetDex 및 커스텀 펫',
+          desc: '방대한 PetDex 라이브러리에서 가져오거나 나만의 픽셀 아트를 업로드하여 진정으로 독특한 동반자를 만드세요.'
+        }
+      },
+      download: {
+        title: '동반자를 만날 준비가 되셨나요?',
+        desc: '플랫폼을 선택하고 오늘 MiniPet과 함께 여정을 시작하세요. 무료이며 앞으로도 계속 무료입니다.',
+        macDesc: 'Intel 및 Apple Silicon 지원',
+        winExeDesc: 'Windows용 표준 설치 프로그램',
+        winZipDesc: '포터블 버전 (설치 불필요)',
+        btn: '다운로드'
+      },
+      docs: {
+        back: '홈으로 돌아가기',
+        title: '규격 커스텀 펫',
+        desc: 'MiniPet 시스템에 나만의 커스텀 펫을 업로드하기 위한 파일 구조 가이드입니다.',
+        section1: '폴더 구조',
+        section1_desc: '완전한 펫은 단일 폴더 내에 2개의 필수 파일을 포함해야 합니다:',
+        section2: '스프라이트 시트 (9행)',
+        section2_desc: 'spritesheet.webp 이미지는 고정된 9개의 행으로 나누어져야 합니다:',
+        table: {
+          row: '행',
+          action: '동작',
+          desc: '상세 설명',
+          idle: '가만히 서서 기다립니다.',
+          walkR: '오른쪽으로 걷습니다.',
+          walkL: '왼쪽으로 걷습니다.',
+          greet: '사용자에게 인사합니다.',
+          action_spec: '특수 동작 (파일 먹기, 점프 등).',
+          failed: '슬픔, 실망 또는 쓰러짐.',
+          waiting: '너무 오래 대기하거나, 자거나, 들어 올려짐.',
+          running: '빨리 달립니다.',
+          review: '미리보기 기능용.'
+        },
+        section3: '기본 방향',
+        section3_desc: '기본적으로 시스템은 모든 이미지가 오른쪽을 향하고 있다고 가정합니다. 펫이 왼쪽으로 이동할 때 시스템이 자동으로 이미지를 반전시킵니다.',
+        section3_note: '중요: 캐릭터가 기본적으로 왼쪽을 향하고 있는 경우 pet.json 파일에 "facingRight": false를 추가해야 합니다.',
+        section4: '실제 사례: 블랙 오공',
+        section4_desc: '참고할 수 있는 완전한 캐릭터 샘플입니다.',
+        spritesheet_sample: '스프라이트 시트 샘플',
+        scroll_note: '9개의 행을 모두 보려면 스크롤하세요 →',
+        json_config: 'pet.json 설정'
+      },
+      custom: {
+        back: '돌아가기',
+        title: '커스텀 펫 민팅',
+        subtitle: '나만의 독특한 탈중앙화 펫 만들기',
+        no_slot: {
+          title: '민트 슬롯을 찾을 수 없음',
+          desc: '먼저 마켓에서 민트 슬롯을 구매해야 합니다.',
+          go_market: '마켓으로 이동'
+        },
+        form: {
+          name_label: '펫 이름',
+          name_placeholder: '예: 사이버 키티',
+          avatar_label: '아바타 이미지',
+          sprite_label: '애니메이션 스프라이트 시트',
+          upload_hint: '파일 선택',
+          uploaded_hint: 'Walrus에 업로드됨',
+          sponsor_badge: '관리자 지원',
+          sponsor_desc: '업로드 비용이 지원됩니다! 귀하의 펫은 Walrus에 영구적으로 저장됩니다.',
+          mint_btn: '커스텀 펫 민팅'
+        },
+        alerts: {
+          mint_success: '커스텀 펫이 민팅되었습니다! 관리자가 가스비를 지원했습니다 ✨',
+          upload_failed: 'Walrus 업로드에 실패했습니다. 다시 시도해 주세요.',
+          sponsor_unavailable: '현재 관리자 가스비 지원을 사용할 수 없습니다.',
+          mint_failed: '커스텀 펫 민팅에 실패했습니다: {{error}}'
+        },
+        preview: {
+          title: '실시간 애니메이션 미리보기',
+          desc: '블록체인에 민팅하기 전에 펫 애니메이션을 테스트해 보세요.',
+          no_sprite: '업로드된 스프라이트 시트 없음',
+          frames_per_row: '한 행당 프레임 수',
+          guidelines_title: '스프라이트 시트 가이드라인',
+          guide_1: '스프라이트 시트 이미지는 각 캐릭터 상태에 대해 정확히 9행의 프레임을 포함해야 합니다.',
+          guide_2: '모든 행은 동일한 수의 프레임(열)을 가져야 합니다. 기본값은 4열입니다.',
+          guide_3: '올바른 애니메이션 정렬을 위해 캐릭터는 기본적으로 오른쪽을 향해야 합니다.',
+          view_docs: '전체 문서 보기'
+        }
+      },
+      admin: {
+        title: '관리자 센터',
+        subtitle: 'MiniPet 에코시스템 관리',
+        tabs: {
+          overview: '개요',
+          store: '상점',
+          economy: '경제',
+          system: '시스템'
+        },
+        dashboard: {
+          package_id: '패키지 ID',
+          mipet_token: 'MIPET 토큰',
+          status: '관리자 상태',
+          authorized: '인증됨',
+          custom_mint_progress: '민팅된 커스텀 펫 수',
+          slot_price: '커스텀 슬롯 가격',
+          slot_price_desc: '사용자가 커스텀 민팅하는 데 필요한 수수료',
+          treasury_addr: '금고 수신 주소',
+          treasury_desc: '모든 슬롯 구매 수수료를 받습니다',
+          welcome: '관리자님, 환영합니다',
+          welcome_desc: '위의 탐색 메뉴를 사용하여 펫 상점을 관리하고, MIPET 토큰을 발행하거나, 수수료 및 한도와 같은 글로벌 시스템 매개변수를 조정하십시오.'
+        },
+        store: {
+          add_title: '새 펫 템플릿 추가',
+          pet_name: '펫 이름',
+          price: '가격 (SUI)',
+          main_image: '메인 이미지 (PNG)',
+          sprite_sheet: '스프라이트 시트 (PNG)',
+          uploading: '업로드 중...',
+          uploaded: '업로드 완료',
+          choose_file: '파일 선택',
+          confirm_btn: '확인 및 상점에 추가'
+        },
+        economy: {
+          mint_title: 'MIPET 토큰 발행 (Mint)',
+          recipient: '수신자 주소',
+          amount: '수량 (MIPET)',
+          mint_btn: '발행',
+          treasury_title: '금고 관리',
+          new_treasury: '새 금고 주소',
+          update_btn: '업데이트',
+          treasury_note: '참고: 이 주소는 상점 구매 및 커스텀 슬롯 판매로 발생하는 모든 수수료를 받게 됩니다.'
+        },
+        system: {
+          title: '시스템 설정',
+          fee_label: '기본 커스텀 슬롯 수수료 (MIPET)',
+          save_btn: '변경 사항 저장',
+          limit_label: '커스텀 펫 민팅 한도 늘리기',
+          increase_btn: '한도 늘리기',
+          limit_desc: '현재 활성화된 한도: {{current}}마리의 커스텀 펫.',
+          warning: '경고',
+          warning_desc: '이 매개변수를 조정하면 전체 경제에 영향을 미칩니다. 변경 사항은 블록체인에 즉시 반영됩니다.'
+        },
+        alerts: {
+          template_success: '템플릿이 성공적으로 생성되었습니다!',
+          tokens_minted: '토큰이 발행되었습니다!',
+          treasury_updated: '금고가 업데이트되었습니다!',
+          config_updated: '설정이 업데이트되었습니다!',
+          upload_failed: 'Walrus 업로드에 실패했습니다.',
+          limit_increased: '커스텀 펫 민팅 한도가 성공적으로 증가했습니다!'
+        }
+      },
+      market: {
+        nav_badge: '공식 상점',
+        title: '동반자 입양하기',
+        desc: '공식 픽셀 펫 컬렉션에서 선택해 보세요. 각 펫은 Sui 블록체인의 고유한 NFT입니다.',
+        custom_slot: {
+          title: '커스텀 펫 슬롯',
+          desc: '나만의 픽셀 친구 디자인하기'
+        },
+        pet_card: {
+          loyal_companion: '{{energy}}를 가진 충실한 동반자. 작업 공간을 밝힐 준비가 되어 있습니다!',
+          mythical_powers: '신비로운 능력',
+          fluffy_energy: '솜털 같은 에너지',
+          adopt_btn: '지금 입양하기'
+        },
+        mint_section: {
+          title: '완벽한 펫을 찾지 못하셨나요?',
+          desc: '민트 슬롯을 구매하고 나만의 스프라이트 시트를 업로드하여 나만이 소유한 단 하나의 동반자를 만들어 보세요.',
+          buy_btn: '민트 슬롯 구매',
+          view_guide: '가이드 보기'
+        },
+        alerts: {
+          need_mipet: '민트 슬롯을 구매하려면 MIPET 토큰이 필요합니다!',
+          buy_pet_success: '펫을 성공적으로 입양했습니다! 데스크톱 앱 또는 프로필을 확인해 주세요.',
+          buy_slot_success: '민트 슬롯을 성공적으로 구매했습니다! 생성 페이지로 이동 중...',
+          buy_custom_slot_success: '민트 슬롯을 성공적으로 구매했습니다! 펫 커스터마이징 페이지로 이동 중...',
+          has_slot: '이미 민트 슬롯을 보유하고 있습니다! 제작 페이지로 이동 중...',
+          has_slot_custom: '이미 민트 슬롯을 보유하고 있습니다! 이 펫 정보가 입력된 제작 페이지로 이동 중...',
+          buy_failed: '거래가 실패했거나 거부되었습니다: {{error}}'
+        }
+      },
+      not_found: {
+        title: '페이지를 찾을 수 없음',
+        desc: '죄송합니다! 찾고 계신 펫이 디지털 야생 속으로 가버렸습니다.',
+        back_home: '홈으로 돌아가기'
+      },
+      footer: {
+        disclaimer: '면책 조항:',
+        disclaimer_text: '이 애플리케이션은 도구만 제공합니다. 당사는 사용자가 업로드하거나 외부 리소스에서 링크한 콘텐츠/이미지를 소유하지 않으며 이에 대해 책임을 지지 않습니다.',
+        copyright: '오픈 소스 프로젝트.'
       }
     }
   }

@@ -1,8 +1,9 @@
 import { toBase64 } from '@mysten/sui/utils';
 import { suiClient } from './blockchain/sui';
 
-const PUBLISHER_URL = 'https://publisher.walrus.testnet.sui.io';
-const AGGREGATOR_URL = 'https://aggregator.walrus.testnet.sui.io';
+const PUBLISHER_URL = import.meta.env.VITE_WALRUS_PUBLISHER_URL || 'https://publisher.walrus-testnet.walrus.space';
+const AGGREGATOR_URL = import.meta.env.VITE_WALRUS_AGGREGATOR_URL || 'https://aggregator.walrus-testnet.walrus.space';
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3001';
 
 export interface WalrusUploadResponse {
   newlyCreated?: {
@@ -27,15 +28,53 @@ export interface WalrusUploadResponse {
 
 export const WalrusService = {
   /**
-   * 1. UPLOAD (User chọn ảnh, Admin Proxy đẩy lên Walrus)
+   * 1. UPLOAD (User chọn ảnh, gửi qua Backend để kiểm tra hợp lệ, Backend đẩy lên Walrus và chuyển quyền sở hữu trên Sui)
    */
-  async uploadFile(file: File | Blob, epochs: number = 5): Promise<{ blobId: string; blobObjectId: string }> {
-    const response = await fetch(`${PUBLISHER_URL}/v1/blobs?epochs=${epochs}`, {
-      method: 'PUT',
+  async uploadFile(
+    file: File | Blob, 
+    targetAddress?: string, 
+    isCustom: boolean = false, 
+    epochs: number = 5
+  ): Promise<{ blobId: string; blobObjectId: string }> {
+    // Nếu không truyền targetAddress, thực hiện tải trực tiếp lên Walrus (chế độ Testnet công cộng hoặc thử nghiệm cục bộ)
+    if (!targetAddress) {
+      const response = await fetch(`${PUBLISHER_URL}/v1/blobs?epochs=${epochs}`, {
+        method: 'PUT',
+        body: file,
+      });
+
+      if (!response.ok) throw new Error(`Walrus upload failed: ${response.statusText}`);
+      const data: WalrusUploadResponse = await response.json();
+      
+      if (data.newlyCreated) {
+        return {
+          blobId: data.newlyCreated.blobObject.blobId,
+          blobObjectId: data.newlyCreated.blobObject.id
+        };
+      } else if (data.alreadyCertified) {
+        return {
+          blobId: data.alreadyCertified.blobId,
+          blobObjectId: '0x0000000000000000000000000000000000000000000000000000000000000000' 
+        };
+      }
+      throw new Error('Unexpected Walrus response format');
+    }
+
+    // Tải thông qua Backend của dự án để Backend kiểm tra quyền lợi và chuyển quyền sở hữu (đặc biệt hữu ích trên Mainnet)
+    const backendUrl = `${BACKEND_URL}/upload?targetAddress=${targetAddress}&isCustom=${isCustom}`;
+    const response = await fetch(backendUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': file.type || 'application/octet-stream',
+      },
       body: file,
     });
 
-    if (!response.ok) throw new Error(`Walrus upload failed: ${response.statusText}`);
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({ error: response.statusText }));
+      throw new Error(errorData.error || `Upload to backend failed: ${response.statusText}`);
+    }
+
     const data: WalrusUploadResponse = await response.json();
     
     if (data.newlyCreated) {
@@ -49,7 +88,7 @@ export const WalrusService = {
         blobObjectId: '0x0000000000000000000000000000000000000000000000000000000000000000' 
       };
     }
-    throw new Error('Unexpected Walrus response format');
+    throw new Error('Unexpected response format from upload backend');
   },
 
   /**
@@ -63,7 +102,7 @@ export const WalrusService = {
     const txBytes = await tx.build({ client: suiClient });
     const txBase64 = toBase64(txBytes);
 
-    const response = await fetch('http://localhost:3001/sponsor', {
+    const response = await fetch(`${BACKEND_URL}/sponsor`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ txBytes: txBase64, userAddress }),
