@@ -238,12 +238,82 @@ const resources = {
           config_updated: 'Config updated!',
           upload_failed: 'Failed to upload to Walrus.',
           limit_increased: 'Custom pet limit increased successfully!'
+        },
+        auth: {
+          checking: 'Verifying admin permissions...',
+          connect_admin_wallet: 'Connect Admin Wallet to Continue',
+          unauthorized_title: 'Access Denied',
+          unauthorized_desc: 'Only the admin wallet that owns the AdminCap can access the admin dashboard.',
+          wallet_connected: 'Connected Wallet:'
         }
       },
       not_found: {
         title: 'Page Not Found',
         desc: 'Oops! The pet you\'re looking for has wandered off into the digital wilderness.',
         back_home: 'Return Home'
+      },
+      pet_features: {
+        title: "MiniPet Features Showcase",
+        subtitle: "Explore the amazing capabilities of your desktop pixel companions",
+        hero_desc: "MiniPet is not just an ordinary screen pet. It is a smart AI assistant, a productivity partner, and a decentralized web3 companion.",
+        sections: {
+          ai_chat: {
+            title: "AI Chat Assistant",
+            desc: "Double-click your pet to open the chat window. Engage in conversations, ask questions, write code, or just chat. The AI is always on and ready to help, running seamlessly in the background."
+          },
+          pomodoro: {
+            title: "Pomodoro Focus Timer",
+            desc: "Stay productive with customizable Pomodoro cycles. Your pet works when you work, sleeps when you rest, and gently alerts you when it's time to take a break. No more boring timers!"
+          },
+          file_eater: {
+            title: "Interactive File Eating",
+            desc: "Declutter your desktop in a fun way. Simply drag any unwanted file over your pet. Watch them happily eat the file, which instantly moves it to your system's Recycle Bin/Trash."
+          },
+          multi_pet: {
+            title: "Multi-Pet Playground",
+            desc: "Spawn multiple pets simultaneously. Each pet operates independently with its own window, running, jumping, and playing. They will interact with each other, creating a lively pixel community on your screen."
+          },
+          custom_creator: {
+            title: "Custom Pet Creator (Sui + Walrus)",
+            desc: "Design your own pixel companion. Purchase a Mint Slot using MIPET, upload your spritesheet, and mint a custom pet NFT. The asset is stored permanently on Walrus decentralized storage, giving you absolute ownership."
+          },
+          interactivity: {
+            title: "Physics & Mouse Interactions",
+            desc: "Your pets aren't static images. Drag them to pick them up, watch them fall back down with gravity physics, or let them roam along the bottom of your screen. They adapt to your screen resolution dynamically."
+          }
+        },
+        commands: {
+          title: "Pet Commands & Animations",
+          desc: "Test out how your pet reacts to different commands. Click any action below to preview the animations and actions of your pixel friend.",
+          preview_box: "Sprite Preview",
+          actions: {
+            idle: "Idle / Rest",
+            walk: "Walking",
+            run: "Running",
+            greet: "Greeting / Wave",
+            eat: "Eat File",
+            sad: "Sad / Failed",
+            sleep: "Sleeping",
+            pickup: "Pick Up"
+          },
+          action_descs: {
+            idle: "The pet stays still, looking around or blinking, waiting for your next command.",
+            walk: "The pet walks gently across the bottom boundary of your desktop screen.",
+            run: "The pet runs fast, showcasing high energy. Great for chase animations!",
+            greet: "The pet waves or bows to greet you, bringing warmth to your workspace.",
+            eat: "The pet opens its mouth and performs an eating animation to consume drag-dropped files.",
+            sad: "Triggered when a task fails or the pet is disappointed. Pixel tears may flow!",
+            sleep: "Activated during Pomodoro breaks or after long idle periods. Sweet dreams!",
+            pickup: "When you drag the pet with your mouse, it switches to a hanging/flying animation state."
+          }
+        },
+        how_to: {
+          title: "How to Control Your Pet",
+          step1: "Double-Click: Open or close the AI chat bubble to talk to your pet.",
+          step2: "Click & Drag: Drag your pet anywhere on your screen. Release to let it fall with gravity.",
+          step3: "Drag Files: Hover a desktop file over your pet to 'feed' it and send the file to the Recycle Bin.",
+          step4: "Right-Click: Access the pet's context menu to customize settings, switch skins, start Pomodoro, or exit."
+        }
       }
     }
   },
@@ -482,12 +552,82 @@ const resources = {
           config_updated: 'Đã cập nhật cấu hình!',
           upload_failed: 'Tải lên Walrus thất bại.',
           limit_increased: 'Đã tăng giới hạn đúc Pet Custom thành công!'
+        },
+        auth: {
+          checking: 'Đang xác minh quyền admin...',
+          connect_admin_wallet: 'Kết nối ví Admin để tiếp tục',
+          unauthorized_title: 'Quyền truy cập bị từ chối',
+          unauthorized_desc: 'Chỉ địa chỉ ví admin sở hữu AdminCap mới có quyền truy cập trang quản trị này.',
+          wallet_connected: 'Ví đang kết nối:'
         }
       },
       not_found: {
         title: 'Không tìm thấy trang',
         desc: 'Rất tiếc! Thú cưng bạn đang tìm kiếm đã đi lạc vào vùng đất hoang kỹ thuật số.',
         back_home: 'Quay lại Trang chủ'
+      },
+      pet_features: {
+        title: "Khám Phá Tính Năng MiniPet",
+        subtitle: "Trải nghiệm những khả năng độc đáo của người bạn đồng hành pixel trên màn hình",
+        hero_desc: "MiniPet không chỉ là một thú cưng màn hình thông thường. Nó là trợ lý AI thông minh, người bạn đồng hành tăng năng suất và một NFT phi tập trung Web3.",
+        sections: {
+          ai_chat: {
+            title: "Trợ Lý Chat AI",
+            desc: "Nhấp đúp vào pet của bạn để mở khung chat. Trò chuyện, đặt câu hỏi, viết code hoặc tán gẫu. Trợ lý AI luôn luôn bật và sẵn sàng hỗ trợ bạn bất cứ lúc nào ngay trên màn hình."
+          },
+          pomodoro: {
+            title: "Đồng Hồ Pomodoro Tập Trung",
+            desc: "Làm việc hiệu quả với chu kỳ Pomodoro có thể tùy chỉnh. Pet của bạn sẽ làm việc khi bạn tập trung, ngủ khi bạn nghỉ ngơi và nhắc nhở nhẹ nhàng khi đến giờ giải lao."
+          },
+          file_eater: {
+            title: "Hệ Thống Ăn File Tương Tác",
+            desc: "Dọn dẹp màn hình máy tính theo cách cực kỳ thú vị. Chỉ cần kéo bất kỳ file rác nào thả vào pet. Xem chúng ăn file và file đó sẽ được tự động chuyển vào Thùng rác (Trash) hệ điều hành."
+          },
+          multi_pet: {
+            title: "Nuôi Nhiều Thú Cưng",
+            desc: "Bạn có thể gọi nhiều pet xuất hiện cùng lúc trên màn hình. Mỗi pet hoạt động độc lập, đi lại, nhảy múa và tương tác, tạo nên một cộng đồng pixel sinh động ngay trên desktop của bạn."
+          },
+          custom_creator: {
+            title: "Tự Thiết Kế Pet (Sui + Walrus)",
+            desc: "Tự tạo thú cưng độc quyền của bạn. Mua Ô đúc (Mint Slot) bằng token MIPET, tải lên spritesheet hoạt ảnh và đúc NFT. Thú cưng sẽ được lưu trữ vĩnh viễn trên mạng lưới Walrus phi tập trung."
+          },
+          interactivity: {
+            title: "Vật Lý & Tương Tác Chuột",
+            desc: "Thú cưng có phản ứng vật lý thực tế. Bạn có thể dùng chuột nhấc pet lên, ném đi và xem chúng rơi xuống do trọng lực. Pet cũng tự động bám và di chuyển dọc theo thanh taskbar."
+          }
+        },
+        commands: {
+          title: "Hành Động & Hoạt Ảnh Của Pet",
+          desc: "Xem trước cách thú cưng của bạn phản ứng với các lệnh khác nhau. Nhấn vào các hành động dưới đây để xem trước hoạt ảnh chuyển động dạng pixel.",
+          preview_box: "Xem trước hoạt ảnh",
+          actions: {
+            idle: "Đứng im / Nghỉ",
+            walk: "Đi bộ",
+            run: "Chạy nhanh",
+            greet: "Chào hỏi",
+            eat: "Ăn file",
+            sad: "Buồn bã",
+            sleep: "Đi ngủ",
+            pickup: "Nhấc lên"
+          },
+          action_descs: {
+            idle: "Pet đứng im, nhìn xung quanh hoặc chớp mắt, chờ đợi hành động tiếp theo từ bạn.",
+            walk: "Thú cưng đi bộ nhẹ nhàng dọc theo cạnh dưới màn hình máy tính của bạn.",
+            run: "Thú cưng chạy nhanh với năng lượng tràn trề, thích hợp cho hoạt ảnh đuổi bắt.",
+            greet: "Pet vẫy tay hoặc cúi chào bạn, mang lại niềm vui và sự ấm áp cho không gian làm việc.",
+            eat: "Pet mở rộng miệng và thực hiện hoạt ảnh ăn để tiêu thụ các file bạn kéo thả vào.",
+            sad: "Xuất hiện khi một tác vụ thất bại hoặc pet thất vọng. Những giọt nước mắt pixel có thể rơi!",
+            sleep: "Kích hoạt khi đến giờ nghỉ Pomodoro hoặc sau thời gian dài không tương tác. Chúc pet ngủ ngon!",
+            pickup: "Khi bạn dùng chuột kéo pet đi, pet sẽ chuyển sang trạng thái lơ lửng, chân co lại."
+          }
+        },
+        how_to: {
+          title: "Hướng Dẫn Ra Lệnh Cho Pet",
+          step1: "Nhấp đúp chuột: Mở hoặc đóng bong bóng chat AI để trò chuyện trực tiếp.",
+          step2: "Nhấp và kéo: Nhấc pet lên và di chuyển đi bất cứ đâu. Thả ra để pet rơi tự do theo trọng lực.",
+          step3: "Kéo thả tệp: Di chuyển một file trên desktop đè lên pet để 'cho ăn' và xóa file đó vào Thùng rác.",
+          step4: "Nhấp chuột phải: Mở menu ngữ cảnh để cấu hình cài đặt, đổi skin thú cưng, bắt đầu Pomodoro hoặc thoát."
+        }
       }
     }
   },

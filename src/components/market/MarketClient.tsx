@@ -1,10 +1,12 @@
+"use client";
+
 import { useEffect, useState } from 'react';
 import { useCurrentAccount, useSignAndExecuteTransaction } from '@mysten/dapp-kit';
 import { Transaction } from '@mysten/sui/transactions';
-import { PACKAGE_ID, FUNCTIONS, MODULES, suiClient, GLOBAL_CONFIG_ID, PET_TOKEN_TYPE } from '../services/blockchain/sui';
-import { WalrusService } from '../services/walrus';
+import { PACKAGE_ID, FUNCTIONS, MODULES, suiClient, GLOBAL_CONFIG_ID, PET_TOKEN_TYPE } from '../../services/blockchain/sui';
+import { WalrusService } from '../../services/walrus';
 import { ShoppingBag, Sparkles, Download, ArrowRight } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useRouter } from 'next/navigation';
 import { useTranslation } from 'react-i18next';
 
 interface PetTemplate {
@@ -15,8 +17,8 @@ interface PetTemplate {
   price: string;
 }
 
-export default function MarketPage() {
-  const navigate = useNavigate();
+export function MarketClient() {
+  const router = useRouter();
   const account = useCurrentAccount();
   const { t } = useTranslation();
   const { mutate: signAndExecuteTransaction } = useSignAndExecuteTransaction();
@@ -82,25 +84,28 @@ export default function MarketPage() {
       });
       return objects.data.length > 0;
     } catch (e) {
-      console.error('Error checking user slot:', e);
+      console.error('Failed to check user slots:', e);
       return false;
     }
   };
 
-  const handleBuyPet = (templateId: string, price: string) => {
-    if (!account) return;
+  const handleBuyPet = async (templateId: string, price: string) => {
+    if (!account) {
+      alert(t('admin.alerts.connect_wallet') || 'Please connect your wallet first');
+      return;
+    }
+
     const tx = new Transaction();
     
-    const [coin] = tx.splitCoins(tx.gas, [tx.pure.u64(price)]);
-    
+    // We send SUI coin for payment
+    const [feeCoin] = tx.splitCoins(tx.gas, [price]);
+
     tx.moveCall({
       target: `${PACKAGE_ID}::${MODULES.PET_NFT}::${FUNCTIONS.BUY_PET}`,
       arguments: [
         tx.object(GLOBAL_CONFIG_ID),
         tx.object(templateId),
-        coin,
-        tx.object('0x06'), // clock
-        tx.object('0x08'), // random object
+        feeCoin,
       ],
     });
 
@@ -136,7 +141,7 @@ export default function MarketPage() {
     const hasSlot = await checkUserHasSlot();
     if (hasSlot) {
       alert(t('market.alerts.has_slot'));
-      navigate('/custom-pet');
+      router.push('/custom-pet');
       return;
     }
 
@@ -176,7 +181,7 @@ export default function MarketPage() {
           const status = txRes.effects?.status?.status;
           if (status === 'success') {
             alert(t('market.alerts.buy_slot_success'));
-            navigate('/custom-pet');
+            router.push('/custom-pet');
           } else {
             const errorReason = txRes.effects?.status?.error || 'Unknown Move abort';
             alert(t('market.alerts.buy_failed', { error: errorReason }));
@@ -193,6 +198,15 @@ export default function MarketPage() {
     });
   };
 
+  const navigateToCustomizer = (pet: PetTemplate) => {
+    const query = new URLSearchParams({
+      name: pet.name,
+      image_url: pet.image_url,
+      sprite_url: pet.sprite_url,
+    }).toString();
+    router.push(`/custom-pet?${query}`);
+  };
+
   const handleBuyCustomPetSlot = async (pet: PetTemplate) => {
     if (!account) {
       alert(t('admin.alerts.connect_wallet') || 'Please connect your wallet first');
@@ -202,7 +216,7 @@ export default function MarketPage() {
     const hasSlot = await checkUserHasSlot();
     if (hasSlot) {
       alert(t('market.alerts.has_slot_custom'));
-      navigate('/custom-pet', { state: { template: pet } });
+      navigateToCustomizer(pet);
       return;
     }
 
@@ -241,7 +255,7 @@ export default function MarketPage() {
           const status = txRes.effects?.status?.status;
           if (status === 'success') {
             alert(t('market.alerts.buy_custom_slot_success'));
-            navigate('/custom-pet', { state: { template: pet } });
+            navigateToCustomizer(pet);
           } else {
             const errorReason = txRes.effects?.status?.error || 'Unknown Move abort';
             alert(t('market.alerts.buy_failed', { error: errorReason }));
@@ -271,18 +285,18 @@ export default function MarketPage() {
           </p>
         </div>
         
-        <div 
-          onClick={() => navigate('/custom-pet')}
-          className="card bg-indigo-600 border-none p-6 flex items-center gap-6 text-white group cursor-pointer hover:bg-indigo-700"
+        <button 
+          onClick={() => router.push('/custom-pet')}
+          className="card bg-indigo-600 border-none p-6 flex items-center gap-6 text-white group cursor-pointer hover:bg-indigo-700 text-left"
         >
           <div>
             <h3 className="font-bold text-lg">{t('market.custom_slot.title')}</h3>
             <p className="text-indigo-100 text-sm">{t('market.custom_slot.desc')}</p>
           </div>
-          <div className="w-12 h-12 rounded-xl bg-white/20 flex items-center justify-center group-hover:scale-110 transition-transform">
+          <div className="w-12 h-12 rounded-xl bg-white/20 flex items-center justify-center group-hover:scale-110 transition-transform flex-shrink-0">
             <Sparkles size={24} />
           </div>
-        </div>
+        </button>
       </div>
 
       {templates.length === 0 ? (
@@ -311,25 +325,25 @@ export default function MarketPage() {
                    </div>
                 </div>
                 <div className="p-6">
-                  <div className="flex items-center justify-between mb-4">
-                    <h3 className="text-xl font-bold">{pet.name}</h3>
-                    <div className="flex gap-1">
-                       {[1,2,3,4,5].map(i => <div key={i} className="w-1.5 h-1.5 rounded-full bg-yellow-400" />)}
-                    </div>
-                  </div>
-                  <p className="text-gray-500 text-sm mb-6 leading-relaxed">
-                    {isCustom 
-                      ? "Custom template. Buy a Mint Slot to adopt and customize this pet with your own name and sprite!"
-                      : t('market.pet_card.loyal_companion', { energy: pet.name === 'Wukong' ? t('market.pet_card.mythical_powers') : t('market.pet_card.fluffy_energy') })
-                    }
-                  </p>
-                  <button 
-                    onClick={() => isCustom ? handleBuyCustomPetSlot(pet) : handleBuyPet(pet.id, pet.price)}
-                    className={`btn-dark w-full !justify-between !py-3.5 group/btn ${isCustom ? '!bg-gradient-to-r !from-indigo-600 !to-purple-600 hover:!from-indigo-700 hover:!to-purple-700 border-none' : ''}`}
-                  >
-                    <span>{isCustom ? "Buy Slot & Customize" : t('market.pet_card.adopt_btn')}</span>
-                    <ArrowRight size={18} className="group-hover/btn:translate-x-1 transition-transform" />
-                  </button>
+                   <div className="flex items-center justify-between mb-4">
+                     <h3 className="text-xl font-bold">{pet.name}</h3>
+                     <div className="flex gap-1">
+                        {[1,2,3,4,5].map(i => <div key={i} className="w-1.5 h-1.5 rounded-full bg-yellow-400" />)}
+                     </div>
+                   </div>
+                   <p className="text-gray-500 text-sm mb-6 leading-relaxed">
+                     {isCustom 
+                       ? "Custom template. Buy a Mint Slot to adopt and customize this pet with your own name and sprite!"
+                       : t('market.pet_card.loyal_companion', { energy: pet.name === 'Wukong' ? t('market.pet_card.mythical_powers') : t('market.pet_card.fluffy_energy') })
+                     }
+                   </p>
+                   <button 
+                     onClick={() => isCustom ? handleBuyCustomPetSlot(pet) : handleBuyPet(pet.id, pet.price)}
+                     className={`btn-dark w-full !justify-between !py-3.5 group/btn ${isCustom ? '!bg-gradient-to-r !from-indigo-600 !to-purple-600 hover:!from-indigo-700 hover:!to-purple-700 border-none' : ''}`}
+                   >
+                     <span>{isCustom ? "Buy Slot & Customize" : t('market.pet_card.adopt_btn')}</span>
+                     <ArrowRight size={18} className="group-hover/btn:translate-x-1 transition-transform" />
+                   </button>
                 </div>
               </div>
             );

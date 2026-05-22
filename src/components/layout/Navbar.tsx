@@ -1,7 +1,8 @@
 import React from 'react';
 import { Globe, ChevronDown, Menu, X, Download } from 'lucide-react';
 import { FaGithub } from 'react-icons/fa';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
+import Link from 'next/link';
+import { useRouter, usePathname } from 'next/navigation';
 import { useTranslation } from 'react-i18next';
 import { ConnectButton, useCurrentAccount, useDisconnectWallet, useSuiClientQuery } from '@mysten/dapp-kit';
 import { Sun, Moon, User, LayoutDashboard, LogOut, Sparkles } from 'lucide-react';
@@ -18,8 +19,8 @@ const Container = ({ children, className = '' }: { children: React.ReactNode; cl
 
 export const Navbar = ({ isDark, toggleTheme }: NavbarProps) => {
   const { t, i18n } = useTranslation();
-  const navigate = useNavigate();
-  const location = useLocation();
+  const router = useRouter();
+  const pathname = usePathname();
   const account = useCurrentAccount();
   const { mutate: disconnect } = useDisconnectWallet();
   
@@ -55,21 +56,6 @@ export const Navbar = ({ isDark, toggleTheme }: NavbarProps) => {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  const handleNavClick = (l: string) => {
-    setMenuOpen(false);
-    const id = l === 'Features' ? 'features' : l.toLowerCase();
-    if (location.pathname !== '/') {
-      navigate('/');
-      setTimeout(() => {
-        const el = document.getElementById(id);
-        if (el) el.scrollIntoView({ behavior: 'smooth' });
-      }, 100);
-    } else {
-      const el = document.getElementById(id);
-      if (el) el.scrollIntoView({ behavior: 'smooth' });
-    }
-  };
-
   const changeLanguage = (lng: string) => {
     i18n.changeLanguage(lng);
     setLangOpen(false);
@@ -92,7 +78,7 @@ export const Navbar = ({ isDark, toggleTheme }: NavbarProps) => {
         <div className="flex items-center w-full bg-[var(--nav-bg)] backdrop-blur-xl border border-white/20 dark:border-white/10 shadow-sm rounded-2xl px-3 sm:px-5 py-2 pointer-events-auto transition-colors duration-300">
           {/* Logo */}
           <Link
-            to="/"
+            href="/"
             className="flex items-center gap-2 mr-auto cursor-pointer no-underline group"
           >
             <div className="w-7 h-7 rounded-lg bg-[#111827] dark:bg-white flex items-center justify-center transition-transform group-hover:scale-105 border border-white/10 shadow-sm">
@@ -103,16 +89,23 @@ export const Navbar = ({ isDark, toggleTheme }: NavbarProps) => {
 
           {/* Desktop Nav links */}
           <nav className="hidden lg:flex items-center gap-7 mx-6">
-            <a
-              href="#features"
-              onClick={(e) => { e.preventDefault(); handleNavClick('Features'); }}
-              className="text-[13px] font-bold text-gray-600 dark:text-gray-300 hover:text-[#111827] dark:hover:text-white transition-colors no-underline"
+            <Link
+              href="/pet-features"
+              className={`text-[13px] font-bold transition-colors no-underline ${
+                pathname === '/pet-features'
+                  ? 'text-indigo-600 dark:text-indigo-400 font-extrabold'
+                  : 'text-gray-600 dark:text-gray-300 hover:text-[#111827] dark:hover:text-white'
+              }`}
             >
               {t('nav.features')}
-            </a>
+            </Link>
             <Link
-              to="/market"
-              className="text-[13px] font-bold text-gray-600 dark:text-gray-300 hover:text-[#111827] dark:hover:text-white transition-colors no-underline"
+              href="/market"
+              className={`text-[13px] font-bold transition-colors no-underline ${
+                pathname === '/market'
+                  ? 'text-indigo-600 dark:text-indigo-400 font-extrabold'
+                  : 'text-gray-600 dark:text-gray-300 hover:text-[#111827] dark:hover:text-white'
+              }`}
             >
               {t('nav.market')}
             </Link>
@@ -139,7 +132,7 @@ export const Navbar = ({ isDark, toggleTheme }: NavbarProps) => {
                     {isAdmin ? (
                       <>
                         <button 
-                          onClick={() => { navigate('/admin'); setUserDropdownOpen(false); }}
+                          onClick={() => { router.push('/admin'); setUserDropdownOpen(false); }}
                           className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-[12px] font-bold text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-900/20 transition-all border-none cursor-pointer"
                         >
                           <LayoutDashboard size={14} /> {t('nav.admin')}
@@ -154,7 +147,7 @@ export const Navbar = ({ isDark, toggleTheme }: NavbarProps) => {
                           <User size={14} /> {t('nav.profile')}
                         </button>
                         <button 
-                          onClick={() => { navigate('/custom-pet'); setUserDropdownOpen(false); }}
+                          onClick={() => { router.push('/custom-pet'); setUserDropdownOpen(false); }}
                           className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-[12px] font-bold text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 transition-all border-none cursor-pointer"
                         >
                           <Sparkles size={14} /> {t('nav.mint_custom')}
@@ -166,7 +159,7 @@ export const Navbar = ({ isDark, toggleTheme }: NavbarProps) => {
                       onClick={() => { 
                         disconnect(); 
                         setUserDropdownOpen(false);
-                        navigate('/'); 
+                        router.push('/'); 
                       }}
                       className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-[12px] font-bold text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-all border-none cursor-pointer"
                     >
@@ -231,8 +224,8 @@ export const Navbar = ({ isDark, toggleTheme }: NavbarProps) => {
               href="#download"
               onClick={(e) => {
                 e.preventDefault();
-                if (location.pathname !== '/') {
-                  navigate('/');
+                if (pathname !== '/') {
+                  router.push('/');
                   setTimeout(() => {
                     const el = document.getElementById('download');
                     if (el) el.scrollIntoView({ behavior: 'smooth' });
@@ -256,17 +249,25 @@ export const Navbar = ({ isDark, toggleTheme }: NavbarProps) => {
         {menuOpen && (
           <div className="lg:hidden absolute top-full left-0 right-0 mt-2 bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 rounded-3xl shadow-2xl p-4 pointer-events-auto mx-4 z-[60]">
             <div className="flex flex-col gap-2">
-              <a
-                href="#features"
-                onClick={(e) => { e.preventDefault(); setMenuOpen(false); handleNavClick('Features'); }}
-                className="w-full text-left px-5 py-4 rounded-2xl text-[14px] font-bold text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-[#111827] dark:hover:text-white transition-all no-underline"
+              <Link
+                href="/pet-features"
+                onClick={() => setMenuOpen(false)}
+                className={`w-full text-left px-5 py-4 rounded-2xl text-[14px] font-bold transition-all no-underline block ${
+                  pathname === '/pet-features'
+                    ? 'bg-indigo-50 dark:bg-indigo-900/20 text-indigo-600 dark:text-indigo-400'
+                    : 'text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-[#111827] dark:hover:text-white'
+                }`}
               >
                 {t('nav.features')}
-              </a>
+              </Link>
               <Link
-                to="/market"
+                href="/market"
                 onClick={() => setMenuOpen(false)}
-                className="w-full text-left px-5 py-4 rounded-2xl text-[14px] font-bold text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-[#111827] dark:hover:text-white transition-all no-underline"
+                className={`w-full text-left px-5 py-4 rounded-2xl text-[14px] font-bold transition-all no-underline block ${
+                  pathname === '/market'
+                    ? 'bg-indigo-50 dark:bg-indigo-900/20 text-indigo-600 dark:text-indigo-400'
+                    : 'text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-[#111827] dark:hover:text-white'
+                }`}
               >
                 {t('nav.market')}
               </Link>

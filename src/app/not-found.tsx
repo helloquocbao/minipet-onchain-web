@@ -1,10 +1,12 @@
+"use client";
+
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useRouter } from 'next/navigation';
 import { Home, AlertCircle } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
-const NotFoundPage: React.FC = () => {
-  const navigate = useNavigate();
+export default function NotFoundPage() {
+  const router = useRouter();
   const { t } = useTranslation();
 
   return (
@@ -30,8 +32,8 @@ const NotFoundPage: React.FC = () => {
         </div>
 
         <button
-          onClick={() => navigate('/')}
-          className="group relative inline-flex items-center justify-center px-8 py-3 font-semibold text-white transition-all duration-200 bg-blue-600 rounded-full hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-600 focus:ring-offset-[#0f172a]"
+          onClick={() => router.push('/')}
+          className="group relative inline-flex items-center justify-center px-8 py-3 font-semibold text-white transition-all duration-200 bg-blue-600 rounded-full hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-600 focus:ring-offset-[#0f172a] border-none cursor-pointer"
         >
           <Home className="w-5 h-5 mr-2 transition-transform group-hover:-translate-y-1" />
           {t('not_found.back_home')}
@@ -47,6 +49,4 @@ const NotFoundPage: React.FC = () => {
       </div>
     </div>
   );
-};
-
-export default NotFoundPage;
+}

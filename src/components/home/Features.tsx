@@ -1,3 +1,5 @@
+"use client";
+
 import { useTranslation } from 'react-i18next';
 import { Clock } from 'lucide-react';
 import React from 'react';

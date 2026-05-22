@@ -1,9 +1,9 @@
 import { toBase64 } from '@mysten/sui/utils';
 import { suiClient } from './blockchain/sui';
 
-const PUBLISHER_URL = import.meta.env.VITE_WALRUS_PUBLISHER_URL || 'https://publisher.walrus-testnet.walrus.space';
-const AGGREGATOR_URL = import.meta.env.VITE_WALRUS_AGGREGATOR_URL || 'https://aggregator.walrus-testnet.walrus.space';
-const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3001';
+const PUBLISHER_URL = process.env.NEXT_PUBLIC_WALRUS_PUBLISHER_URL || 'https://publisher.walrus-testnet.walrus.space';
+const AGGREGATOR_URL = process.env.NEXT_PUBLIC_WALRUS_AGGREGATOR_URL || 'https://aggregator.walrus-testnet.walrus.space';
+const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:3001';
 
 export interface WalrusUploadResponse {
   newlyCreated?: {
@@ -21,7 +21,7 @@ export interface WalrusUploadResponse {
     blobId: string;
     event: {
       txDigest: string;
-      eventSeq: string;
+      eventSeq: string
     };
   };
 }
@@ -31,9 +31,9 @@ export const WalrusService = {
    * 1. UPLOAD (User chọn ảnh, gửi qua Backend để kiểm tra hợp lệ, Backend đẩy lên Walrus và chuyển quyền sở hữu trên Sui)
    */
   async uploadFile(
-    file: File | Blob, 
-    targetAddress?: string, 
-    isCustom: boolean = false, 
+    file: File | Blob,
+    targetAddress?: string,
+    isCustom: boolean = false,
     epochs: number = 5
   ): Promise<{ blobId: string; blobObjectId: string }> {
     // Nếu không truyền targetAddress, thực hiện tải trực tiếp lên Walrus (chế độ Testnet công cộng hoặc thử nghiệm cục bộ)
@@ -45,7 +45,7 @@ export const WalrusService = {
 
       if (!response.ok) throw new Error(`Walrus upload failed: ${response.statusText}`);
       const data: WalrusUploadResponse = await response.json();
-      
+
       if (data.newlyCreated) {
         return {
           blobId: data.newlyCreated.blobObject.blobId,
@@ -54,7 +54,7 @@ export const WalrusService = {
       } else if (data.alreadyCertified) {
         return {
           blobId: data.alreadyCertified.blobId,
-          blobObjectId: '0x0000000000000000000000000000000000000000000000000000000000000000' 
+          blobObjectId: '0x0000000000000000000000000000000000000000000000000000000000000000'
         };
       }
       throw new Error('Unexpected Walrus response format');
@@ -76,7 +76,7 @@ export const WalrusService = {
     }
 
     const data: WalrusUploadResponse = await response.json();
-    
+
     if (data.newlyCreated) {
       return {
         blobId: data.newlyCreated.blobObject.blobId,
@@ -85,7 +85,7 @@ export const WalrusService = {
     } else if (data.alreadyCertified) {
       return {
         blobId: data.alreadyCertified.blobId,
-        blobObjectId: '0x0000000000000000000000000000000000000000000000000000000000000000' 
+        blobObjectId: '0x0000000000000000000000000000000000000000000000000000000000000000'
       };
     }
     throw new Error('Unexpected response format from upload backend');
@@ -97,7 +97,7 @@ export const WalrusService = {
    */
   async sponsorTransaction(tx: any, userAddress: string): Promise<any> {
     console.log(`[Sponsor] Requesting sponsorship for ${userAddress}...`);
-    
+
     // Chuyển đổi Transaction sang bytes để gửi qua API
     const txBytes = await tx.build({ client: suiClient });
     const txBase64 = toBase64(txBytes);
@@ -114,10 +114,10 @@ export const WalrusService = {
     }
 
     const { signature } = await response.json();
-    
+
     // Thêm chữ ký của Sponsor vào Transaction
     tx.addSignature(signature);
-    
+
     return tx;
   },
 

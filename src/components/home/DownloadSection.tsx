@@ -1,3 +1,5 @@
+"use client";
+
 import { useTranslation } from 'react-i18next';
 import { Download } from 'lucide-react';
 import { FaApple, FaWindows } from 'react-icons/fa';

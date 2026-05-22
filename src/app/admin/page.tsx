@@ -1,6 +1,8 @@
+"use client";
+
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useCurrentAccount, useSignAndExecuteTransaction } from '@mysten/dapp-kit';
+import { useCurrentAccount, useSignAndExecuteTransaction, ConnectButton } from '@mysten/dapp-kit';
 import { Transaction } from '@mysten/sui/transactions';
 import {
   PACKAGE_ID,
@@ -11,15 +13,19 @@ import {
   TREASURY_CAP_ID,
   PET_TOKEN_PACKAGE_ID,
   suiClient
-} from '../services/blockchain/sui';
-import { WalrusService } from '../services/walrus';
-import { Settings, Plus, Info, Activity, Upload, Loader2, Check, Coins, Layers } from 'lucide-react';
+} from '../../services/blockchain/sui';
+import { WalrusService } from '../../services/walrus';
+import { Settings, Plus, Info, Activity, Upload, Loader2, Check, Coins, Layers, Lock, ShieldAlert } from 'lucide-react';
 
 export default function AdminPage() {
   const account = useCurrentAccount();
   const { t } = useTranslation();
   const { mutate: signAndExecuteTransaction } = useSignAndExecuteTransaction();
   const [activeTab, setActiveTab] = useState<'dashboard' | 'store' | 'economy' | 'settings'>('dashboard');
+
+  const [isAdmin, setIsAdmin] = useState<boolean | null>(null);
+  const [adminAddress, setAdminAddress] = useState<string | null>(null);
+  const [verifyingAdmin, setVerifyingAdmin] = useState<boolean>(false);
 
   const [template, setTemplate] = useState({
     name: '',
@@ -83,9 +89,40 @@ export default function AdminPage() {
   };
 
   useEffect(() => {
-    if (account) {
-      fetchGlobalConfig();
-    }
+    const verifyAdmin = async () => {
+      if (!account) {
+        setIsAdmin(null);
+        setVerifyingAdmin(false);
+        return;
+      }
+      try {
+        setVerifyingAdmin(true);
+        const res = await suiClient.getObject({
+          id: ADMIN_CAP_ID,
+          options: { showOwner: true }
+        });
+        const ownerObj = res.data?.owner as any;
+        if (ownerObj && ownerObj.AddressOwner) {
+          const ownerAddr = ownerObj.AddressOwner;
+          setAdminAddress(ownerAddr);
+          if (account.address.toLowerCase() === ownerAddr.toLowerCase()) {
+            setIsAdmin(true);
+            fetchGlobalConfig();
+          } else {
+            setIsAdmin(false);
+          }
+        } else {
+          setIsAdmin(false);
+        }
+      } catch (err) {
+        console.error("Failed to verify admin status:", err);
+        setIsAdmin(false);
+      } finally {
+        setVerifyingAdmin(false);
+      }
+    };
+
+    verifyAdmin();
   }, [account]);
 
   const handleFileUpload = async (file: File, type: 'image' | 'sprite') => {
@@ -138,7 +175,7 @@ export default function AdminPage() {
             options: { showEffects: true }
           });
           if (txRes.effects?.status?.status === 'success') {
-            alert(t('admin.alerts.template_created'));
+            alert(t('admin.alerts.template_created') || 'Template created successfully!');
             setTemplate({
               name: '',
               image_url: '',
@@ -312,6 +349,79 @@ export default function AdminPage() {
       },
     });
   };
+
+  if (!account) {
+    return (
+      <div className="pt-28 pb-20 min-h-screen bg-gray-50 dark:bg-[#0a0a0b] flex items-center justify-center">
+        <div className="max-w-md w-full mx-4 p-8 bg-white dark:bg-gray-900 rounded-[2.5rem] shadow-2xl border border-gray-100 dark:border-gray-800 text-center animate-in fade-in zoom-in duration-300">
+          <div className="w-20 h-20 bg-indigo-100 dark:bg-indigo-950/50 rounded-3xl flex items-center justify-center mx-auto mb-6 text-indigo-600 dark:text-indigo-400">
+            <Lock size={40} />
+          </div>
+          <h2 className="text-2xl font-black text-gray-900 dark:text-white mb-2">
+            {t('admin.auth.unauthorized_title') || 'Access Denied'}
+          </h2>
+          <p className="text-gray-500 dark:text-gray-400 font-medium mb-8 text-sm leading-relaxed">
+            {t('admin.auth.connect_admin_wallet') || 'Connect Admin Wallet to Continue'}
+          </p>
+          <div className="flex justify-center">
+            <ConnectButton className="!rounded-2xl !text-sm !font-black !px-6 !py-3 !shadow-lg !shadow-indigo-500/20" />
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (verifyingAdmin) {
+    return (
+      <div className="pt-28 pb-20 min-h-screen bg-gray-50 dark:bg-[#0a0a0b] flex items-center justify-center">
+        <div className="text-center">
+          <Loader2 className="animate-spin text-indigo-600 mb-4 mx-auto" size={48} />
+          <p className="text-gray-500 dark:text-gray-400 font-bold text-sm">
+            {t('admin.auth.checking') || 'Verifying admin permissions...'}
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  if (isAdmin === false) {
+    return (
+      <div className="pt-28 pb-20 min-h-screen bg-gray-50 dark:bg-[#0a0a0b] flex items-center justify-center">
+        <div className="max-w-lg w-full mx-4 p-8 md:p-10 bg-white dark:bg-gray-900 rounded-[2.5rem] shadow-2xl border border-gray-100 dark:border-gray-800 text-center animate-in fade-in zoom-in duration-300">
+          <div className="w-20 h-20 bg-rose-100 dark:bg-rose-950/50 rounded-3xl flex items-center justify-center mx-auto mb-6 text-rose-600 dark:text-rose-400">
+            <ShieldAlert size={40} />
+          </div>
+          <h2 className="text-2xl font-black text-rose-600 dark:text-rose-400 mb-4">
+            {t('admin.auth.unauthorized_title') || 'Access Denied'}
+          </h2>
+          <p className="text-gray-500 dark:text-gray-400 font-medium mb-6 text-sm leading-relaxed">
+            {t('admin.auth.unauthorized_desc') || 'Only the admin wallet that owns the AdminCap can access the admin dashboard.'}
+          </p>
+          <div className="p-4 bg-gray-50 dark:bg-gray-800/50 rounded-2xl mb-8 text-left border border-gray-100 dark:border-gray-800/80">
+            <p className="text-xs font-bold text-gray-400 uppercase mb-1">
+              {t('admin.auth.wallet_connected') || 'Connected Wallet:'}
+            </p>
+            <p className="font-mono text-xs text-rose-500 break-all select-all font-semibold">
+              {account.address}
+            </p>
+            {adminAddress && (
+              <>
+                <p className="text-xs font-bold text-gray-400 uppercase mt-3 mb-1">
+                  Required Admin Wallet Owner:
+                </p>
+                <p className="font-mono text-xs text-indigo-500 break-all select-all font-semibold">
+                  {adminAddress}
+                </p>
+              </>
+            )}
+          </div>
+          <div className="flex justify-center gap-4">
+            <ConnectButton className="!rounded-2xl !text-sm !font-black !px-6 !py-3 !shadow-lg" />
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="pt-28 pb-20 min-h-screen bg-gray-50 dark:bg-[#0a0a0b]">
@@ -698,7 +808,7 @@ export default function AdminPage() {
 
                   <div className="p-6 bg-pink-50 dark:bg-pink-900/10 rounded-2xl border border-pink-100 dark:border-pink-900/30">
                     <div className="flex gap-3 text-pink-700 dark:text-pink-400">
-                      <Info size={20} className="shrink-0 animate-bounce" />
+                      <Info size={20} className="shrink-0" />
                       <div className="text-sm">
                         <p className="font-black mb-1">{t('admin.system.warning')}</p>
                         <p className="font-medium opacity-80 leading-relaxed">

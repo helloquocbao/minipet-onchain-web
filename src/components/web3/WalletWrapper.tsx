@@ -1,3 +1,5 @@
+"use client";
+
 import React from 'react';
 import { createNetworkConfig, SuiClientProvider, WalletProvider } from '@mysten/dapp-kit';
 import { getJsonRpcFullnodeUrl } from '@mysten/sui/jsonRpc';
