@@ -280,7 +280,7 @@ export function MarketClient() {
             <ShoppingBag size={16} /> {t('market.nav_badge')}
           </div>
           <h1 className="text-4xl md:text-5xl font-black tracking-tight mb-4">{t('market.title')}</h1>
-          <p className="text-gray-500 max-w-xl text-lg">
+          <p className="text-gray-500 dark:text-gray-400 max-w-xl text-lg">
             {t('market.desc')}
           </p>
         </div>
@@ -331,7 +331,7 @@ export function MarketClient() {
                         {[1,2,3,4,5].map(i => <div key={i} className="w-1.5 h-1.5 rounded-full bg-yellow-400" />)}
                      </div>
                    </div>
-                   <p className="text-gray-500 text-sm mb-6 leading-relaxed">
+                   <p className="text-gray-500 dark:text-gray-400 text-sm mb-6 leading-relaxed">
                      {isCustom 
                        ? "Custom template. Buy a Mint Slot to adopt and customize this pet with your own name and sprite!"
                        : t('market.pet_card.loyal_companion', { energy: pet.name === 'Wukong' ? t('market.pet_card.mythical_powers') : t('market.pet_card.fluffy_energy') })

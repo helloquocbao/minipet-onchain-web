@@ -41,7 +41,7 @@ export const CustomPetForm: React.FC<CustomPetFormProps> = ({
         </div>
         <div>
           <h1 className="text-3xl font-black tracking-tight">{t('custom.title')}</h1>
-          <p className="text-gray-500 font-medium">{t('custom.subtitle')}</p>
+          <p className="text-gray-500 dark:text-gray-400 font-medium">{t('custom.subtitle')}</p>
         </div>
       </div>
 
@@ -64,7 +64,7 @@ export const CustomPetForm: React.FC<CustomPetFormProps> = ({
       <div className="space-y-8">
         {/* Pet Name */}
         <div>
-          <label className="block text-sm font-bold text-gray-500 mb-2 uppercase tracking-wider">
+          <label className="block text-sm font-bold text-gray-500 dark:text-gray-400 mb-2 uppercase tracking-wider">
             {t('custom.form.name_label')}
           </label>
           <input 
@@ -79,7 +79,7 @@ export const CustomPetForm: React.FC<CustomPetFormProps> = ({
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Image Upload */}
           <div>
-            <label className="block text-sm font-bold text-gray-500 mb-2 uppercase tracking-wider">
+            <label className="block text-sm font-bold text-gray-500 dark:text-gray-400 mb-2 uppercase tracking-wider">
               {t('custom.form.avatar_label')}
             </label>
             <div className="relative group">
@@ -118,7 +118,7 @@ export const CustomPetForm: React.FC<CustomPetFormProps> = ({
 
           {/* Sprite Upload */}
           <div>
-            <label className="block text-sm font-bold text-gray-500 mb-2 uppercase tracking-wider">
+            <label className="block text-sm font-bold text-gray-500 dark:text-gray-400 mb-2 uppercase tracking-wider">
               {t('custom.form.sprite_label')}
             </label>
             <div className="relative group">

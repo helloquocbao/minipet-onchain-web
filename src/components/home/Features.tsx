@@ -71,8 +71,8 @@ export const Features = () => {
                 <div className="absolute top-3 right-3 bg-white/90 backdrop-blur-sm text-[9px] font-semibold text-gray-600 px-2 py-0.5 rounded-full shadow-sm">{t('features.focus_mode')}</div>
               </div>
               {/* Text always at bottom */}
-              <div className="p-4 md:p-6 border-t border-gray-100/80">
-                <h3 className="text-[15px] font-extrabold text-[#111827] mb-1.5">{t('features.pomodoro.title')}</h3>
+              <div className="p-4 md:p-6 border-t border-gray-100/80 dark:border-gray-800">
+                <h3 className="text-[15px] font-extrabold text-[#111827] dark:text-white mb-1.5">{t('features.pomodoro.title')}</h3>
                 <p className="text-[13px] text-gray-600 dark:text-gray-400 leading-relaxed max-w-sm">
                   {t('features.pomodoro.desc')}
                 </p>

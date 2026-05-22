@@ -11,7 +11,7 @@ export const Footer = () => {
   return (
     <footer className="pt-12 pb-10">
       <Container>
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-6 border-t border-gray-200/60 pt-8">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-6 border-t border-gray-200/60 dark:border-white/10 pt-8">
           {/* Logo */}
           <div className="flex items-center gap-2.5">
             <div className="w-8 h-8 rounded-lg bg-[#111827] dark:bg-white flex items-center justify-center overflow-hidden">
