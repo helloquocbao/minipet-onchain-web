@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useState } from 'react';
-import { useCurrentAccount, useSignAndExecuteTransaction } from '@mysten/dapp-kit';
+import { useSignAndExecuteTransaction } from '@mysten/dapp-kit';
+import { useActiveAddress } from '../../hooks/useActiveAddress';
 import { Transaction } from '@mysten/sui/transactions';
 import { PACKAGE_ID, FUNCTIONS, MODULES, suiClient, GLOBAL_CONFIG_ID, PET_TOKEN_TYPE } from '../../services/blockchain/sui';
 import { WalrusService } from '../../services/walrus';
@@ -19,7 +20,7 @@ interface PetTemplate {
 
 export function MarketClient() {
   const router = useRouter();
-  const account = useCurrentAccount();
+  const activeAddress = useActiveAddress();
   const { t } = useTranslation();
   const { mutate: signAndExecuteTransaction } = useSignAndExecuteTransaction();
   const [templates, setTemplates] = useState<PetTemplate[]>([]);
@@ -76,10 +77,10 @@ export function MarketClient() {
   }, []);
 
   const checkUserHasSlot = async () => {
-    if (!account) return false;
+    if (!activeAddress) return false;
     try {
       const objects = await suiClient.getOwnedObjects({
-        owner: account.address,
+        owner: activeAddress,
         filter: { StructType: `${PACKAGE_ID}::${MODULES.PET_NFT}::MintSlot` }
       });
       return objects.data.length > 0;
@@ -90,7 +91,7 @@ export function MarketClient() {
   };
 
   const handleBuyPet = async (templateId: string, price: string) => {
-    if (!account) {
+    if (!activeAddress) {
       alert(t('admin.alerts.connect_wallet') || 'Please connect your wallet first');
       return;
     }
@@ -136,7 +137,7 @@ export function MarketClient() {
   };
 
   const handleBuyMintSlot = async () => {
-    if (!account) return;
+    if (!activeAddress) return;
     
     const hasSlot = await checkUserHasSlot();
     if (hasSlot) {
@@ -149,7 +150,7 @@ export function MarketClient() {
 
     // 1. Get user's MIPET tokens
     const coins = await suiClient.getCoins({
-      owner: account.address,
+      owner: activeAddress,
       coinType: PET_TOKEN_TYPE,
     });
 
@@ -208,7 +209,7 @@ export function MarketClient() {
   };
 
   const handleBuyCustomPetSlot = async (pet: PetTemplate) => {
-    if (!account) {
+    if (!activeAddress) {
       alert(t('admin.alerts.connect_wallet') || 'Please connect your wallet first');
       return;
     }
@@ -223,7 +224,7 @@ export function MarketClient() {
     const tx = new Transaction();
     
     const coins = await suiClient.getCoins({
-      owner: account.address,
+      owner: activeAddress,
       coinType: PET_TOKEN_TYPE,
     });
 

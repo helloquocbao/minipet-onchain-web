@@ -31,16 +31,19 @@ export const Navbar = ({ isDark, toggleTheme }: NavbarProps) => {
   const [menuOpen, setMenuOpen] = React.useState(false);
   const [userDropdownOpen, setUserDropdownOpen] = React.useState(false);
   const [connectModalOpen, setConnectModalOpen] = React.useState(false);
+  const [zkLoginAddress, setZkLoginAddress] = React.useState<string | null>(null);
   
   const langRef = React.useRef<HTMLDivElement>(null);
   const menuRef = React.useRef<HTMLDivElement>(null);
   const userRef = React.useRef<HTMLDivElement>(null);
 
+  const activeAddress = account?.address || zkLoginAddress;
+
   // Check if user is Admin by querying for AdminCap
   const { data: adminCaps } = useSuiClientQuery('getOwnedObjects', {
-    owner: account?.address || '',
+    owner: activeAddress || '',
     filter: { StructType: `${PACKAGE_ID}::${MODULES.PET_NFT}::AdminCap` }
-  }, { enabled: !!account });
+  }, { enabled: !!activeAddress });
 
   const isAdmin = adminCaps?.data && adminCaps.data.length > 0;
 
@@ -57,6 +60,7 @@ export const Navbar = ({ isDark, toggleTheme }: NavbarProps) => {
       }
     };
     document.addEventListener('mousedown', handleClickOutside);
+    setZkLoginAddress(localStorage.getItem('zklogin_address'));
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
@@ -118,7 +122,7 @@ export const Navbar = ({ isDark, toggleTheme }: NavbarProps) => {
           </nav>
 
           <div className="flex items-center gap-1.5 sm:gap-3">
-            {!account ? (
+            {!activeAddress ? (
               <button
                 onClick={() => {
                   console.log('Connect button clicked, opening modal...');
@@ -136,7 +140,7 @@ export const Navbar = ({ isDark, toggleTheme }: NavbarProps) => {
                 >
                   <User size={14} />
                   <span className="text-[11px] font-black hidden sm:inline">
-                    {account.address.slice(0, 4)}...{account.address.slice(-4)}
+                    {activeAddress.slice(0, 4)}...{activeAddress.slice(-4)}
                   </span>
                   <ChevronDown size={10} className={`transition-transform ${userDropdownOpen ? 'rotate-180' : ''}`} />
                 </button>
@@ -155,7 +159,7 @@ export const Navbar = ({ isDark, toggleTheme }: NavbarProps) => {
                     ) : (
                       <>
                         <button 
-                          onClick={() => { /* Profile logic */ setUserDropdownOpen(false); }}
+                          onClick={() => { router.push('/profile'); setUserDropdownOpen(false); }}
                           className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-[12px] font-bold text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 transition-all border-none cursor-pointer"
                         >
                           <User size={14} /> {t('nav.profile')}
@@ -172,6 +176,8 @@ export const Navbar = ({ isDark, toggleTheme }: NavbarProps) => {
                     <button 
                       onClick={() => { 
                         disconnect(); 
+                        localStorage.removeItem('zklogin_address');
+                        setZkLoginAddress(null);
                         setUserDropdownOpen(false);
                         router.push('/'); 
                       }}

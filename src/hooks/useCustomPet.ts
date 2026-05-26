@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useTranslation } from 'react-i18next';
-import { useCurrentAccount, useSignAndExecuteTransaction } from '@mysten/dapp-kit';
+import { useSignAndExecuteTransaction } from '@mysten/dapp-kit';
+import { useActiveAddress } from './useActiveAddress';
 import { Transaction } from '@mysten/sui/transactions';
 import { 
   PACKAGE_ID, 
@@ -11,6 +12,7 @@ import {
   suiClient 
 } from '../services/blockchain/sui';
 import { WalrusService } from '../services/walrus';
+import { AIGenerationService } from '../services/aiGenerationService';
 
 export interface PetData {
   name: string;
@@ -32,7 +34,7 @@ const extractBlobId = (url: string) => {
 export const useCustomPet = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const account = useCurrentAccount();
+  const activeAddress = useActiveAddress();
   const { t } = useTranslation();
   const { mutate: signAndExecuteTransaction } = useSignAndExecuteTransaction();
 
@@ -61,21 +63,26 @@ export const useCustomPet = () => {
   const [hasSlot, setHasSlot] = useState(false);
   const [loadingSlot, setLoadingSlot] = useState(false);
 
+  // AI Generation states
+  const [baseImage, setBaseImage] = useState<File | null>(null);
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [generationStep, setGenerationStep] = useState<'upload' | 'review'>('upload');
+
   // Check if user has a Mint Slot
   useEffect(() => {
-    if (account) {
+    if (activeAddress) {
       checkMintSlot();
     } else {
       setHasSlot(false);
     }
-  }, [account]);
+  }, [activeAddress]);
 
   const checkMintSlot = async () => {
-    if (!account) return;
+    if (!activeAddress) return;
     setLoadingSlot(true);
     try {
       const objects = await suiClient.getOwnedObjects({
-        owner: account.address,
+        owner: activeAddress,
         filter: { StructType: `${PACKAGE_ID}::${MODULES.PET_NFT}::MintSlot` }
       });
       setHasSlot(objects.data.length > 0);
@@ -87,13 +94,13 @@ export const useCustomPet = () => {
   };
 
   const handleFileUpload = async (file: File, type: 'image' | 'sprite') => {
-    if (!account) {
+    if (!activeAddress) {
       alert(t('custom.alerts.connect_wallet') || 'Please connect your wallet first');
       return;
     }
     try {
       setUploading(prev => ({ ...prev, [type]: true }));
-      const { blobId, blobObjectId } = await WalrusService.uploadFile(file, account.address, true);
+      const { blobId, blobObjectId } = await WalrusService.uploadFile(file, activeAddress, true);
       setPetData(prev => ({
         ...prev,
         [type === 'image' ? 'imageBlob' : 'spriteBlob']: blobId,
@@ -104,6 +111,44 @@ export const useCustomPet = () => {
       alert(error.message || t('custom.alerts.upload_failed'));
     } finally {
       setUploading(prev => ({ ...prev, [type]: false }));
+    }
+  };
+
+  const handleGeneratePet = async () => {
+    if (!baseImage) return;
+    if (!activeAddress) {
+      alert(t('custom.alerts.connect_wallet') || 'Please connect your wallet first');
+      return;
+    }
+
+    setIsGenerating(true);
+    try {
+      // 1. Generate Pet Files
+      const { avatar, sprite } = await AIGenerationService.generatePetFromImage(baseImage);
+
+      // 2. Upload them to Walrus
+      setUploading({ image: true, sprite: true });
+      const [avatarWalrus, spriteWalrus] = await Promise.all([
+        WalrusService.uploadFile(avatar, activeAddress, true),
+        WalrusService.uploadFile(sprite, activeAddress, true)
+      ]);
+
+      // 3. Update state
+      setPetData(prev => ({
+        ...prev,
+        imageBlob: avatarWalrus.blobId,
+        imageObjId: avatarWalrus.blobObjectId,
+        spriteBlob: spriteWalrus.blobId,
+        spriteObjId: spriteWalrus.blobObjectId
+      }));
+
+      setGenerationStep('review');
+    } catch (error: any) {
+      console.error('Generation failed:', error);
+      alert(error.message || t('custom.alerts.generate_failed') || 'Generation failed');
+    } finally {
+      setIsGenerating(false);
+      setUploading({ image: false, sprite: false });
     }
   };
 
@@ -179,6 +224,12 @@ export const useCustomPet = () => {
     loadingSlot,
     handleFileUpload,
     handleMint,
+    handleGeneratePet,
+    baseImage,
+    setBaseImage,
+    isGenerating,
+    generationStep,
+    setGenerationStep,
     account,
     t,
     navigate

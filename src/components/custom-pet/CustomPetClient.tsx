@@ -16,6 +16,12 @@ export function CustomPetClient() {
     loadingSlot,
     handleFileUpload,
     handleMint,
+    handleGeneratePet,
+    baseImage,
+    setBaseImage,
+    isGenerating,
+    generationStep,
+    setGenerationStep,
     t,
     navigate
   } = useCustomPet();
@@ -40,6 +46,12 @@ export function CustomPetClient() {
             loadingSlot={loadingSlot}
             handleFileUpload={handleFileUpload}
             handleMint={handleMint}
+            handleGeneratePet={handleGeneratePet}
+            baseImage={baseImage}
+            setBaseImage={setBaseImage}
+            isGenerating={isGenerating}
+            generationStep={generationStep}
+            setGenerationStep={setGenerationStep}
             t={t}
             navigate={navigate}
           />

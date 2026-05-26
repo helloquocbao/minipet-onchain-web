@@ -6,16 +6,18 @@ import { ShieldCheck, HelpCircle, Laptop } from 'lucide-react';
 import { FcGoogle } from 'react-icons/fc';
 import { jwtToAddress, generateNonce, generateRandomness } from '@mysten/sui/zklogin';
 import { Ed25519Keypair } from '@mysten/sui/keypairs/ed25519';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 export default function SyncLoginPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const account = useCurrentAccount();
-  const [syncStatus, setSyncStatus] = useState<'idle' | 'success' | 'failed' | 'connected'>('idle');
+  const isConnectOnly = searchParams.get('action') === 'connect';
   const [zkLoginAddress, setZkLoginAddress] = useState<string | null>(null);
   const [googleClientId, setGoogleClientId] = useState<string>('');
   const [showClientInput, setShowClientInput] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+  const [syncStatus, _setSyncStatus] = useState<'idle' | 'success' | 'failed' | 'connected'>('idle');
 
   // Load Google Client ID from env or localStorage
   useEffect(() => {
@@ -33,27 +35,32 @@ export default function SyncLoginPage() {
     if (hash) {
       const params = new URLSearchParams(hash.substring(1));
       const idToken = params.get('id_token');
+      const stateParam = params.get('state');
       if (idToken) {
         try {
           // Derive Sui address using a 128-bit constant salt for simple local testing
           const salt = BigInt("11223344556677889900112233445566");
           const derivedAddress = jwtToAddress(idToken, salt, false);
           setZkLoginAddress(derivedAddress);
-          setSyncStatus('idle');
+          localStorage.setItem('zklogin_address', derivedAddress);
           // Clear hash from address bar
           window.history.replaceState(null, '', window.location.pathname);
+          
+          if (stateParam === 'connect') {
+            router.push('/');
+            return;
+          }
         } catch (err: any) {
           console.error(err);
           setError("Lỗi giải mã token hoặc tính toán địa chỉ ví zkLogin: " + err.message);
         }
       }
     }
-  }, []);
+  }, [router]);
 
   const handleSyncAddress = (addressToSync: string, isManual: boolean = false) => {
     try {
       if (isManual) {
-        setSyncStatus('success');
         try {
           if (navigator.clipboard && navigator.clipboard.writeText) {
             navigator.clipboard.writeText(addressToSync)
@@ -63,8 +70,6 @@ export default function SyncLoginPage() {
         } catch (clipErr) {
           console.warn('[Sync] Trình duyệt chặn quyền ghi clipboard trực tiếp:', clipErr);
         }
-      } else {
-        setSyncStatus('connected');
       }
 
       const syncUrl = `minipet://sync?address=${addressToSync}`;
@@ -72,25 +77,8 @@ export default function SyncLoginPage() {
       window.location.href = syncUrl;
     } catch (err) {
       console.error(err);
-      if (isManual) {
-        setSyncStatus('failed');
-      }
     }
   };
-
-  // Auto trigger sync once account connects
-  useEffect(() => {
-    if (account) {
-      handleSyncAddress(account.address, false);
-    }
-  }, [account]);
-
-  // Auto trigger sync once zkLogin address is derived
-  useEffect(() => {
-    if (zkLoginAddress) {
-      handleSyncAddress(zkLoginAddress, false);
-    }
-  }, [zkLoginAddress]);
 
   const handleGoogleLogin = () => {
     const clientId = googleClientId.trim();
@@ -130,6 +118,7 @@ export default function SyncLoginPage() {
         response_type: 'id_token',
         scope: 'openid email profile',
         nonce: nonce,
+        ...(isConnectOnly ? { state: 'connect' } : {})
       });
       
       window.location.href = `https://accounts.google.com/o/oauth2/v2/auth?${params.toString()}`;
@@ -155,10 +144,12 @@ export default function SyncLoginPage() {
 
         <div className="space-y-2">
           <h1 className="text-3xl font-extrabold tracking-tight bg-gradient-to-r from-indigo-200 via-blue-100 to-indigo-200 bg-clip-text text-transparent">
-            Đồng bộ ví MiniPet
+            {isConnectOnly ? 'Đăng nhập MiniPet' : 'Đồng bộ ví MiniPet'}
           </h1>
           <p className="text-sm text-slate-400">
-            Kết nối qua ví Sui extension hoặc Đăng nhập trực tiếp bằng Google (zkLogin) để đồng bộ tài sản xuống app.
+            {isConnectOnly 
+              ? 'Kết nối qua ví Sui extension hoặc Đăng nhập trực tiếp bằng Google (zkLogin).'
+              : 'Kết nối qua ví Sui extension hoặc Đăng nhập trực tiếp bằng Google (zkLogin) để đồng bộ tài sản xuống app.'}
           </p>
         </div>
 

@@ -34,10 +34,43 @@ export function WalletConnectModal({ isOpen, onClose }: WalletConnectModalProps)
     );
   };
 
-  const handlezkLoginClick = () => {
+  const handlezkLoginClick = async () => {
     onClose();
-    // Chuyển hướng người dùng sang trang sync-login
-    router.push('/sync-login');
+    const clientId = localStorage.getItem('google_client_id') || process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || '';
+    if (!clientId) {
+      router.push('/sync-login?action=connect');
+      return;
+    }
+
+    try {
+      const redirectUri = window.location.origin + '/sync-login';
+      const { Ed25519Keypair } = await import('@mysten/sui/keypairs/ed25519');
+      const { generateNonce, generateRandomness } = await import('@mysten/sui/zklogin');
+      
+      const ephemeralKeypair = new Ed25519Keypair();
+      localStorage.setItem('zklogin_ephemeral_private_key', ephemeralKeypair.getSecretKey());
+      
+      const randomness = generateRandomness();
+      localStorage.setItem('zklogin_randomness', randomness);
+      const maxEpoch = 999999999;
+      localStorage.setItem('zklogin_max_epoch', maxEpoch.toString());
+      
+      const nonce = generateNonce(ephemeralKeypair.getPublicKey(), maxEpoch, randomness);
+      
+      const params = new URLSearchParams({
+        client_id: clientId,
+        redirect_uri: redirectUri,
+        response_type: 'id_token',
+        scope: 'openid email profile',
+        nonce: nonce,
+        state: 'connect'
+      });
+      
+      window.location.href = `https://accounts.google.com/o/oauth2/v2/auth?${params.toString()}`;
+    } catch (err: any) {
+      console.error(err);
+      alert("Không thể khởi tạo yêu cầu zkLogin: " + err.message);
+    }
   };
 
   return (

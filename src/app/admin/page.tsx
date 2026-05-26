@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useCurrentAccount, useSignAndExecuteTransaction, ConnectButton } from '@mysten/dapp-kit';
+import { useSignAndExecuteTransaction, ConnectButton } from '@mysten/dapp-kit';
+import { useActiveAddress } from '../../hooks/useActiveAddress';
 import { Transaction } from '@mysten/sui/transactions';
 import {
   PACKAGE_ID,
@@ -18,7 +19,7 @@ import { WalrusService } from '../../services/walrus';
 import { Settings, Plus, Info, Activity, Upload, Loader2, Check, Coins, Layers, Lock, ShieldAlert } from 'lucide-react';
 
 export default function AdminPage() {
-  const account = useCurrentAccount();
+  const activeAddress = useActiveAddress();
   const { t } = useTranslation();
   const { mutate: signAndExecuteTransaction } = useSignAndExecuteTransaction();
   const [activeTab, setActiveTab] = useState<'dashboard' | 'store' | 'economy' | 'settings'>('dashboard');
@@ -90,7 +91,7 @@ export default function AdminPage() {
 
   useEffect(() => {
     const verifyAdmin = async () => {
-      if (!account) {
+      if (!activeAddress) {
         setIsAdmin(null);
         setVerifyingAdmin(false);
         return;
@@ -105,7 +106,7 @@ export default function AdminPage() {
         if (ownerObj && ownerObj.AddressOwner) {
           const ownerAddr = ownerObj.AddressOwner;
           setAdminAddress(ownerAddr);
-          if (account.address.toLowerCase() === ownerAddr.toLowerCase()) {
+          if (activeAddress.toLowerCase() === ownerAddr.toLowerCase()) {
             setIsAdmin(true);
             fetchGlobalConfig();
           } else {
@@ -123,17 +124,17 @@ export default function AdminPage() {
     };
 
     verifyAdmin();
-  }, [account]);
+  }, [activeAddress]);
 
   const handleFileUpload = async (file: File, type: 'image' | 'sprite') => {
-    if (!account) {
+    if (!activeAddress) {
       alert(t('admin.alerts.connect_wallet') || 'Please connect your wallet first');
       return;
     }
     try {
       setUploading(prev => ({ ...prev, [type]: true }));
       setUploadDone(prev => ({ ...prev, [type]: false }));
-      const { blobId, blobObjectId } = await WalrusService.uploadFile(file, account.address, false);
+      const { blobId, blobObjectId } = await WalrusService.uploadFile(file, activeAddress, false);
       setTemplate(prev => ({
         ...prev,
         [type === 'image' ? 'image_url' : 'sprite_url']: WalrusService.getBlobUrl(blobId),
@@ -149,7 +150,7 @@ export default function AdminPage() {
   };
 
   const handleCreateTemplate = () => {
-    if (!account) return;
+    if (!activeAddress) return;
     const tx = new Transaction();
 
     // Gửi ID template sang global_config luôn để quản lý tập trung
@@ -203,7 +204,7 @@ export default function AdminPage() {
   };
 
   const handleMintToken = () => {
-    if (!account || !tokenMint.recipient) return;
+    if (!activeAddress || !tokenMint.recipient) return;
     const tx = new Transaction();
     tx.moveCall({
       target: `${PET_TOKEN_PACKAGE_ID}::pet_token::mint`,
@@ -239,7 +240,7 @@ export default function AdminPage() {
   };
 
   const handleUpdateTreasury = () => {
-    if (!account || !config.treasury) return;
+    if (!activeAddress || !config.treasury) return;
     const tx = new Transaction();
     tx.moveCall({
       target: `${PACKAGE_ID}::${MODULES.PET_NFT}::update_treasury`,
@@ -276,7 +277,7 @@ export default function AdminPage() {
   };
 
   const handleUpdateConfig = () => {
-    if (!account) return;
+    if (!activeAddress) return;
     const tx = new Transaction();
     tx.moveCall({
       target: `${PACKAGE_ID}::${MODULES.PET_NFT}::${FUNCTIONS.UPDATE_CONFIG}`,
@@ -313,7 +314,7 @@ export default function AdminPage() {
   };
 
   const handleIncreaseLimit = () => {
-    if (!account || !increaseAmount) return;
+    if (!activeAddress || !increaseAmount) return;
     const tx = new Transaction();
     tx.moveCall({
       target: `${PACKAGE_ID}::${MODULES.PET_NFT}::increase_mint_limit`,
@@ -350,7 +351,7 @@ export default function AdminPage() {
     });
   };
 
-  if (!account) {
+  if (!activeAddress) {
     return (
       <div className="pt-28 pb-20 min-h-screen bg-gray-50 dark:bg-[#0a0a0b] flex items-center justify-center">
         <div className="max-w-md w-full mx-4 p-8 bg-white dark:bg-gray-900 rounded-[2.5rem] shadow-2xl border border-gray-100 dark:border-gray-800 text-center animate-in fade-in zoom-in duration-300">
@@ -402,7 +403,7 @@ export default function AdminPage() {
               {t('admin.auth.wallet_connected') || 'Connected Wallet:'}
             </p>
             <p className="font-mono text-xs text-rose-500 break-all select-all font-semibold">
-              {account.address}
+              {activeAddress}
             </p>
             {adminAddress && (
               <>

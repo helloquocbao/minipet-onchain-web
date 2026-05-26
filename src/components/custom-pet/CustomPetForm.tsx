@@ -18,6 +18,12 @@ interface CustomPetFormProps {
   loadingSlot: boolean;
   handleFileUpload: (file: File, type: 'image' | 'sprite') => Promise<void>;
   handleMint: () => Promise<void>;
+  handleGeneratePet: () => Promise<void>;
+  baseImage: File | null;
+  setBaseImage: (file: File | null) => void;
+  isGenerating: boolean;
+  generationStep: 'upload' | 'review';
+  setGenerationStep: (step: 'upload' | 'review') => void;
   t: (key: string, options?: any) => string;
   navigate: (path: string | number) => void;
 }
@@ -28,8 +34,15 @@ export const CustomPetForm: React.FC<CustomPetFormProps> = ({
   uploading,
   hasSlot,
   loadingSlot,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   handleFileUpload,
   handleMint,
+  handleGeneratePet,
+  baseImage,
+  setBaseImage,
+  isGenerating,
+  generationStep,
+  setGenerationStep,
   t,
   navigate
 }) => {
@@ -76,104 +89,155 @@ export const CustomPetForm: React.FC<CustomPetFormProps> = ({
           />
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* Image Upload */}
-          <div>
-            <label className="block text-sm font-bold text-gray-500 dark:text-gray-400 mb-2 uppercase tracking-wider">
-              {t('custom.form.avatar_label')}
-            </label>
-            <div className="relative group">
-              <div className={`aspect-square rounded-3xl border-2 border-dashed flex flex-col items-center justify-center transition-all ${petData.imageBlob ? 'border-green-500 bg-green-50/50 dark:bg-green-900/10' : 'border-gray-200 dark:border-gray-700 group-hover:border-indigo-400'}`}>
-                {uploading.image ? (
-                  <Loader2 className="animate-spin text-indigo-500" size={32} />
-                ) : petData.imageBlob ? (
-                  <div className="text-center p-2 h-full w-full flex flex-col items-center justify-center relative">
-                    <img 
-                      src={WalrusService.getBlobUrl(petData.imageBlob)} 
-                      alt="Avatar Preview" 
-                      className="w-full h-full object-contain rounded-2xl max-h-32"
-                    />
-                    <div className="absolute bottom-2 bg-white/90 dark:bg-gray-900/90 backdrop-blur px-2.5 py-1 rounded-full shadow-sm flex items-center gap-1">
-                      <Check className="text-green-500 animate-bounce" size={14} />
-                      <span className="text-[10px] font-black text-green-600 dark:text-green-400 uppercase">
-                        {t('custom.form.uploaded_hint')}
-                      </span>
+        {generationStep === 'upload' ? (
+          <div className="space-y-6">
+            <div>
+              <label className="block text-sm font-bold text-gray-500 dark:text-gray-400 mb-2 uppercase tracking-wider">
+                Upload Base Image for AI Generation
+              </label>
+              <div className="relative group">
+                <div className={`aspect-video rounded-3xl border-2 border-dashed flex flex-col items-center justify-center transition-all ${baseImage ? 'border-indigo-500 bg-indigo-50/50 dark:bg-indigo-900/10' : 'border-gray-200 dark:border-gray-700 group-hover:border-indigo-400'}`}>
+                  {baseImage ? (
+                    <div className="text-center p-2 h-full w-full flex flex-col items-center justify-center relative">
+                      <img 
+                        src={URL.createObjectURL(baseImage)} 
+                        alt="Base Preview" 
+                        className="w-full h-full object-contain rounded-2xl max-h-48"
+                      />
+                      <div className="absolute bottom-4 bg-white/90 dark:bg-gray-900/90 backdrop-blur px-3 py-1.5 rounded-full shadow-sm flex items-center gap-2">
+                        <Check className="text-green-500" size={16} />
+                        <span className="text-xs font-black text-green-600 dark:text-green-400 uppercase">
+                          Image Selected
+                        </span>
+                      </div>
                     </div>
-                  </div>
-                ) : (
-                  <>
-                    <Upload className="text-gray-400 group-hover:text-indigo-400 mb-2" size={32} />
-                    <p className="text-xs font-bold text-gray-400 uppercase">{t('custom.form.upload_hint')}</p>
-                  </>
-                )}
-                <input 
-                  type="file" 
-                  className="absolute inset-0 opacity-0 cursor-pointer" 
-                  accept="image/*"
-                  onChange={(e) => e.target.files?.[0] && handleFileUpload(e.target.files[0], 'image')}
-                />
+                  ) : (
+                    <>
+                      <Upload className="text-gray-400 group-hover:text-indigo-400 mb-3" size={40} />
+                      <p className="text-sm font-bold text-gray-400 uppercase">Click or drag to upload base image</p>
+                    </>
+                  )}
+                  <input 
+                    type="file" 
+                    className="absolute inset-0 opacity-0 cursor-pointer" 
+                    accept="image/*"
+                    onChange={(e) => e.target.files?.[0] && setBaseImage(e.target.files[0])}
+                  />
+                </div>
               </div>
             </div>
-          </div>
 
-          {/* Sprite Upload */}
-          <div>
-            <label className="block text-sm font-bold text-gray-500 dark:text-gray-400 mb-2 uppercase tracking-wider">
-              {t('custom.form.sprite_label')}
-            </label>
-            <div className="relative group">
-              <div className={`aspect-square rounded-3xl border-2 border-dashed flex flex-col items-center justify-center transition-all ${petData.spriteBlob ? 'border-green-500 bg-green-50/50 dark:bg-green-900/10' : 'border-gray-200 dark:border-gray-700 group-hover:border-indigo-400'}`}>
-                {uploading.sprite ? (
-                  <Loader2 className="animate-spin text-indigo-500" size={32} />
-                ) : petData.spriteBlob ? (
-                  <div className="text-center p-2 h-full w-full flex flex-col items-center justify-center relative">
-                    <img 
-                      src={WalrusService.getBlobUrl(petData.spriteBlob)} 
-                      alt="Sprite Preview" 
-                      className="w-full h-full object-contain rounded-2xl max-h-32"
-                    />
-                    <div className="absolute bottom-2 bg-white/90 dark:bg-gray-900/90 backdrop-blur px-2.5 py-1 rounded-full shadow-sm flex items-center gap-1">
-                      <Check className="text-green-500 animate-bounce" size={14} />
-                      <span className="text-[10px] font-black text-green-600 dark:text-green-400 uppercase">
-                        {t('custom.form.uploaded_hint')}
-                      </span>
-                    </div>
+            <button 
+              onClick={handleGeneratePet}
+              disabled={!hasSlot || !petData.name || !baseImage || isGenerating}
+              className="w-full bg-indigo-600 hover:bg-indigo-700 text-white rounded-2xl py-5 font-black text-lg shadow-xl hover:shadow-indigo-500/30 hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-50 disabled:hover:scale-100 flex items-center justify-center gap-3"
+            >
+              {isGenerating ? (
+                <>
+                  <Loader2 className="animate-spin" size={24} />
+                  Generating AI Pet...
+                </>
+              ) : (
+                <>
+                  <Sparkles size={24} />
+                  Generate with AI
+                </>
+              )}
+            </button>
+          </div>
+        ) : (
+          <div className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* Generated Avatar */}
+              <div>
+                <label className="block text-sm font-bold text-gray-500 dark:text-gray-400 mb-2 uppercase tracking-wider">
+                  Generated Avatar
+                </label>
+                <div className="relative group">
+                  <div className="aspect-square rounded-3xl border-2 border-green-500 bg-green-50/50 dark:bg-green-900/10 flex flex-col items-center justify-center transition-all">
+                    {uploading.image ? (
+                      <Loader2 className="animate-spin text-indigo-500" size={32} />
+                    ) : petData.imageBlob ? (
+                      <div className="text-center p-2 h-full w-full flex flex-col items-center justify-center relative">
+                        <img 
+                          src={WalrusService.getBlobUrl(petData.imageBlob)} 
+                          alt="Avatar Preview" 
+                          className="w-full h-full object-contain rounded-2xl max-h-32"
+                        />
+                        <div className="absolute bottom-2 bg-white/90 dark:bg-gray-900/90 backdrop-blur px-2.5 py-1 rounded-full shadow-sm flex items-center gap-1">
+                          <Check className="text-green-500 animate-bounce" size={14} />
+                          <span className="text-[10px] font-black text-green-600 dark:text-green-400 uppercase">
+                            Generated & Uploaded
+                          </span>
+                        </div>
+                      </div>
+                    ) : null}
                   </div>
-                ) : (
-                  <>
-                    <Upload className="text-gray-400 group-hover:text-indigo-400 mb-2" size={32} />
-                    <p className="text-xs font-bold text-gray-400 uppercase">{t('custom.form.upload_hint')}</p>
-                  </>
-                )}
-                <input 
-                  type="file" 
-                  className="absolute inset-0 opacity-0 cursor-pointer" 
-                  accept="image/*"
-                  onChange={(e) => e.target.files?.[0] && handleFileUpload(e.target.files[0], 'sprite')}
-                />
+                </div>
+              </div>
+
+              {/* Generated Sprite */}
+              <div>
+                <label className="block text-sm font-bold text-gray-500 dark:text-gray-400 mb-2 uppercase tracking-wider">
+                  Generated Sprite
+                </label>
+                <div className="relative group">
+                  <div className="aspect-square rounded-3xl border-2 border-green-500 bg-green-50/50 dark:bg-green-900/10 flex flex-col items-center justify-center transition-all">
+                    {uploading.sprite ? (
+                      <Loader2 className="animate-spin text-indigo-500" size={32} />
+                    ) : petData.spriteBlob ? (
+                      <div className="text-center p-2 h-full w-full flex flex-col items-center justify-center relative">
+                        <img 
+                          src={WalrusService.getBlobUrl(petData.spriteBlob)} 
+                          alt="Sprite Preview" 
+                          className="w-full h-full object-contain rounded-2xl max-h-32"
+                        />
+                        <div className="absolute bottom-2 bg-white/90 dark:bg-gray-900/90 backdrop-blur px-2.5 py-1 rounded-full shadow-sm flex items-center gap-1">
+                          <Check className="text-green-500 animate-bounce" size={14} />
+                          <span className="text-[10px] font-black text-green-600 dark:text-green-400 uppercase">
+                            Generated & Uploaded
+                          </span>
+                        </div>
+                      </div>
+                    ) : null}
+                  </div>
+                </div>
               </div>
             </div>
-          </div>
-        </div>
 
-        {/* Sponsorship Badge */}
-        <div className="bg-indigo-50 dark:bg-indigo-900/20 p-5 rounded-3xl border border-indigo-100 dark:border-indigo-800">
-          <div className="flex gap-4">
-            <Sparkles className="text-indigo-500 shrink-0 mt-0.5" size={20} />
-            <p className="text-xs text-indigo-900 dark:text-indigo-300 font-medium leading-relaxed">
-              <strong>{t('custom.form.sponsor_badge')}:</strong> {t('custom.form.sponsor_desc')}
-            </p>
-          </div>
-        </div>
+            {/* Sponsorship Badge */}
+            <div className="bg-indigo-50 dark:bg-indigo-900/20 p-5 rounded-3xl border border-indigo-100 dark:border-indigo-800">
+              <div className="flex gap-4">
+                <Sparkles className="text-indigo-500 shrink-0 mt-0.5" size={20} />
+                <p className="text-xs text-indigo-900 dark:text-indigo-300 font-medium leading-relaxed">
+                  <strong>{t('custom.form.sponsor_badge')}:</strong> {t('custom.form.sponsor_desc')}
+                </p>
+              </div>
+            </div>
 
-        <button 
-          onClick={handleMint}
-          disabled={!hasSlot || !petData.name || !petData.imageBlob || !petData.spriteBlob}
-          className="w-full bg-black dark:bg-white dark:text-black text-white rounded-2xl py-5 font-black text-lg shadow-xl hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-50 disabled:hover:scale-100 flex items-center justify-center gap-3"
-        >
-          <Sparkles size={24} />
-          {t('custom.form.mint_btn')}
-        </button>
+            <div className="flex gap-4">
+              <button 
+                onClick={() => {
+                  setGenerationStep('upload');
+                  setBaseImage(null);
+                  setPetData(prev => ({...prev, imageBlob: '', imageObjId: '', spriteBlob: '', spriteObjId: ''}));
+                }}
+                className="w-1/3 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-2xl py-5 font-black text-lg shadow-xl hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center"
+              >
+                Retrying
+              </button>
+              
+              <button 
+                onClick={handleMint}
+                disabled={!hasSlot || !petData.name || !petData.imageBlob || !petData.spriteBlob || uploading.image || uploading.sprite}
+                className="w-2/3 bg-black dark:bg-white dark:text-black text-white rounded-2xl py-5 font-black text-lg shadow-xl hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-50 disabled:hover:scale-100 flex items-center justify-center gap-3"
+              >
+                <Sparkles size={24} />
+                {t('custom.form.mint_btn')}
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
