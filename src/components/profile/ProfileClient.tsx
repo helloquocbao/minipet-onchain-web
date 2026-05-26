@@ -115,7 +115,7 @@ export const ProfileClient = () => {
 
   if (!activeAddress) {
     return (
-      <div className="min-h-screen pt-24 pb-12 flex items-center justify-center bg-gray-50 dark:bg-gray-900">
+      <div className="min-h-screen pt-24 pb-12 flex items-center justify-center bg-transparent">
         <div className="text-center p-8 bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 max-w-md w-full">
           <Activity size={48} className="mx-auto text-gray-300 dark:text-gray-600 mb-4" />
           <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-2">Vui lòng kết nối ví</h2>
@@ -126,7 +126,7 @@ export const ProfileClient = () => {
   }
 
   return (
-    <div className="min-h-screen pt-24 pb-12 bg-gray-50 dark:bg-gray-900">
+    <div className="min-h-screen pt-24 pb-12 bg-transparent">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="mb-8">
           <h1 className="text-3xl font-extrabold text-gray-900 dark:text-white">Profile Cá Nhân</h1>

@@ -27,7 +27,7 @@ export function CustomPetClient() {
   } = useCustomPet();
 
   return (
-    <div className="pt-32 pb-20 min-h-screen bg-gray-50 dark:bg-black/20">
+    <div className="pt-32 pb-20 min-h-screen bg-transparent">
       <div className="container mx-auto px-4 max-w-6xl">
         <button
           onClick={() => navigate(-1)}

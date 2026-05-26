@@ -3,7 +3,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRouter } from 'next/navigation';
-import { ArrowLeft } from 'lucide-react';
+
 
 export const HeroSection = () => {
   const { t } = useTranslation();
@@ -14,20 +14,20 @@ export const HeroSection = () => {
       {/* Back navigation */}
       <button
         onClick={() => router.push('/')}
-        className="flex items-center gap-2 text-gray-500 mb-8 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors font-bold uppercase text-xs tracking-widest bg-transparent border-none cursor-pointer"
+        className="text-gray-400 mb-6 hover:text-indigo-600 dark:hover:text-indigo-400 font-bold uppercase text-[10px] tracking-widest bg-transparent border-none cursor-pointer transition-all hover:scale-102"
       >
-        <ArrowLeft size={16} /> {t('custom.back')}
+        {t('custom.back')}
       </button>
 
       {/* Hero Section */}
-      <div className="text-center mb-16 max-w-3xl mx-auto">
-        <h1 className="text-[36px] sm:text-[44px] md:text-[52px] font-[900] text-[#111827] dark:text-white tracking-tight leading-tight mb-4">
+      <div className="text-center mb-12 max-w-3xl mx-auto">
+        <h1 className="text-[36px] sm:text-[44px] md:text-[48px] font-black tracking-tight leading-none mb-3 bg-gradient-to-r from-gray-900 via-indigo-950 to-gray-900 dark:from-white dark:via-indigo-100 dark:to-white bg-clip-text text-transparent">
           {t('pet_features.title')}
         </h1>
-        <p className="text-indigo-600 dark:text-indigo-400 font-extrabold text-[15px] sm:text-[17px] mb-6 uppercase tracking-wider">
+        <p className="text-indigo-500 dark:text-indigo-400 font-black text-[12px] sm:text-[13px] mb-4 uppercase tracking-widest">
           {t('pet_features.subtitle')}
         </p>
-        <p className="text-gray-600 dark:text-gray-400 text-[15px] sm:text-[16px] leading-relaxed">
+        <p className="text-gray-500 dark:text-gray-400 text-[14px] sm:text-[15px] leading-relaxed max-w-2xl mx-auto font-medium">
           {t('pet_features.hero_desc')}
         </p>
       </div>

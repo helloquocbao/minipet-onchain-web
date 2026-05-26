@@ -153,11 +153,11 @@ export const useCustomPet = () => {
   };
 
   const handleMint = async () => {
-    if (!account || !hasSlot) return;
+    if (!activeAddress || !hasSlot) return;
 
     // Find the slot object
     const objects = await suiClient.getOwnedObjects({
-      owner: account.address,
+      owner: activeAddress,
       filter: { StructType: `${PACKAGE_ID}::${MODULES.PET_NFT}::MintSlot` }
     });
     
@@ -183,7 +183,7 @@ export const useCustomPet = () => {
     });
 
     try {
-      tx = await WalrusService.sponsorTransaction(tx, account.address);
+      tx = await WalrusService.sponsorTransaction(tx, activeAddress);
       
       signAndExecuteTransaction({ transaction: tx }, {
         onSuccess: async (response) => {
@@ -230,7 +230,6 @@ export const useCustomPet = () => {
     isGenerating,
     generationStep,
     setGenerationStep,
-    account,
     t,
     navigate
   };
