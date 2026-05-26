@@ -24,7 +24,6 @@ export const Navbar = ({ isDark, toggleTheme }: NavbarProps) => {
   const { t, i18n } = useTranslation();
   const router = useRouter();
   const pathname = usePathname();
-  if (pathname === '/sync-login') return null;
   const account = useCurrentAccount();
   const { mutate: disconnect } = useDisconnectWallet();
   
@@ -76,6 +75,8 @@ export const Navbar = ({ isDark, toggleTheme }: NavbarProps) => {
   ];
 
   const currentLang = languages.find(l => l.code === i18n.language) || languages[0];
+
+  if (pathname === '/sync-login') return null;
 
   return (
     <header className="fixed top-3 left-0 right-0 z-50 pointer-events-none" ref={menuRef}>
