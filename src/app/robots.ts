@@ -7,6 +7,6 @@ export default function robots(): MetadataRoute.Robots {
       allow: '/',
       disallow: '/admin',
     },
-    sitemap: 'https://minipet.vercel.app/sitemap.xml',
+    sitemap: 'https://onchain.minipet.xyz/sitemap.xml',
   };
 }

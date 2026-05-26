@@ -1,12 +1,15 @@
+"use client";
+
 import React from 'react';
 import { Globe, ChevronDown, Menu, X, Download } from 'lucide-react';
 import { FaGithub } from 'react-icons/fa';
 import Link from 'next/link';
 import { useRouter, usePathname } from 'next/navigation';
 import { useTranslation } from 'react-i18next';
-import { ConnectButton, useCurrentAccount, useDisconnectWallet, useSuiClientQuery } from '@mysten/dapp-kit';
+import { useCurrentAccount, useDisconnectWallet, useSuiClientQuery } from '@mysten/dapp-kit';
 import { Sun, Moon, User, LayoutDashboard, LogOut, Sparkles } from 'lucide-react';
 import { PACKAGE_ID, MODULES } from '../../services/blockchain/sui';
+import { WalletConnectModal } from '../web3/WalletConnectModal';
 
 interface NavbarProps {
   isDark: boolean;
@@ -21,12 +24,14 @@ export const Navbar = ({ isDark, toggleTheme }: NavbarProps) => {
   const { t, i18n } = useTranslation();
   const router = useRouter();
   const pathname = usePathname();
+  if (pathname === '/sync-login') return null;
   const account = useCurrentAccount();
   const { mutate: disconnect } = useDisconnectWallet();
   
   const [langOpen, setLangOpen] = React.useState(false);
   const [menuOpen, setMenuOpen] = React.useState(false);
   const [userDropdownOpen, setUserDropdownOpen] = React.useState(false);
+  const [connectModalOpen, setConnectModalOpen] = React.useState(false);
   
   const langRef = React.useRef<HTMLDivElement>(null);
   const menuRef = React.useRef<HTMLDivElement>(null);
@@ -109,11 +114,29 @@ export const Navbar = ({ isDark, toggleTheme }: NavbarProps) => {
             >
               {t('nav.market')}
             </Link>
+            <Link
+              href="/sync-login"
+              className={`text-[13px] font-bold transition-colors no-underline ${
+                pathname === '/sync-login'
+                  ? 'text-indigo-600 dark:text-indigo-400 font-extrabold'
+                  : 'text-gray-600 dark:text-gray-300 hover:text-[#111827] dark:hover:text-white'
+              }`}
+            >
+              {t('nav.sync')}
+            </Link>
           </nav>
 
           <div className="flex items-center gap-1.5 sm:gap-3">
             {!account ? (
-              <ConnectButton className="!rounded-xl !text-xs !font-black !px-4 !py-1.5" />
+              <button
+                onClick={() => {
+                  console.log('Connect button clicked, opening modal...');
+                  setConnectModalOpen(true);
+                }}
+                className="pointer-events-auto bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-black px-4 py-1.5 cursor-pointer border-none transition-all duration-200 active:scale-[0.97] shadow-md shadow-indigo-600/10 hover:shadow-indigo-600/20"
+              >
+                {t('nav.connect') || 'Connect'}
+              </button>
             ) : (
               <div className="relative" ref={userRef}>
                 <button
@@ -271,6 +294,17 @@ export const Navbar = ({ isDark, toggleTheme }: NavbarProps) => {
               >
                 {t('nav.market')}
               </Link>
+              <Link
+                href="/sync-login"
+                onClick={() => setMenuOpen(false)}
+                className={`w-full text-left px-5 py-4 rounded-2xl text-[14px] font-bold transition-all no-underline block ${
+                  pathname === '/sync-login'
+                    ? 'bg-indigo-50 dark:bg-indigo-900/20 text-indigo-600 dark:text-indigo-400'
+                    : 'text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-[#111827] dark:hover:text-white'
+                }`}
+              >
+                {t('nav.sync')}
+              </Link>
               <div className="h-px bg-gray-100 dark:bg-gray-800 my-2 mx-5" />
               <a
                 href="https://github.com/helloquocbao/mini-pet"
@@ -286,6 +320,7 @@ export const Navbar = ({ isDark, toggleTheme }: NavbarProps) => {
           </div>
         )}
       </Container>
+      <WalletConnectModal isOpen={connectModalOpen} onClose={() => setConnectModalOpen(false)} />
     </header>
   );
 };

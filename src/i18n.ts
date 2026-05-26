@@ -18,7 +18,13 @@ const resources = {
         admin: 'Admin Hub',
         profile: 'Profile',
         mint_custom: 'Mint Custom Pet',
-        logout: 'Log Out'
+        logout: 'Log Out',
+        sync: 'zkLogin / Sync',
+        connect: 'Connect Wallet'
+      },
+      wallet: {
+        modal_title: 'Connect your wallet',
+        modal_subtitle: 'Choose a method to sync your wallet with MiniPet'
       },
       hero: {
         title1: 'Meet your new',
@@ -332,7 +338,13 @@ const resources = {
         admin: 'Quản trị',
         profile: 'Cá nhân',
         mint_custom: 'Tạo Pet mới',
-        logout: 'Đăng xuất'
+        logout: 'Đăng xuất',
+        sync: 'Đồng bộ ví / zkLogin',
+        connect: 'Kết nối ví'
+      },
+      wallet: {
+        modal_title: 'Kết nối ví của bạn',
+        modal_subtitle: 'Chọn phương thức phù hợp để liên kết tài sản của bạn với MiniPet'
       },
       hero: {
         title1: 'Gặp gỡ những',
@@ -646,7 +658,13 @@ const resources = {
         admin: '管理中心',
         profile: '个人中心',
         mint_custom: '铸造自定义宠物',
-        logout: '登出'
+        logout: '登出',
+        sync: 'zkLogin / 同步钱包',
+        connect: '连接钱包'
+      },
+      wallet: {
+        modal_title: '连接您的钱包',
+        modal_subtitle: '选择合适的方法将您的钱包与 MiniPet 关联'
       },
       hero: {
         title1: '遇见你的新',
@@ -744,7 +762,13 @@ const resources = {
         admin: 'Pannello Admin',
         profile: 'Profilo',
         mint_custom: 'Crea Pet Personalizzato',
-        logout: 'Disconnetti'
+        logout: 'Disconnetti',
+        sync: 'Sincronizza / zkLogin',
+        connect: 'Connetti wallet'
+      },
+      wallet: {
+        modal_title: 'Connetti il tuo wallet',
+        modal_subtitle: 'Scegli un metodo per collegare il tuo wallet con MiniPet'
       },
       hero: {
         title1: 'Incontra i tuoi',
@@ -842,7 +866,13 @@ const resources = {
         admin: 'Espace Admin',
         profile: 'Profil',
         mint_custom: 'Créer Pet',
-        logout: 'Se Déconnecter'
+        logout: 'Se Déconnecter',
+        sync: 'Synchro / zkLogin',
+        connect: 'Se Connecter'
+      },
+      wallet: {
+        modal_title: 'Connectez votre portefeuille',
+        modal_subtitle: 'Choisissez une méthode pour lier votre portefeuille avec MiniPet'
       },
       hero: {
         title1: 'Rencontrez vos',
@@ -940,7 +970,13 @@ const resources = {
         admin: '관리자 센터',
         profile: '프로필',
         mint_custom: '커스텀 펫 만들기',
-        logout: '로그아웃'
+        logout: '로그아웃',
+        sync: 'zkLogin / 지갑 동기화',
+        connect: '지갑 연결'
+      },
+      wallet: {
+        modal_title: '지갑 연결',
+        modal_subtitle: 'MiniPet에 지갑을 연결할 방법을 선택하세요'
       },
       hero: {
         title1: '새로운',

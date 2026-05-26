@@ -8,23 +8,23 @@ export const metadata: Metadata = {
   keywords: 'minipet, minipets, mini pet, mini pets, mini pet app, mini pet apps, virtual pet, qbao, desktop pet, pixel pet, pomodoro timer, desktop companion, screen pet, interactive pet, minipet official, minipet website',
   robots: 'index, follow, max-image-preview:large',
   alternates: {
-    canonical: 'https://minipet.vercel.app',
+    canonical: 'https://onchain.minipet.xyz',
     languages: {
-      'en': 'https://minipet.vercel.app/?lang=en',
-      'vi': 'https://minipet.vercel.app/?lang=vi',
-      'zh': 'https://minipet.vercel.app/?lang=zh',
-      'fr': 'https://minipet.vercel.app/?lang=fr',
-      'it': 'https://minipet.vercel.app/?lang=it',
+      'en': 'https://onchain.minipet.xyz/?lang=en',
+      'vi': 'https://onchain.minipet.xyz/?lang=vi',
+      'zh': 'https://onchain.minipet.xyz/?lang=zh',
+      'fr': 'https://onchain.minipet.xyz/?lang=fr',
+      'it': 'https://onchain.minipet.xyz/?lang=it',
     },
   },
   openGraph: {
     type: 'website',
-    url: 'https://minipet.vercel.app',
+    url: 'https://onchain.minipet.xyz',
     title: 'MiniPet - Your Cute Desktop Pixel Companion',
     description: 'MiniPet is a lightweight desktop app that brings cute pixel friends to your workspace.',
     images: [
       {
-        url: 'https://minipet.vercel.app/icons/icon.png',
+        url: 'https://onchain.minipet.xyz/icons/icon.png',
         width: 512,
         height: 512,
         alt: 'MiniPet Logo',
@@ -35,7 +35,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'MiniPet - Your Cute Desktop Pixel Companion',
     description: 'MiniPet is a lightweight desktop app that brings cute pixel friends to your workspace.',
-    images: ['https://minipet.vercel.app/icons/icon.png'],
+    images: ['https://onchain.minipet.xyz/icons/icon.png'],
   },
 };
 

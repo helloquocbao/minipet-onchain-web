@@ -1,7 +1,7 @@
 import { MetadataRoute } from 'next';
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = 'https://minipet.vercel.app';
+  const baseUrl = 'https://onchain.minipet.xyz';
   
   // Public routes to index
   const routes = ['', '/pet-features', '/market', '/custom-pet'];

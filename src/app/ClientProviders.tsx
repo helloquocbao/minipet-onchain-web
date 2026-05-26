@@ -8,16 +8,21 @@ import { Navbar } from '../components/layout/Navbar';
 import { Footer } from '../components/layout/Footer';
 
 export function ClientProviders({ children }: { children: React.ReactNode }) {
-  const [isDark, setIsDark] = React.useState(() => {
-    if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem('theme');
-      if (saved) return saved === 'dark';
-      return window.matchMedia('(prefers-color-scheme: dark)').matches;
-    }
-    return false;
-  });
+  const [isDark, setIsDark] = React.useState(false);
+  const [mounted, setMounted] = React.useState(false);
 
   React.useEffect(() => {
+    const saved = localStorage.getItem('theme');
+    if (saved) {
+      setIsDark(saved === 'dark');
+    } else {
+      setIsDark(window.matchMedia('(prefers-color-scheme: dark)').matches);
+    }
+    setMounted(true);
+  }, []);
+
+  React.useEffect(() => {
+    if (!mounted) return;
     if (isDark) {
       document.documentElement.classList.add('dark');
       localStorage.setItem('theme', 'dark');
@@ -25,7 +30,7 @@ export function ClientProviders({ children }: { children: React.ReactNode }) {
       document.documentElement.classList.remove('dark');
       localStorage.setItem('theme', 'light');
     }
-  }, [isDark]);
+  }, [isDark, mounted]);
 
   const toggleTheme = () => setIsDark(!isDark);
 

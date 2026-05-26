@@ -1,3 +1,5 @@
+"use client";
+
 import { useTranslation } from 'react-i18next';
 import { FaGithub } from 'react-icons/fa';
 import React from 'react';
