@@ -23,14 +23,14 @@ interface FeatureCardProps {
 const FeatureCard = ({ icon: Icon, iconColorClass, iconBgClass, titleKey, descKey }: FeatureCardProps) => {
   const { t } = useTranslation();
   return (
-    <div className="card p-8 flex flex-col group h-full">
-      <div className={`w-12 h-12 rounded-2xl ${iconBgClass} ${iconColorClass} flex items-center justify-center mb-6 group-hover:scale-110 duration-300 shadow-sm`}>
-        <Icon size={22} />
+    <div className="bg-white/40 dark:bg-slate-900/40 backdrop-blur-md border border-white/60 dark:border-slate-800/40 hover:border-indigo-200/60 dark:hover:border-indigo-900/60 shadow-sm hover:shadow-md hover:shadow-indigo-500/[0.02] hover:-translate-y-1 rounded-2xl p-6 flex flex-col group transition-all duration-300 h-full">
+      <div className={`w-10 h-10 rounded-xl flex items-center justify-center mb-5 shadow-sm transition-all duration-300 group-hover:scale-110 group-hover:bg-indigo-600 group-hover:text-white group-hover:shadow-indigo-500/10 ${iconBgClass} ${iconColorClass}`}>
+        <Icon size={18} className="transition-colors animate-none" />
       </div>
-      <h3 className="text-lg font-black text-gray-900 dark:text-white mb-3">
+      <h3 className="text-sm sm:text-base font-extrabold text-gray-900 dark:text-white mb-2 leading-snug">
         {t(titleKey)}
       </h3>
-      <p className="text-[13.5px] text-gray-500 dark:text-gray-400 leading-relaxed">
+      <p className="text-[12px] text-gray-500 dark:text-gray-400 leading-relaxed font-medium">
         {t(descKey)}
       </p>
     </div>
@@ -84,7 +84,7 @@ export const FeatureGrid = () => {
   ];
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-20">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 mb-16">
       {features.map((feature, idx) => (
         <FeatureCard
           key={idx}

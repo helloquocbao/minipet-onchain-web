@@ -7,7 +7,7 @@
 
 @layer base {
   :root {
-    --bg-gradient: linear-gradient(135deg, #e8eeff 0%, #f0e8ff 25%, #ffe8f5 50%, #fff5e8 75%, #e8ffee 100%);
+    --bg-gradient: radial-gradient(circle at top left, rgba(125, 211, 252, 0.15) 0%, rgba(248, 249, 255, 0) 50%), radial-gradient(circle at bottom right, rgba(100, 222, 175, 0.15) 0%, rgba(248, 249, 255, 0) 50%);
     --text-main: #1f2937;
     --text-muted: #6b7280;
     --card-bg: rgba(255, 255, 255, 0.72);
@@ -46,7 +46,8 @@
     scroll-behavior: smooth;
   }
   body {
-    background: var(--bg-gradient);
+    background-color: #f8f9ff;
+    background-image: var(--bg-gradient);
     background-attachment: fixed;
     color: var(--text-main);
     margin: 0;

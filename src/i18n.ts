@@ -120,6 +120,16 @@ const resources = {
         nav_badge: 'Official Store',
         title: 'Adopt a Companion',
         desc: 'Choose from our official collection of pixel pets. Each one is a unique NFT on the Sui blockchain.',
+        filters: {
+          search_placeholder: 'Search pet templates...',
+          type_all: 'All Templates',
+          type_official: 'Official (SUI)',
+          type_custom: 'Custom (MIPET)',
+          sort_price_asc: 'Price: Low to High',
+          sort_price_desc: 'Price: High to Low',
+          sort_name_asc: 'Name: A-Z',
+          stats_showing: 'Showing {{count}} of {{total}} templates'
+        },
         custom_slot: {
           title: 'Custom Pet Slot',
           desc: 'Design your own pixel friend'
@@ -440,6 +450,16 @@ const resources = {
         nav_badge: 'Cửa hàng chính thức',
         title: 'Nhận nuôi bạn đồng hành',
         desc: 'Chọn từ bộ sưu tập thú cưng pixel chính thức của chúng tôi. Mỗi con là một NFT duy nhất trên blockchain Sui.',
+        filters: {
+          search_placeholder: 'Tìm kiếm thú cưng...',
+          type_all: 'Tất cả',
+          type_official: 'Chính thức (SUI)',
+          type_custom: 'Tự chọn (MIPET)',
+          sort_price_asc: 'Giá: Thấp đến Cao',
+          sort_price_desc: 'Giá: Cao đến Thấp',
+          sort_name_asc: 'Tên: A-Z',
+          stats_showing: 'Hiển thị {{count}} trên {{total}} thú cưng'
+        },
         custom_slot: {
           title: 'Ô tạo Pet tùy chỉnh',
           desc: 'Tự thiết kế người bạn pixel của riêng bạn'
@@ -1156,6 +1176,16 @@ const resources = {
         nav_badge: '공식 상점',
         title: '동반자 입양하기',
         desc: '공식 픽셀 펫 컬렉션에서 선택해 보세요. 각 펫은 Sui 블록체인의 고유한 NFT입니다.',
+        filters: {
+          search_placeholder: '펫 템플릿 검색...',
+          type_all: '모든 템플릿',
+          type_official: '공식 (SUI)',
+          type_custom: '커스텀 (MIPET)',
+          sort_price_asc: '가격: 낮은 순',
+          sort_price_desc: '가격: 높은 순',
+          sort_name_asc: '이름: A-Z',
+          stats_showing: '{{total}}개 중 {{count}}개 표시 중'
+        },
         custom_slot: {
           title: '커스텀 펫 슬롯',
           desc: '나만의 픽셀 친구 디자인하기'

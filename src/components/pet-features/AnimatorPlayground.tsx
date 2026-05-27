@@ -69,23 +69,40 @@ export const AnimatorPlayground = () => {
   const posY = activeAction * 12.5; // activeAction goes from 0 to 8. 100 / 8 = 12.5
 
   return (
-    <div className="lg:col-span-7 bg-white dark:bg-gray-900 rounded-[2.5rem] p-6 sm:p-8 shadow-2xl border border-gray-100 dark:border-gray-800 flex flex-col">
+    <div className="lg:col-span-7 bg-white/40 dark:bg-slate-900/40 backdrop-blur-xl border border-white/50 dark:border-slate-800/40 shadow-sm rounded-3xl p-6 sm:p-8 flex flex-col">
       <div className="mb-6">
-        <span className="bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full mb-2 inline-block">
+        <span className="bg-indigo-50/50 dark:bg-indigo-950/30 text-indigo-600 dark:text-indigo-400 text-[9px] font-black uppercase tracking-widest px-2.5 py-0.5 rounded-md mb-2 inline-block border border-indigo-100/30 dark:border-indigo-900/30">
           {t('pet_features.commands.preview_box')}
         </span>
-        <h2 className="text-2xl font-black text-gray-900 dark:text-white">
+        <h2 className="text-xl md:text-2xl font-extrabold text-gray-900 dark:text-white">
           {t('pet_features.commands.title')}
         </h2>
-        <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+        <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5 font-medium">
           {t('pet_features.commands.desc')}
         </p>
       </div>
 
       {/* Animation Frame */}
-      <div className="flex-1 bg-gray-50 dark:bg-gray-950 rounded-3xl border border-gray-100 dark:border-gray-800/80 flex flex-col items-center justify-center relative overflow-hidden p-8 min-h-[260px] mb-6 group">
+      <div className="flex-1 bg-indigo-50/30 dark:bg-indigo-950/20 rounded-2xl border border-indigo-100/30 dark:border-indigo-900/30 flex flex-col items-center justify-center relative overflow-hidden p-8 min-h-[260px] mb-6 group">
+        {/* Retro Grid Background */}
+        <div className="absolute inset-0 bg-[linear-gradient(rgba(99,102,241,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(99,102,241,0.03)_1px,transparent_1px)] bg-[size:14px_14px] pointer-events-none" />
+        
+        {/* Tech labels HUD */}
+        <div className="absolute top-3 left-3 text-[9px] text-gray-400/85 dark:text-gray-500/80 font-mono select-none">CMD.PREVIEW_STATE</div>
+        <div className="absolute bottom-3 right-3 text-[9px] text-gray-400/85 dark:text-gray-500/80 font-mono select-none">FRAME_{currentFrame}</div>
+        
+        {/* Corner Crosshairs */}
+        <div className="absolute top-3 right-3 w-1.5 h-1.5 border-t border-r border-indigo-200/50 dark:border-indigo-900/50" />
+        <div className="absolute bottom-3 left-3 w-1.5 h-1.5 border-b border-l border-indigo-200/50 dark:border-indigo-900/50" />
+        <div className="absolute top-3 left-3 w-1.5 h-1.5 border-t border-l border-indigo-200/50 dark:border-indigo-900/50" />
+        <div className="absolute bottom-3 right-3 w-1.5 h-1.5 border-b border-r border-indigo-200/50 dark:border-indigo-900/50" />
+
+        {/* Center scanlines */}
+        <div className="absolute inset-x-0 h-[1px] bg-indigo-500/5 top-1/2 -translate-y-1/2 pointer-events-none" />
+        <div className="absolute inset-y-0 w-[1px] bg-indigo-500/5 left-1/2 -translate-x-1/2 pointer-events-none" />
+
         <div 
-          className="w-32 h-32 select-none pointer-events-none pixel-art transform transition-transform group-hover:scale-110 duration-300"
+          className="w-28 h-28 select-none pointer-events-none pixel-art transform transition-transform group-hover:scale-105 duration-300"
           style={{
             backgroundImage: "url('/cat/spritesheet.png')",
             backgroundSize: "800% 900%",
@@ -95,19 +112,19 @@ export const AnimatorPlayground = () => {
           }}
         />
         
-        <div className="absolute top-4 right-4 flex gap-2">
+        <div className="absolute top-3 right-3 flex gap-2">
           <button
             onClick={() => setIsPlaying(!isPlaying)}
-            className="w-8 h-8 rounded-full bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 shadow-md hover:shadow-lg flex items-center justify-center border border-gray-100 dark:border-gray-700 transition-all active:scale-95 cursor-pointer"
+            className="w-7 h-7 rounded-lg bg-white/80 dark:bg-slate-900/80 text-gray-500 dark:text-gray-400 shadow-sm hover:shadow flex items-center justify-center border border-gray-100 dark:border-slate-800 transition-all hover:scale-105 active:scale-95 cursor-pointer"
             aria-label={isPlaying ? "Pause animation" : "Play animation"}
           >
-            {isPlaying ? <Pause size={14} /> : <Play size={14} />}
+            {isPlaying ? <Pause size={12} /> : <Play size={12} />}
           </button>
         </div>
 
         {/* Status Banner */}
-        <div className="absolute bottom-4 left-4 right-4 bg-white/80 dark:bg-gray-900/85 backdrop-blur-sm px-4 py-2.5 rounded-2xl border border-gray-100 dark:border-gray-800 text-center">
-          <p className="text-[12px] font-bold text-gray-700 dark:text-gray-300 leading-snug">
+        <div className="absolute bottom-3 left-3 right-3 bg-white/70 dark:bg-slate-950/70 backdrop-blur-md px-3 py-1.5 rounded-xl border border-white/50 dark:border-slate-800/40 text-center">
+          <p className="text-[11px] font-extrabold text-gray-700 dark:text-gray-300 leading-snug">
             {getActionDescription(activeAction)}
           </p>
         </div>
@@ -122,13 +139,13 @@ export const AnimatorPlayground = () => {
               setActiveAction(action.id);
               setIsPlaying(true);
             }}
-            className={`py-3 px-4 rounded-2xl text-[12px] font-extrabold transition-all border flex flex-col items-center gap-1 cursor-pointer active:scale-98 ${
+            className={`py-2.5 px-3 rounded-xl text-[11px] font-bold transition-all border flex flex-col items-center gap-0.5 cursor-pointer active:scale-98 ${
               activeAction === action.id
-                ? 'bg-indigo-600 text-white border-indigo-600 shadow-lg shadow-indigo-600/20'
-                : 'bg-gray-50/50 dark:bg-gray-800/30 hover:bg-gray-100/80 dark:hover:bg-gray-800/80 text-gray-700 dark:text-gray-300 border-gray-100 dark:border-gray-800'
+                ? 'bg-indigo-600 text-white border-indigo-600 shadow-md shadow-indigo-600/10 hover:bg-indigo-700'
+                : 'bg-white/40 dark:bg-slate-900/20 backdrop-blur border border-gray-200/50 dark:border-slate-800/50 hover:bg-white dark:hover:bg-slate-800 text-gray-700 dark:text-gray-300'
             }`}
           >
-            <span className="text-base">{action.icon}</span>
+            <span className="text-sm">{action.icon}</span>
             <span>{action.label}</span>
           </button>
         ))}

@@ -14,8 +14,12 @@ export const metadata: Metadata = {
 
 export default function PetFeaturesPage() {
   return (
-    <div className="pt-32 pb-20 min-h-screen bg-gray-50/50 dark:bg-black/20 relative">
-      <div className="container mx-auto px-4 max-w-6xl">
+    <div className="pt-32 pb-20 min-h-screen bg-transparent relative overflow-hidden">
+      {/* Background glow orbs */}
+      <div className="absolute top-1/4 left-1/4 w-[600px] h-[600px] bg-indigo-200/10 dark:bg-indigo-900/5 rounded-full blur-[120px] pointer-events-none -z-10" />
+      <div className="absolute bottom-1/3 right-1/4 w-[500px] h-[500px] bg-pink-200/10 dark:bg-pink-900/5 rounded-full blur-[120px] pointer-events-none -z-10" />
+
+      <div className="container mx-auto px-4 max-w-6xl relative">
         {/* Title, Subtitle, and Back Button */}
         <HeroSection />
 

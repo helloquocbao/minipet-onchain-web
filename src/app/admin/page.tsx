@@ -353,7 +353,7 @@ export default function AdminPage() {
 
   if (!activeAddress) {
     return (
-      <div className="pt-28 pb-20 min-h-screen bg-gray-50 dark:bg-[#0a0a0b] flex items-center justify-center">
+      <div className="pt-28 pb-20 min-h-screen bg-transparent flex items-center justify-center">
         <div className="max-w-md w-full mx-4 p-8 bg-white dark:bg-gray-900 rounded-[2.5rem] shadow-2xl border border-gray-100 dark:border-gray-800 text-center animate-in fade-in zoom-in duration-300">
           <div className="w-20 h-20 bg-indigo-100 dark:bg-indigo-950/50 rounded-3xl flex items-center justify-center mx-auto mb-6 text-indigo-600 dark:text-indigo-400">
             <Lock size={40} />
@@ -374,7 +374,7 @@ export default function AdminPage() {
 
   if (verifyingAdmin) {
     return (
-      <div className="pt-28 pb-20 min-h-screen bg-gray-50 dark:bg-[#0a0a0b] flex items-center justify-center">
+      <div className="pt-28 pb-20 min-h-screen bg-transparent flex items-center justify-center">
         <div className="text-center">
           <Loader2 className="animate-spin text-indigo-600 mb-4 mx-auto" size={48} />
           <p className="text-gray-500 dark:text-gray-400 font-bold text-sm">
@@ -387,7 +387,7 @@ export default function AdminPage() {
 
   if (isAdmin === false) {
     return (
-      <div className="pt-28 pb-20 min-h-screen bg-gray-50 dark:bg-[#0a0a0b] flex items-center justify-center">
+      <div className="pt-28 pb-20 min-h-screen bg-transparent flex items-center justify-center">
         <div className="max-w-lg w-full mx-4 p-8 md:p-10 bg-white dark:bg-gray-900 rounded-[2.5rem] shadow-2xl border border-gray-100 dark:border-gray-800 text-center animate-in fade-in zoom-in duration-300">
           <div className="w-20 h-20 bg-rose-100 dark:bg-rose-950/50 rounded-3xl flex items-center justify-center mx-auto mb-6 text-rose-600 dark:text-rose-400">
             <ShieldAlert size={40} />
@@ -425,7 +425,7 @@ export default function AdminPage() {
   }
 
   return (
-    <div className="pt-28 pb-20 min-h-screen bg-gray-50 dark:bg-[#0a0a0b]">
+    <div className="pt-28 pb-20 min-h-screen bg-transparent">
       <div className="container mx-auto px-4 lg:px-8">
         {/* Header Section */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10">
