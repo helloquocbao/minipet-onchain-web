@@ -2,8 +2,9 @@
 
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useSignAndExecuteTransaction, ConnectButton } from '@mysten/dapp-kit';
+import { ConnectButton } from '@mysten/dapp-kit';
 import { useActiveAddress } from '../../hooks/useActiveAddress';
+import { useTransactionExecutor } from '../../hooks/useTransactionExecutor';
 import { Transaction } from '@mysten/sui/transactions';
 import {
   PACKAGE_ID,
@@ -21,7 +22,7 @@ import { Settings, Plus, Info, Activity, Upload, Loader2, Check, Coins, Layers, 
 export default function AdminPage() {
   const activeAddress = useActiveAddress();
   const { t } = useTranslation();
-  const { mutate: signAndExecuteTransaction } = useSignAndExecuteTransaction();
+  const { execute: signAndExecuteTransaction } = useTransactionExecutor();
   const [activeTab, setActiveTab] = useState<'dashboard' | 'store' | 'economy' | 'settings'>('dashboard');
 
   const [isAdmin, setIsAdmin] = useState<boolean | null>(null);

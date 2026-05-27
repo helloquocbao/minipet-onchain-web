@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { MousePointerClick, Info } from 'lucide-react';
 
 export const InteractionGuide = () => {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
 
   return (
     <div className="lg:col-span-5 bg-white/40 dark:bg-slate-900/40 backdrop-blur-xl border border-white/50 dark:border-slate-800/40 shadow-sm rounded-3xl p-6 sm:p-8 flex flex-col justify-between">
@@ -39,9 +39,7 @@ export const InteractionGuide = () => {
       <div className="mt-6 p-4 bg-indigo-50/30 dark:bg-indigo-950/10 rounded-xl border border-indigo-100/20 dark:border-indigo-900/20 flex gap-3 items-start">
         <Info size={16} className="text-indigo-500 shrink-0 mt-0.5" />
         <p className="text-[11px] text-gray-500 dark:text-gray-400 leading-relaxed font-bold">
-          {i18n.language === 'vi' 
-            ? "Tất cả các hành động của Pet đều tự động hoạt động mượt mà dựa trên máy trạng thái tích hợp trong app desktop, không làm phiền trải nghiệm làm việc của bạn."
-            : "All pet activities execute seamlessly using a built-in state machine in the desktop app, designed to keep your screen lively without interrupting your work."}
+          {t('pet_features.how_to.note')}
         </p>
       </div>
     </div>

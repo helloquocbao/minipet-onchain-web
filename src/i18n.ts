@@ -24,7 +24,72 @@ const resources = {
       },
       wallet: {
         modal_title: 'Connect your wallet',
-        modal_subtitle: 'Choose a method to sync your wallet with MiniPet'
+        modal_subtitle: 'Choose a method to sync your wallet with MiniPet',
+        social_login_a: 'Option A: No Wallet (Sui zkLogin)',
+        social_login_desc: 'Secure zkLogin, fast and simple',
+        recommend: 'Recommended',
+        or: 'Or',
+        extension_login_b: 'Option B: Sui Wallet Extension',
+        extension_desc: 'Use Sui Wallet, Suiet, or other extensions.',
+        no_extension: 'No Wallet Extension detected',
+        download_extension: 'Download Sui Wallet on Chrome Web Store →',
+        safe_note: 'MiniPet never stores your private key. Transactions are safe.'
+      },
+      sync: {
+        login_title: 'Login to MiniPet',
+        sync_title: 'Sync MiniPet Wallet',
+        login_desc: 'Connect via Sui extension or log in directly with Google.',
+        sync_desc: 'Connect via Sui extension or Google to sync assets.',
+        option_a: 'Option A: Google Login (zkLogin)',
+        option_b: 'Option B: Connect Wallet Extension',
+        connecting: 'Connecting to zkLogin...',
+        loading_wait: 'Please wait a moment',
+        connect_success: 'Wallet connected successfully! 🎉',
+        connect_success_detail: 'Click "Sync with Desktop App" below to complete synchronization.',
+        sync_success: 'Sync request sent to Desktop App! 🚀',
+        sync_success_detail: 'Your wallet address was copied to clipboard as backup. If the desktop app doesn\'t respond, left-click once on your Pet on screen to sync instantly!',
+        sync_failed: 'Sync failed. Make sure MiniPet desktop app is open and running.',
+        google_client_id_label: 'Google Client ID (OAuth Web):',
+        google_client_id_placeholder: 'Enter your Google Client ID...',
+        google_client_id_guide: '* Guide: Get Client ID from Google Cloud Console (Add {{origin}}/sync-login to Redirect URIs)',
+        google_login_btn: 'Log in with Google',
+        sync_desktop_btn: 'Sync with Desktop App',
+        change_account: 'Change account',
+        troubleshoot: 'Having issues? Make sure MiniPet is running on your computer.',
+        back_home: 'Back to Home',
+        alert_enter_client_id: 'Please enter Google Client ID to log in.',
+        error_decode: 'Error decoding token or deriving zkLogin address: ',
+        error_init: 'Failed to initialize zkLogin request: '
+      },
+      profile: {
+        title: 'Personal Profile',
+        subtitle: 'Manage your pet\'s mood according to how you feel.',
+        need_connect: 'Please connect wallet',
+        need_connect_desc: 'Connect your wallet to view and interact with MiniPet.',
+        no_pets: 'No Pets found',
+        no_pets_desc: 'You don\'t own any MiniPet NFTs in this wallet.',
+        adopt_now: 'Adopt Now',
+        your_pets: 'Your Pets',
+        mood_label: 'Mood',
+        how_feel: 'How are you feeling?',
+        update_btn: 'Update Pet Mood',
+        updating: 'Updating Blockchain...',
+        tx_note: '*This requires confirming a transaction on your Sui wallet.',
+        update_success: 'Mood updated successfully!',
+        update_failed: 'Failed to update mood: ',
+        error_retry: 'Error: Please try again.',
+        moods: {
+          sad: 'Sad',
+          tired: 'Tired',
+          normal: 'Normal',
+          happy: 'Happy',
+          ecstatic: 'Ecstatic'
+        }
+      },
+      download_cta: {
+        ready: 'Ready to start?',
+        title: 'Adopt your screen pet today!',
+        desc: 'MiniPet is 100% free, open-source, and private. Download for macOS or Windows and start walking alongside your new companion.'
       },
       hero: {
         title1: 'Meet your new',
@@ -191,7 +256,17 @@ const resources = {
           guide_1: 'The Spritesheet image must contain exactly 9 rows of frames for each character state.',
           guide_2: 'Every row must have the same number of frames (columns). Default is 4 columns.',
           guide_3: 'Characters should face Right by default for proper animation alignment.',
-          view_docs: 'View Full Documentation'
+          view_docs: 'View Full Documentation',
+          actions: {
+            idle: 'Idle (Row 1)',
+            walk_right: 'Walk Right (Row 2)',
+            walk_left: 'Walk Left (Row 3)',
+            greet: 'Greet (Row 4)',
+            special: 'Special (Row 5)',
+            sad: 'Sad (Row 6)',
+            sleep: 'Sleep (Row 7)',
+            run: 'Run (Row 8)'
+          }
         }
       },
       admin: {
@@ -354,7 +429,72 @@ const resources = {
       },
       wallet: {
         modal_title: 'Kết nối ví của bạn',
-        modal_subtitle: 'Chọn phương thức phù hợp để liên kết tài sản của bạn với MiniPet'
+        modal_subtitle: 'Chọn phương thức phù hợp để liên kết tài sản của bạn với MiniPet',
+        social_login_a: 'Phương án A: Không cần ví (Sui zkLogin)',
+        social_login_desc: 'Bảo mật bằng zkLogin, cực kỳ nhanh gọn',
+        recommend: 'Khuyên dùng',
+        or: 'Hoặc',
+        extension_login_b: 'Phương án B: Ví Sui Extension (Ví Slug)',
+        extension_desc: 'Sử dụng Sui Wallet, Suiet hoặc các ví extension khác đã cài trên trình duyệt của bạn.',
+        no_extension: 'Chưa phát hiện thấy ví Extension nào',
+        download_extension: 'Tải Sui Wallet trên Chrome Web Store →',
+        safe_note: 'MiniPet không bao giờ lưu trữ khóa riêng tư của bạn. Giao dịch luôn an toàn.'
+      },
+      sync: {
+        login_title: 'Đăng nhập MiniPet',
+        sync_title: 'Đồng bộ ví MiniPet',
+        login_desc: 'Kết nối qua ví Sui extension hoặc Đăng nhập trực tiếp bằng Google (zkLogin).',
+        sync_desc: 'Kết nối qua ví Sui extension hoặc Đăng nhập trực tiếp bằng Google (zkLogin) để đồng bộ tài sản xuống app.',
+        option_a: 'Phương án A: Đăng nhập Google (zkLogin)',
+        option_b: 'Phương án B: Kết nối Ví Extension',
+        connecting: 'Đang kết nối zkLogin...',
+        loading_wait: 'Vui lòng đợi trong giây lát',
+        connect_success: 'Kết nối ví thành công! 🎉',
+        connect_success_detail: 'Hãy nhấn nút "Đồng bộ với Desktop App" ở bên dưới để hoàn tất liên kết ví với ứng dụng.',
+        sync_success: 'Đã gửi yêu cầu đồng bộ tới Desktop App! 🚀',
+        sync_success_detail: 'Địa chỉ ví của bạn đã được tự động copy vào clipboard làm dự phòng. Nếu ứng dụng không nhận được, bạn hãy click chuột trái 1 lần vào chú Pet trên màn hình để đồng bộ tức thì nhé!',
+        sync_failed: 'Đồng bộ thất bại. Hãy chắc chắn bạn đã mở và chạy ứng dụng MiniPet.',
+        google_client_id_label: 'Google Client ID (OAuth Web):',
+        google_client_id_placeholder: 'Nhập Google Client ID của bạn...',
+        google_client_id_guide: '* Hướng dẫn: Lấy Client ID từ Google Cloud (Thêm {{origin}}/sync-login vào Redirect URIs)',
+        google_login_btn: 'Đăng nhập bằng Google',
+        sync_desktop_btn: 'Đồng bộ với Desktop App',
+        change_account: 'Đổi tài khoản khác',
+        troubleshoot: 'Gặp sự cố? Hãy chắc chắn rằng bạn đã mở MiniPet trên máy tính.',
+        back_home: 'Quay lại trang chủ',
+        alert_enter_client_id: 'Vui lòng nhập Google Client ID để bắt đầu đăng nhập bằng Google.',
+        error_decode: 'Lỗi giải mã token hoặc tính toán địa chỉ ví zkLogin: ',
+        error_init: 'Không thể khởi tạo yêu cầu zkLogin: '
+      },
+      profile: {
+        title: 'Profile Cá Nhân',
+        subtitle: 'Quản lý trạng thái và cảm xúc của Pet theo tâm trạng của bạn.',
+        need_connect: 'Vui lòng kết nối ví',
+        need_connect_desc: 'Kết nối ví của bạn để xem và tương tác với MiniPet.',
+        no_pets: 'Chưa có Pet nào',
+        no_pets_desc: 'Bạn chưa sở hữu MiniPet NFT nào trong ví này.',
+        adopt_now: 'Nhận Pet ngay',
+        your_pets: 'Pet của bạn',
+        mood_label: 'Tâm trạng',
+        how_feel: 'Bạn đang cảm thấy thế nào?',
+        update_btn: 'Cập nhật tâm trạng cho Pet',
+        updating: 'Đang cập nhật Blockchain...',
+        tx_note: '*Thao tác này yêu cầu xác nhận giao dịch trên ví Sui của bạn để cập nhật trạng thái On-chain.',
+        update_success: 'Cập nhật cảm xúc thành công!',
+        update_failed: 'Có lỗi xảy ra khi cập nhật cảm xúc: ',
+        error_retry: 'Lỗi: Vui lòng thử lại.',
+        moods: {
+          sad: 'Buồn bã',
+          tired: 'Mệt mỏi',
+          normal: 'Bình thường',
+          happy: 'Vui vẻ',
+          ecstatic: 'Hạnh phúc'
+        }
+      },
+      download_cta: {
+        ready: 'Sẵn sàng trải nghiệm?',
+        title: 'Nhận MiniPet ngay hôm nay!',
+        desc: 'MiniPet hoàn toàn miễn phí, mã nguồn mở và hoạt động riêng tư. Tải bản cài đặt cho macOS hoặc Windows và kết nối với người bạn mới.'
       },
       hero: {
         title1: 'Gặp gỡ những',
@@ -521,7 +661,17 @@ const resources = {
           guide_1: 'Hình ảnh Spritesheet phải được chia làm 9 dòng hoạt ảnh tương ứng với các trạng thái của Pet.',
           guide_2: 'Tất cả các dòng phải có cùng số lượng khung hình (Cột). Mặc định là 4 cột.',
           guide_3: 'Nhân vật nên hướng mặt sang bên Phải làm chuẩn.',
-          view_docs: 'Xem tài liệu đầy đủ'
+          view_docs: 'Xem tài liệu đầy đủ',
+          actions: {
+            idle: 'Idle (Đứng im - Dòng 1)',
+            walk_right: 'Walk Right (Đi phải - Dòng 2)',
+            walk_left: 'Walk Left (Đi trái - Dòng 3)',
+            greet: 'Greet (Chào hỏi - Dòng 4)',
+            special: 'Special (Đặc biệt - Dòng 5)',
+            sad: 'Sad (U sầu - Dòng 6)',
+            sleep: 'Sleep (Ngủ/Chờ - Dòng 7)',
+            run: 'Run (Chạy nhanh - Dòng 8)'
+          }
         }
       },
       admin: {

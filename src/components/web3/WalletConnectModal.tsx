@@ -5,7 +5,6 @@ import { X } from 'lucide-react';
 import { FcGoogle } from 'react-icons/fc';
 import { useWallets, useConnectWallet } from '@mysten/dapp-kit';
 import { useTranslation } from 'react-i18next';
-import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface WalletConnectModalProps {
@@ -15,9 +14,18 @@ interface WalletConnectModalProps {
 
 export function WalletConnectModal({ isOpen, onClose }: WalletConnectModalProps) {
   const { t } = useTranslation();
-  const router = useRouter();
   const wallets = useWallets();
   const { mutate: connectWallet } = useConnectWallet();
+  const [googleClientId, setGoogleClientId] = React.useState<string>('');
+  const [showClientInput, setShowClientInput] = React.useState<boolean>(false);
+
+  React.useEffect(() => {
+    if (isOpen) {
+      const savedId = localStorage.getItem('google_client_id') || '';
+      const envId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || '';
+      setGoogleClientId(envId || savedId);
+    }
+  }, [isOpen]);
 
   const handleSelectWallet = (wallet: any) => {
     connectWallet(
@@ -27,20 +35,25 @@ export function WalletConnectModal({ isOpen, onClose }: WalletConnectModalProps)
           onClose();
         },
         onError: (err: any) => {
-          console.error("Lỗi kết nối ví:", err);
-          alert("Không thể kết nối ví: " + err.message);
+          console.error("Wallet connection error:", err);
+          alert(t('sync.sync_failed') + ": " + err.message);
         },
       }
     );
   };
 
   const handlezkLoginClick = async () => {
-    onClose();
-    const clientId = localStorage.getItem('google_client_id') || process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || '';
+    const clientId = googleClientId.trim();
     if (!clientId) {
-      router.push('/sync-login?action=connect');
+      setShowClientInput(true);
       return;
     }
+
+    if (!process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID) {
+      localStorage.setItem('google_client_id', clientId);
+    }
+
+    onClose();
 
     try {
       const redirectUri = window.location.origin + '/sync-login';
@@ -69,7 +82,7 @@ export function WalletConnectModal({ isOpen, onClose }: WalletConnectModalProps)
       window.location.href = `https://accounts.google.com/o/oauth2/v2/auth?${params.toString()}`;
     } catch (err: any) {
       console.error(err);
-      alert("Không thể khởi tạo yêu cầu zkLogin: " + err.message);
+      alert(t('sync.error_init') + err.message);
     }
   };
 
@@ -118,8 +131,30 @@ export function WalletConnectModal({ isOpen, onClose }: WalletConnectModalProps)
               {/* Option A: Social Login (zkLogin) */}
               <div className="space-y-2">
                 <span className="text-[10px] text-indigo-400 font-bold uppercase tracking-wider block">
-                  Phương án A: Không cần ví (Sui zkLogin)
+                  {t('wallet.social_login_a')}
                 </span>
+                
+                {showClientInput && (
+                  <div className="space-y-2 text-left bg-slate-950/50 p-3 rounded-xl border border-indigo-500/30 mb-3">
+                    <label className="text-[11px] text-slate-400 font-medium block">{t('sync.google_client_id_label')}</label>
+                    <input 
+                      type="text" 
+                      value={googleClientId} 
+                      onChange={(e) => setGoogleClientId(e.target.value)} 
+                      placeholder={t('sync.google_client_id_placeholder')}
+                      className="w-full bg-slate-900 border border-white/10 rounded-lg p-2.5 text-xs text-indigo-200 font-mono outline-none focus:border-indigo-500 transition-colors"
+                    />
+                    <a 
+                      href="https://console.cloud.google.com/" 
+                      target="_blank" 
+                      rel="noopener noreferrer" 
+                      className="text-[9px] text-indigo-400 hover:underline block mt-1"
+                    >
+                      * {t('sync.google_client_id_guide').replace('{{origin}}', window.location.origin)}
+                    </a>
+                  </div>
+                )}
+
                 <button
                   onClick={handlezkLoginClick}
                   className="w-full flex items-center justify-between p-4 rounded-2xl bg-white text-slate-900 hover:bg-slate-100 active:scale-[0.99] transition-all duration-200 font-bold text-sm cursor-pointer border-none group"
@@ -129,12 +164,12 @@ export function WalletConnectModal({ isOpen, onClose }: WalletConnectModalProps)
                       <FcGoogle size={22} />
                     </div>
                     <div className="text-left">
-                      <div className="text-slate-900 font-black">Đăng nhập bằng Google</div>
-                      <div className="text-[10px] text-slate-500 font-medium">Bảo mật bằng zkLogin, cực kỳ nhanh gọn</div>
+                      <div className="text-slate-900 font-black">{t('sync.google_login_btn')}</div>
+                      <div className="text-[10px] text-slate-500 font-medium">{t('wallet.social_login_desc')}</div>
                     </div>
                   </div>
                   <span className="text-[10px] bg-indigo-500/10 text-indigo-600 px-2 py-0.5 rounded-md font-extrabold group-hover:bg-indigo-500/25 transition-all">
-                    Khuyên dùng
+                    {t('wallet.recommend')}
                   </span>
                 </button>
               </div>
@@ -142,14 +177,14 @@ export function WalletConnectModal({ isOpen, onClose }: WalletConnectModalProps)
               {/* Divider */}
               <div className="relative flex py-1 items-center">
                 <div className="flex-grow border-t border-white/10"></div>
-                <span className="flex-shrink mx-3 text-[10px] text-slate-500 uppercase font-bold tracking-wider">Hoặc</span>
+                <span className="flex-shrink mx-3 text-[10px] text-slate-500 uppercase font-bold tracking-wider">{t('wallet.or')}</span>
                 <div className="flex-grow border-t border-white/10"></div>
               </div>
 
               {/* Option B: Wallet Extensions */}
               <div className="space-y-2">
                 <span className="text-[10px] text-indigo-400 font-bold uppercase tracking-wider block">
-                  Phương án B: Ví Sui Extension (Ví Slug)
+                  {t('wallet.extension_login_b')}
                 </span>
                 <div className="max-h-[220px] overflow-y-auto pr-1 space-y-2 scrollbar-thin scrollbar-thumb-slate-800">
                   {wallets && wallets.length > 0 ? (
@@ -168,20 +203,20 @@ export function WalletConnectModal({ isOpen, onClose }: WalletConnectModalProps)
                         </div>
                         <div>
                           <div className="font-extrabold text-xs text-slate-100">{wallet.name}</div>
-                          <div className="text-[9px] text-slate-500">Bản cài đặt Extension ({wallet.version})</div>
+                          <div className="text-[9px] text-slate-500">{t('wallet.extension_desc')} ({wallet.version})</div>
                         </div>
                       </button>
                     ))
                   ) : (
                     <div className="text-center py-6 px-4 bg-slate-950/30 rounded-2xl border border-dashed border-white/5">
-                      <div className="text-xs text-slate-400 font-semibold">Chưa phát hiện thấy ví Extension nào</div>
+                      <div className="text-xs text-slate-400 font-semibold">{t('wallet.no_extension')}</div>
                       <a
                         href="https://chrome.google.com/webstore/detail/sui-wallet/opffplechnddgebcedknjanceedoccom"
                         target="_blank"
                         rel="noopener noreferrer"
                         className="inline-block mt-2.5 text-[10px] text-indigo-400 hover:underline font-bold"
                       >
-                        Tải Sui Wallet trên Chrome Web Store →
+                        {t('wallet.download_extension')}
                       </a>
                     </div>
                   )}
@@ -191,7 +226,7 @@ export function WalletConnectModal({ isOpen, onClose }: WalletConnectModalProps)
 
             <div className="mt-6 text-center">
               <p className="text-[10px] text-slate-500">
-                MiniPet không bao giờ lưu trữ khóa riêng tư của bạn. Giao dịch luôn an toàn.
+                {t('wallet.safe_note')}
               </p>
             </div>
           </motion.div>

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useTranslation } from 'react-i18next';
-import { useSignAndExecuteTransaction } from '@mysten/dapp-kit';
+import { useTransactionExecutor } from './useTransactionExecutor';
 import { useActiveAddress } from './useActiveAddress';
 import { Transaction } from '@mysten/sui/transactions';
 import { 
@@ -36,7 +36,7 @@ export const useCustomPet = () => {
   const searchParams = useSearchParams();
   const activeAddress = useActiveAddress();
   const { t } = useTranslation();
-  const { mutate: signAndExecuteTransaction } = useSignAndExecuteTransaction();
+  const { execute: signAndExecuteTransaction } = useTransactionExecutor();
 
   const navigate = (path: string | number) => {
     if (typeof path === 'number') {

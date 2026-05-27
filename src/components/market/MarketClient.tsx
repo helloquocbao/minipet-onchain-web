@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect, useState } from 'react';
-import { useSignAndExecuteTransaction } from '@mysten/dapp-kit';
 import { useActiveAddress } from '../../hooks/useActiveAddress';
+import { useTransactionExecutor } from '../../hooks/useTransactionExecutor';
 import { Transaction } from '@mysten/sui/transactions';
 import { PACKAGE_ID, FUNCTIONS, MODULES, suiClient, GLOBAL_CONFIG_ID, PET_TOKEN_TYPE } from '../../services/blockchain/sui';
 import { WalrusService } from '../../services/walrus';
@@ -22,7 +22,7 @@ export function MarketClient() {
   const router = useRouter();
   const activeAddress = useActiveAddress();
   const { t } = useTranslation();
-  const { mutate: signAndExecuteTransaction } = useSignAndExecuteTransaction();
+  const { execute: signAndExecuteTransaction } = useTransactionExecutor();
   const [templates, setTemplates] = useState<PetTemplate[]>([]);
   const [slotPrice, setSlotPrice] = useState('10000000000000'); // Default 10,000 MIPET
   const [, setLoading] = useState(true);
