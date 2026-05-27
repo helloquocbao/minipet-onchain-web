@@ -4,8 +4,9 @@ import React, { useEffect, useState } from 'react';
 import { useCurrentAccount, ConnectButton } from '@mysten/dapp-kit';
 import { ShieldCheck, HelpCircle, Laptop } from 'lucide-react';
 import { FcGoogle } from 'react-icons/fc';
-import { jwtToAddress, generateNonce, generateRandomness } from '@mysten/sui/zklogin';
+import { generateNonce, generateRandomness } from '@mysten/sui/zklogin';
 import { Ed25519Keypair } from '@mysten/sui/keypairs/ed25519';
+
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useTranslation } from 'react-i18next';
 
@@ -39,24 +40,34 @@ export default function SyncLoginPage() {
       const idToken = params.get('id_token');
       const stateParam = params.get('state');
       if (idToken) {
-        try {
-          // Derive Sui address using a 128-bit constant salt for simple local testing
-          const salt = BigInt("11223344556677889900112233445566");
-          const derivedAddress = jwtToAddress(idToken, salt, false);
-          setZkLoginAddress(derivedAddress);
-          localStorage.setItem('zklogin_address', derivedAddress);
-          localStorage.setItem('zklogin_jwt', idToken);
-          // Clear hash from address bar
-          window.history.replaceState(null, '', window.location.pathname);
-          
-          if (stateParam === 'connect') {
-            router.push('/');
-            return;
+        (async () => {
+          try {
+            const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:3001';
+            const res = await fetch(`${backendUrl}/derive-address`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ jwt: idToken }),
+            });
+            if (!res.ok) {
+              const errData = await res.json().catch(() => ({ error: res.statusText }));
+              throw new Error(errData.error || 'Failed to derive address from backend');
+            }
+            const { address } = await res.json();
+            setZkLoginAddress(address);
+            sessionStorage.setItem('zklogin_address', address);
+            sessionStorage.setItem('zklogin_jwt', idToken);
+            // Clear hash from address bar
+            window.history.replaceState(null, '', window.location.pathname);
+            
+            if (stateParam === 'connect') {
+              router.push('/');
+              return;
+            }
+          } catch (err: any) {
+            console.error(err);
+            setError(t('sync.error_decode') + err.message);
           }
-        } catch (err: any) {
-          console.error(err);
-          setError(t('sync.error_decode') + err.message);
-        }
+        })();
       }
     }
   }, [router]);
@@ -100,16 +111,16 @@ export default function SyncLoginPage() {
       
       // 1. Generate Ephemeral Keypair
       const ephemeralKeypair = new Ed25519Keypair();
-      localStorage.setItem('zklogin_ephemeral_private_key', ephemeralKeypair.getSecretKey());
+      sessionStorage.setItem('zklogin_ephemeral_private_key', ephemeralKeypair.getSecretKey());
       
       const ephemeralPublicKey = ephemeralKeypair.getPublicKey();
       
       // 2. Generate Randomness and Max Epoch
       const randomness = generateRandomness();
-      localStorage.setItem('zklogin_randomness', randomness);
+      sessionStorage.setItem('zklogin_randomness', randomness);
       
       const maxEpoch = 999999999; // Simple high epoch for dev testing
-      localStorage.setItem('zklogin_max_epoch', maxEpoch.toString());
+      sessionStorage.setItem('zklogin_max_epoch', maxEpoch.toString());
       
       // 3. Generate Nonce
       const nonce = generateNonce(ephemeralPublicKey, maxEpoch, randomness);

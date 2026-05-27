@@ -19,16 +19,16 @@ export function useTransactionExecutor() {
       onSettled?: () => void;
     }
   ) => {
-    // Check if it's zkLogin (we have a zkLogin session in localStorage and NO extension account active)
-    const isZkLogin = localStorage.getItem('zklogin_address') === activeAddress && !account;
+    // Check if it's zkLogin (we have a zkLogin session in sessionStorage and NO extension account active)
+    const isZkLogin = sessionStorage.getItem('zklogin_address') === activeAddress && !account;
 
     if (isZkLogin) {
       try {
         console.log('[TransactionExecutor] Executing transaction using zkLogin...');
-        const jwt = localStorage.getItem('zklogin_jwt');
-        const privateKeyBase64 = localStorage.getItem('zklogin_ephemeral_private_key');
-        const randomness = localStorage.getItem('zklogin_randomness');
-        const maxEpoch = localStorage.getItem('zklogin_max_epoch');
+        const jwt = sessionStorage.getItem('zklogin_jwt');
+        const privateKeyBase64 = sessionStorage.getItem('zklogin_ephemeral_private_key');
+        const randomness = sessionStorage.getItem('zklogin_randomness');
+        const maxEpoch = sessionStorage.getItem('zklogin_max_epoch');
 
         if (!jwt || !privateKeyBase64 || !randomness || !maxEpoch) {
           throw new Error('zkLogin session data missing from localStorage. Please log in again.');

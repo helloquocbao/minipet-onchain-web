@@ -60,7 +60,7 @@ export const Navbar = ({ isDark, toggleTheme }: NavbarProps) => {
       }
     };
     document.addEventListener('mousedown', handleClickOutside);
-    setZkLoginAddress(localStorage.getItem('zklogin_address'));
+    setZkLoginAddress(sessionStorage.getItem('zklogin_address'));
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
@@ -176,7 +176,7 @@ export const Navbar = ({ isDark, toggleTheme }: NavbarProps) => {
                     <button 
                       onClick={() => { 
                         disconnect(); 
-                        localStorage.removeItem('zklogin_address');
+                        sessionStorage.removeItem('zklogin_address');
                         setZkLoginAddress(null);
                         setUserDropdownOpen(false);
                         router.push('/'); 
