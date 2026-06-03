@@ -27,19 +27,20 @@ export const PetPreview: React.FC<PetPreviewProps> = ({ petData, t }) => {
   }, [isPlaying, frameCount]);
 
   const actionsList = [
-    { name: t('custom.preview.actions.idle'), value: 0 },
-    { name: t('custom.preview.actions.walk_right'), value: 1 },
-    { name: t('custom.preview.actions.walk_left'), value: 2 },
-    { name: t('custom.preview.actions.greet'), value: 3 },
-    { name: t('custom.preview.actions.special'), value: 4 },
-    { name: t('custom.preview.actions.sad'), value: 5 },
-    { name: t('custom.preview.actions.sleep'), value: 6 },
-    { name: t('custom.preview.actions.run'), value: 7 },
+    { name: 'Đứng yên', value: 0 },
+    { name: 'Chạy/Đi bộ', value: 1 },
+    { name: 'Giận dữ', value: 2 },
+    { name: 'Chào', value: 3 },
+    { name: 'Buồn bã', value: 4 },
+    { name: 'Choáng váng', value: 5 },
+    { name: 'Cất tiền', value: 6 },
+    { name: 'Tò mò', value: 7 },
+    { name: 'Gõ búa', value: 8 },
   ];
 
   // Calculate background coordinates for sprite preview
   const posX = frameCount > 1 ? (currentFrame * (100 / (frameCount - 1))) : 0;
-  const posY = previewAction * 12.5; // 9 rows total, index 0 to 8. 100 / 8 = 12.5
+  const posY = previewAction * 12.5; // 9 rows total, index 0 to 8
 
   return (
     <div className="bg-white dark:bg-gray-900 rounded-[2.5rem] p-8 shadow-2xl border border-gray-100 dark:border-gray-800 flex flex-col items-center">

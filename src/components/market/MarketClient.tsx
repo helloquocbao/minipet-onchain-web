@@ -434,7 +434,10 @@ export function MarketClient() {
             const isCustom = pet.name.toLowerCase().includes('custom');
             return (
               <div key={pet.id} className="bg-white/40 dark:bg-slate-900/40 backdrop-blur-md border border-white/60 dark:border-slate-800/40 hover:border-indigo-200/60 dark:hover:border-indigo-900/60 shadow-sm hover:shadow-md hover:shadow-indigo-500/[0.02] hover:-translate-y-1 rounded-2xl p-2 flex flex-col group transition-all duration-300">
-                <div className="w-full aspect-square bg-gradient-to-br from-indigo-50/20 to-purple-50/10 dark:from-slate-950/80 dark:to-slate-900/60 rounded-xl flex items-center justify-center relative overflow-hidden">
+                <div 
+                  onClick={() => router.push(`/market/${pet.id}`)}
+                  className="w-full aspect-square bg-gradient-to-br from-indigo-50/20 to-purple-50/10 dark:from-slate-950/80 dark:to-slate-900/60 rounded-xl flex items-center justify-center relative overflow-hidden cursor-pointer"
+                >
                    <div className="absolute inset-0 bg-gradient-to-t from-indigo-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                    <img 
                      src={pet.image_url.startsWith('http') ? pet.image_url : WalrusService.getBlobUrl(pet.image_url)} 
@@ -446,7 +449,7 @@ export function MarketClient() {
                    </div>
                 </div>
                 <div className="p-2 pt-3 pb-1 flex-1 flex flex-col justify-between">
-                   <div>
+                   <div onClick={() => router.push(`/market/${pet.id}`)} className="cursor-pointer">
                      <div className="flex items-center justify-between mb-0.5 gap-1">
                        <h3 className="text-xs sm:text-sm font-bold truncate text-gray-800 dark:text-gray-100">{pet.name}</h3>
                        <div className="flex gap-0.5 flex-shrink-0">

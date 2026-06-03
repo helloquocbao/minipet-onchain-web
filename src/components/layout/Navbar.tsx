@@ -66,7 +66,13 @@ export const Navbar = ({ isDark, toggleTheme }: NavbarProps) => {
 
   const changeLanguage = (lng: string) => {
     i18n.changeLanguage(lng);
+    localStorage.setItem('i18nextLng', lng);
     setLangOpen(false);
+    
+    // Update URL query parameter without full reload
+    const params = new URLSearchParams(window.location.search);
+    params.set('lang', lng);
+    router.push(`${pathname}?${params.toString()}`);
   };
 
   const languages = [

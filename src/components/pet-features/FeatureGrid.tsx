@@ -6,7 +6,6 @@ import {
   MessageSquare, 
   Timer, 
   Trash2, 
-  Users, 
   Wand2, 
   Activity,
   LucideIcon
@@ -59,13 +58,6 @@ export const FeatureGrid = () => {
       iconBgClass: 'bg-amber-50 dark:bg-amber-900/20',
       titleKey: 'pet_features.sections.file_eater.title',
       descKey: 'pet_features.sections.file_eater.desc',
-    },
-    {
-      icon: Users,
-      iconColorClass: 'text-emerald-500',
-      iconBgClass: 'bg-emerald-50 dark:bg-emerald-900/20',
-      titleKey: 'pet_features.sections.multi_pet.title',
-      descKey: 'pet_features.sections.multi_pet.desc',
     },
     {
       icon: Wand2,
