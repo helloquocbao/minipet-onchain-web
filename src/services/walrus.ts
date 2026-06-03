@@ -34,6 +34,7 @@ export const WalrusService = {
     file: File | Blob,
     targetAddress?: string,
     isCustom: boolean = false,
+    signature?: string,
     epochs: number = 5
   ): Promise<{ blobId: string; blobObjectId: string }> {
     // Nếu không truyền targetAddress, thực hiện tải trực tiếp lên Walrus (chế độ Testnet công cộng hoặc thử nghiệm cục bộ)
@@ -60,13 +61,22 @@ export const WalrusService = {
       throw new Error('Unexpected Walrus response format');
     }
 
+    const headers: Record<string, string> = {
+      'Content-Type': file.type || 'application/octet-stream',
+    };
+
+    const jwt = typeof window !== 'undefined' ? sessionStorage.getItem('zklogin_jwt') : null;
+    if (jwt) {
+      headers['Authorization'] = `Bearer ${jwt}`;
+    } else if (signature) {
+      headers['x-sui-signature'] = signature;
+    }
+
     // Tải thông qua Backend của dự án để Backend kiểm tra quyền lợi và chuyển quyền sở hữu (đặc biệt hữu ích trên Mainnet)
     const backendUrl = `${BACKEND_URL}/upload?targetAddress=${targetAddress}&isCustom=${isCustom}`;
     const response = await fetch(backendUrl, {
       method: 'POST',
-      headers: {
-        'Content-Type': file.type || 'application/octet-stream',
-      },
+      headers,
       body: file,
     });
 

@@ -6,7 +6,7 @@ import { Monitor } from 'lucide-react';
 import { FaApple, FaWindows } from 'react-icons/fa';
 
 export const DownloadCTA = () => {
-  const { i18n } = useTranslation();
+  const { t } = useTranslation();
 
   return (
     <div className="bg-gradient-to-r from-indigo-600/90 to-purple-600/90 backdrop-blur-md rounded-[2.5rem] p-8 md:p-10 relative overflow-hidden flex flex-col md:flex-row items-center justify-between gap-6 shadow-xl border border-white/10">
@@ -16,15 +16,13 @@ export const DownloadCTA = () => {
       <div className="relative max-w-xl text-center md:text-left">
         <div className="inline-flex items-center gap-1.5 bg-white/10 backdrop-blur-sm px-2.5 py-0.5 rounded-md text-[9px] font-extrabold tracking-widest uppercase mb-3 border border-white/5">
           <Monitor size={10} />
-          {i18n.language === 'vi' ? 'Sẵn sàng trải nghiệm?' : 'Ready to start?'}
+          {t('download_cta.ready')}
         </div>
         <h2 className="text-xl sm:text-2xl font-black tracking-tight leading-tight mb-2 text-white">
-          {i18n.language === 'vi' ? 'Nhận MiniPet ngay hôm nay!' : 'Adopt your screen pet today!'}
+          {t('download_cta.title')}
         </h2>
         <p className="text-[12.5px] text-indigo-100/90 leading-relaxed font-medium">
-          {i18n.language === 'vi' 
-            ? 'MiniPet hoàn toàn miễn phí, mã nguồn mở và hoạt động riêng tư. Tải bản cài đặt cho macOS hoặc Windows và kết nối với người bạn mới.'
-            : 'MiniPet is 100% free, open-source, and private. Download for macOS or Windows and start walking alongside your new companion.'}
+          {t('download_cta.desc')}
         </p>
       </div>
 

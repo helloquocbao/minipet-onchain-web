@@ -1,11 +1,12 @@
 "use client";
 
 import { useEffect, useState } from 'react';
-import { useSignAndExecuteTransaction } from '@mysten/dapp-kit';
 import { useActiveAddress } from '../../hooks/useActiveAddress';
+import { useTransactionExecutor } from '../../hooks/useTransactionExecutor';
 import { Transaction } from '@mysten/sui/transactions';
 import { PACKAGE_ID, MODULES, suiClient } from '../../services/blockchain/sui';
 import { Heart, Activity, ArrowRight, Loader2, Frown, Meh, Smile, SmilePlus, Laugh } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 interface Pet {
   id: string;
@@ -16,16 +17,17 @@ interface Pet {
 }
 
 const MOODS = [
-  { label: 'Buồn bã', score: 10, icon: Frown, color: 'text-red-500', bg: 'bg-red-100 dark:bg-red-900/30' },
-  { label: 'Mệt mỏi', score: 30, icon: Meh, color: 'text-orange-500', bg: 'bg-orange-100 dark:bg-orange-900/30' },
-  { label: 'Bình thường', score: 50, icon: Smile, color: 'text-yellow-500', bg: 'bg-yellow-100 dark:bg-yellow-900/30' },
-  { label: 'Vui vẻ', score: 80, icon: SmilePlus, color: 'text-green-500', bg: 'bg-green-100 dark:bg-green-900/30' },
-  { label: 'Hạnh phúc', score: 100, icon: Laugh, color: 'text-emerald-500', bg: 'bg-emerald-100 dark:bg-emerald-900/30' }
+  { labelKey: 'profile.moods.sad', score: 10, icon: Frown, color: 'text-red-500', bg: 'bg-red-100 dark:bg-red-900/30' },
+  { labelKey: 'profile.moods.tired', score: 30, icon: Meh, color: 'text-orange-500', bg: 'bg-orange-100 dark:bg-orange-900/30' },
+  { labelKey: 'profile.moods.normal', score: 50, icon: Smile, color: 'text-yellow-500', bg: 'bg-yellow-100 dark:bg-yellow-900/30' },
+  { labelKey: 'profile.moods.happy', score: 80, icon: SmilePlus, color: 'text-green-500', bg: 'bg-green-100 dark:bg-green-900/30' },
+  { labelKey: 'profile.moods.ecstatic', score: 100, icon: Laugh, color: 'text-emerald-500', bg: 'bg-emerald-100 dark:bg-emerald-900/30' }
 ];
 
 export const ProfileClient = () => {
+  const { t } = useTranslation();
   const activeAddress = useActiveAddress();
-  const { mutate: signAndExecuteTransaction } = useSignAndExecuteTransaction();
+  const { execute: signAndExecuteTransaction } = useTransactionExecutor();
   
   const [pets, setPets] = useState<Pet[]>([]);
   const [loading, setLoading] = useState(true);
@@ -94,13 +96,13 @@ export const ProfileClient = () => {
       }, {
         onSuccess: (result) => {
           console.log('Mood updated successfully:', result);
-          alert('Cập nhật cảm xúc thành công!');
+          alert(t('profile.update_success'));
           fetchOwnedPets();
           setSelectedMood(null);
         },
         onError: (err) => {
           console.error('Failed to update mood:', err);
-          alert('Có lỗi xảy ra khi cập nhật cảm xúc: ' + err.message);
+          alert(t('profile.update_failed') + err.message);
         },
         onSettled: () => {
           setIsUpdating(false);
@@ -108,7 +110,7 @@ export const ProfileClient = () => {
       });
     } catch (e) {
       console.error('Failed to prepare transaction:', e);
-      alert('Lỗi: Vui lòng thử lại.');
+      alert(t('profile.error_retry'));
       setIsUpdating(false);
     }
   };
@@ -118,8 +120,8 @@ export const ProfileClient = () => {
       <div className="min-h-screen pt-24 pb-12 flex items-center justify-center bg-transparent">
         <div className="text-center p-8 bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 max-w-md w-full">
           <Activity size={48} className="mx-auto text-gray-300 dark:text-gray-600 mb-4" />
-          <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-2">Vui lòng kết nối ví</h2>
-          <p className="text-gray-500 dark:text-gray-400">Kết nối ví của bạn để xem và tương tác với MiniPet.</p>
+          <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-2">{t('profile.need_connect')}</h2>
+          <p className="text-gray-500 dark:text-gray-400">{t('profile.need_connect_desc')}</p>
         </div>
       </div>
     );
@@ -129,8 +131,8 @@ export const ProfileClient = () => {
     <div className="min-h-screen pt-24 pb-12 bg-transparent">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="mb-8">
-          <h1 className="text-3xl font-extrabold text-gray-900 dark:text-white">Profile Cá Nhân</h1>
-          <p className="mt-2 text-gray-600 dark:text-gray-400">Quản lý trạng thái và cảm xúc của Pet theo tâm trạng của bạn.</p>
+          <h1 className="text-3xl font-extrabold text-gray-900 dark:text-white">{t('profile.title')}</h1>
+          <p className="mt-2 text-gray-600 dark:text-gray-400">{t('profile.subtitle')}</p>
         </div>
 
         {loading ? (
@@ -142,17 +144,17 @@ export const ProfileClient = () => {
             <div className="w-20 h-20 bg-indigo-50 dark:bg-indigo-900/30 rounded-2xl flex items-center justify-center mx-auto mb-4">
               <Heart className="text-indigo-400" size={32} />
             </div>
-            <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">Chưa có Pet nào</h3>
-            <p className="text-gray-500 dark:text-gray-400 mb-6">Bạn chưa sở hữu MiniPet NFT nào trong ví này.</p>
+            <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">{t('profile.no_pets')}</h3>
+            <p className="text-gray-500 dark:text-gray-400 mb-6">{t('profile.no_pets_desc')}</p>
             <a href="/market" className="inline-flex items-center gap-2 px-6 py-3 bg-indigo-600 text-white font-bold rounded-xl hover:bg-indigo-700 transition-colors">
-              Nhận Pet ngay <ArrowRight size={18} />
+              {t('profile.adopt_now')} <ArrowRight size={18} />
             </a>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {/* Cột trái: Thông tin Pet */}
             <div className="bg-white dark:bg-gray-800 rounded-3xl p-6 shadow-sm border border-gray-100 dark:border-gray-700">
-              <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4 border-b border-gray-100 dark:border-gray-700 pb-4">Pet của bạn</h2>
+              <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4 border-b border-gray-100 dark:border-gray-700 pb-4">{t('profile.your_pets')}</h2>
               
               <div className="space-y-4">
                 {pets.map((pet) => (
@@ -177,11 +179,11 @@ export const ProfileClient = () => {
                       <div className="flex items-center gap-3 mt-1 text-sm text-gray-500 dark:text-gray-400">
                         <span className="flex items-center gap-1">
                           <Activity size={14} className="text-indigo-400" />
-                          Lv {pet.level}
+                          {t('profile.mood_label')} Lv {pet.level}
                         </span>
                         <span className="flex items-center gap-1">
                           <Heart size={14} className={pet.happiness > 50 ? 'text-red-400' : 'text-gray-400'} />
-                          Tâm trạng: {pet.happiness}/100
+                          {t('profile.mood_label')}: {pet.happiness}/100
                         </span>
                       </div>
                     </div>
@@ -192,7 +194,7 @@ export const ProfileClient = () => {
 
             {/* Cột phải: Form cập nhật cảm xúc */}
             <div className="bg-white dark:bg-gray-800 rounded-3xl p-6 shadow-sm border border-gray-100 dark:border-gray-700">
-              <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4 border-b border-gray-100 dark:border-gray-700 pb-4">Bạn đang cảm thấy thế nào?</h2>
+              <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4 border-b border-gray-100 dark:border-gray-700 pb-4">{t('profile.how_feel')}</h2>
               
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-8">
                 {MOODS.map((mood) => {
@@ -210,7 +212,7 @@ export const ProfileClient = () => {
                     >
                       <Icon size={32} className={`mb-2 ${isSelected ? mood.color : 'text-gray-400'}`} />
                       <span className={`text-sm font-semibold ${isSelected ? 'text-gray-900 dark:text-white' : 'text-gray-500 dark:text-gray-400'}`}>
-                        {mood.label}
+                        {t(mood.labelKey)}
                       </span>
                     </button>
                   );
@@ -223,13 +225,13 @@ export const ProfileClient = () => {
                 className="w-full flex items-center justify-center gap-2 py-4 px-6 bg-gradient-to-r from-indigo-500 to-purple-500 hover:from-indigo-600 hover:to-purple-600 text-white font-bold rounded-2xl transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-indigo-500/25"
               >
                 {isUpdating ? (
-                  <><Loader2 className="animate-spin" size={20} /> Đang cập nhật Blockchain...</>
+                  <><Loader2 className="animate-spin" size={20} /> {t('profile.updating')}</>
                 ) : (
-                  <><Heart size={20} /> Cập nhật tâm trạng cho Pet</>
+                  <><Heart size={20} /> {t('profile.update_btn')}</>
                 )}
               </button>
               <p className="text-center text-xs text-gray-400 mt-4">
-                *Thao tác này yêu cầu xác nhận giao dịch trên ví Sui của bạn để cập nhật trạng thái On-chain.
+                {t('profile.tx_note')}
               </p>
             </div>
           </div>

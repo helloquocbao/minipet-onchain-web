@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { useTranslation } from 'react-i18next';
 import { Sparkles, Pause, Play, Sliders } from 'lucide-react';
 import { WalrusService } from '../../services/walrus';
 import { PetData } from '../../hooks/useCustomPet';
@@ -12,8 +11,6 @@ interface PetPreviewProps {
 }
 
 export const PetPreview: React.FC<PetPreviewProps> = ({ petData, t }) => {
-  const { i18n } = useTranslation();
-
   // Preview States
   const [previewAction, setPreviewAction] = useState<number>(0);
   const [frameCount, setFrameCount] = useState<number>(4);
@@ -30,19 +27,20 @@ export const PetPreview: React.FC<PetPreviewProps> = ({ petData, t }) => {
   }, [isPlaying, frameCount]);
 
   const actionsList = [
-    { name: i18n.language === 'vi' ? 'Idle (Đứng im - Dòng 1)' : 'Idle (Row 1)', value: 0 },
-    { name: i18n.language === 'vi' ? 'Walk Right (Đi phải - Dòng 2)' : 'Walk Right (Row 2)', value: 1 },
-    { name: i18n.language === 'vi' ? 'Walk Left (Đi trái - Dòng 3)' : 'Walk Left (Row 3)', value: 2 },
-    { name: i18n.language === 'vi' ? 'Greet (Chào hỏi - Dòng 4)' : 'Greet (Row 4)', value: 3 },
-    { name: i18n.language === 'vi' ? 'Special (Đặc biệt - Dòng 5)' : 'Special (Row 5)', value: 4 },
-    { name: i18n.language === 'vi' ? 'Sad (U sầu - Dòng 6)' : 'Sad (Row 6)', value: 5 },
-    { name: i18n.language === 'vi' ? 'Sleep (Ngủ/Chờ - Dòng 7)' : 'Sleep (Row 7)', value: 6 },
-    { name: i18n.language === 'vi' ? 'Run (Chạy nhanh - Dòng 8)' : 'Run (Row 8)', value: 7 },
+    { name: 'Đứng yên', value: 0 },
+    { name: 'Chạy/Đi bộ', value: 1 },
+    { name: 'Giận dữ', value: 2 },
+    { name: 'Chào', value: 3 },
+    { name: 'Buồn bã', value: 4 },
+    { name: 'Choáng váng', value: 5 },
+    { name: 'Cất tiền', value: 6 },
+    { name: 'Tò mò', value: 7 },
+    { name: 'Gõ búa', value: 8 },
   ];
 
   // Calculate background coordinates for sprite preview
   const posX = frameCount > 1 ? (currentFrame * (100 / (frameCount - 1))) : 0;
-  const posY = previewAction * 12.5; // 9 rows total, index 0 to 8. 100 / 8 = 12.5
+  const posY = previewAction * 12.5; // 9 rows total, index 0 to 8
 
   return (
     <div className="bg-white dark:bg-gray-900 rounded-[2.5rem] p-8 shadow-2xl border border-gray-100 dark:border-gray-800 flex flex-col items-center">

@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useTranslation } from 'react-i18next';
-import { useSignAndExecuteTransaction } from '@mysten/dapp-kit';
+import { useTransactionExecutor } from './useTransactionExecutor';
 import { useActiveAddress } from './useActiveAddress';
+import { useSignPersonalMessage } from '@mysten/dapp-kit';
 import { Transaction } from '@mysten/sui/transactions';
 import { 
   PACKAGE_ID, 
@@ -36,7 +37,8 @@ export const useCustomPet = () => {
   const searchParams = useSearchParams();
   const activeAddress = useActiveAddress();
   const { t } = useTranslation();
-  const { mutate: signAndExecuteTransaction } = useSignAndExecuteTransaction();
+  const { execute: signAndExecuteTransaction } = useTransactionExecutor();
+  const { mutateAsync: signPersonalMessage } = useSignPersonalMessage();
 
   const navigate = (path: string | number) => {
     if (typeof path === 'number') {
@@ -93,6 +95,16 @@ export const useCustomPet = () => {
     }
   };
 
+  const getUploadSignature = async (): Promise<string | undefined> => {
+    const jwt = sessionStorage.getItem('zklogin_jwt');
+    if (jwt) return undefined; // zkLogin utilizes JWT bearer token instead
+
+    const message = `MiniPet Upload: ${activeAddress}`;
+    const messageBytes = new TextEncoder().encode(message);
+    const response = await signPersonalMessage({ message: messageBytes });
+    return response.signature;
+  };
+
   const handleFileUpload = async (file: File, type: 'image' | 'sprite') => {
     if (!activeAddress) {
       alert(t('custom.alerts.connect_wallet') || 'Please connect your wallet first');
@@ -100,7 +112,8 @@ export const useCustomPet = () => {
     }
     try {
       setUploading(prev => ({ ...prev, [type]: true }));
-      const { blobId, blobObjectId } = await WalrusService.uploadFile(file, activeAddress, true);
+      const signature = await getUploadSignature();
+      const { blobId, blobObjectId } = await WalrusService.uploadFile(file, activeAddress, true, signature);
       setPetData(prev => ({
         ...prev,
         [type === 'image' ? 'imageBlob' : 'spriteBlob']: blobId,
@@ -126,14 +139,17 @@ export const useCustomPet = () => {
       // 1. Generate Pet Files
       const { avatar, sprite } = await AIGenerationService.generatePetFromImage(baseImage);
 
-      // 2. Upload them to Walrus
+      // 2. Request signature once for both uploads
+      const signature = await getUploadSignature();
+
+      // 3. Upload them to Walrus
       setUploading({ image: true, sprite: true });
       const [avatarWalrus, spriteWalrus] = await Promise.all([
-        WalrusService.uploadFile(avatar, activeAddress, true),
-        WalrusService.uploadFile(sprite, activeAddress, true)
+        WalrusService.uploadFile(avatar, activeAddress, true, signature),
+        WalrusService.uploadFile(sprite, activeAddress, true, signature)
       ]);
 
-      // 3. Update state
+      // 4. Update state
       setPetData(prev => ({
         ...prev,
         imageBlob: avatarWalrus.blobId,

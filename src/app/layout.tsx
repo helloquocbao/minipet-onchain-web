@@ -52,7 +52,7 @@ export default function RootLayout({
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800;900&display=swap" rel="stylesheet" />
-        <link rel="preload" href="/cat/spritesheet.png" as="image" />
+        <link rel="preload" href="/cat/spritesheet.webp" as="image" />
         <link rel="preload" href="/icons/icon.png" as="image" />
       </head>
       <body className="antialiased">

@@ -60,13 +60,19 @@ export const Navbar = ({ isDark, toggleTheme }: NavbarProps) => {
       }
     };
     document.addEventListener('mousedown', handleClickOutside);
-    setZkLoginAddress(localStorage.getItem('zklogin_address'));
+    setZkLoginAddress(sessionStorage.getItem('zklogin_address'));
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
   const changeLanguage = (lng: string) => {
     i18n.changeLanguage(lng);
+    localStorage.setItem('i18nextLng', lng);
     setLangOpen(false);
+    
+    // Update URL query parameter without full reload
+    const params = new URLSearchParams(window.location.search);
+    params.set('lang', lng);
+    router.push(`${pathname}?${params.toString()}`);
   };
 
   const languages = [
@@ -176,7 +182,7 @@ export const Navbar = ({ isDark, toggleTheme }: NavbarProps) => {
                     <button 
                       onClick={() => { 
                         disconnect(); 
-                        localStorage.removeItem('zklogin_address');
+                        sessionStorage.removeItem('zklogin_address');
                         setZkLoginAddress(null);
                         setUserDropdownOpen(false);
                         router.push('/'); 

@@ -24,13 +24,78 @@ const resources = {
       },
       wallet: {
         modal_title: 'Connect your wallet',
-        modal_subtitle: 'Choose a method to sync your wallet with MiniPet'
+        modal_subtitle: 'Choose a method to sync your wallet with MiniPet',
+        social_login_a: 'Option A: No Wallet (Sui zkLogin)',
+        social_login_desc: 'Secure zkLogin, fast and simple',
+        recommend: 'Recommended',
+        or: 'Or',
+        extension_login_b: 'Option B: Sui Wallet Extension',
+        extension_desc: 'Use Sui Wallet, Suiet, or other extensions.',
+        no_extension: 'No Wallet Extension detected',
+        download_extension: 'Download Sui Wallet on Chrome Web Store →',
+        safe_note: 'MiniPet never stores your private key. Transactions are safe.'
+      },
+      sync: {
+        login_title: 'Login to MiniPet',
+        sync_title: 'Sync MiniPet Wallet',
+        login_desc: 'Connect via Sui extension or log in directly with Google.',
+        sync_desc: 'Connect via Sui extension or Google to sync assets.',
+        option_a: 'Option A: Google Login (zkLogin)',
+        option_b: 'Option B: Connect Wallet Extension',
+        connecting: 'Connecting to zkLogin...',
+        loading_wait: 'Please wait a moment',
+        connect_success: 'Wallet connected successfully! 🎉',
+        connect_success_detail: 'Click "Sync with Desktop App" below to complete synchronization.',
+        sync_success: 'Sync request sent to Desktop App! 🚀',
+        sync_success_detail: 'Your wallet address was copied to clipboard as backup. If the desktop app doesn\'t respond, left-click once on your Pet on screen to sync instantly!',
+        sync_failed: 'Sync failed. Make sure MiniPet desktop app is open and running.',
+        google_client_id_label: 'Google Client ID (OAuth Web):',
+        google_client_id_placeholder: 'Enter your Google Client ID...',
+        google_client_id_guide: '* Guide: Get Client ID from Google Cloud Console (Add {{origin}}/sync-login to Redirect URIs)',
+        google_login_btn: 'Log in with Google',
+        sync_desktop_btn: 'Sync with Desktop App',
+        change_account: 'Change account',
+        troubleshoot: 'Having issues? Make sure MiniPet is running on your computer.',
+        back_home: 'Back to Home',
+        alert_enter_client_id: 'Please enter Google Client ID to log in.',
+        error_decode: 'Error decoding token or deriving zkLogin address: ',
+        error_init: 'Failed to initialize zkLogin request: '
+      },
+      profile: {
+        title: 'Personal Profile',
+        subtitle: 'Manage your pet\'s mood according to how you feel.',
+        need_connect: 'Please connect wallet',
+        need_connect_desc: 'Connect your wallet to view and interact with MiniPet.',
+        no_pets: 'No Pets found',
+        no_pets_desc: 'You don\'t own any MiniPet NFTs in this wallet.',
+        adopt_now: 'Adopt Now',
+        your_pets: 'Your Pets',
+        mood_label: 'Mood',
+        how_feel: 'How are you feeling?',
+        update_btn: 'Update Pet Mood',
+        updating: 'Updating Blockchain...',
+        tx_note: '*This requires confirming a transaction on your Sui wallet.',
+        update_success: 'Mood updated successfully!',
+        update_failed: 'Failed to update mood: ',
+        error_retry: 'Error: Please try again.',
+        moods: {
+          sad: 'Sad',
+          tired: 'Tired',
+          normal: 'Normal',
+          happy: 'Happy',
+          ecstatic: 'Ecstatic'
+        }
+      },
+      download_cta: {
+        ready: 'Ready to start?',
+        title: 'Adopt your screen pet today!',
+        desc: 'MiniPet is free, open-source, and private. Download for macOS or Windows to start.'
       },
       hero: {
         title1: 'Meet your new',
         title2: 'desktop',
         title3: 'companions.',
-        desc: 'MiniPet is a lightweight desktop app that brings cute pixel friends to your workspace. They walk, talk, and even "eat" your unwanted files while you work.',
+        desc: 'MiniPet places pixel pets on your desktop. Your companion walks, talks, and cleans up unwanted files while you work.',
         getFree: 'Get MiniPet Free',
         source: 'Source Code',
         noAds: 'No Ads',
@@ -39,26 +104,26 @@ const resources = {
       },
       features: {
         badge: 'Small companion, big joy',
-        desc: 'A simple, delightful desktop companion designed to keep you productive and smiling throughout the day.',
+        desc: 'Stay focused and productive with a desktop companion.',
         companion: {
           title: 'Live Desktop Companion',
-          desc: 'Your pixel pet lives right on your screen — walking, talking, and bringing joy to every work session.'
+          desc: 'Your pixel pet walks and talks directly on your screen to brighten your workday.'
         },
         pomodoro: {
           title: 'Pomodoro Timer',
-          desc: 'Customisable work/break cycles with your pet — gently nudging you when it\'s time to rest.'
+          desc: 'Customize work and break cycles. Your pet nudges you when it is time to rest.'
         },
         multi: {
           title: 'Multi-Pet Support',
-          desc: 'Why settle for one? Spawn multiple pets with unique personalities and watch them interact with each other.'
+          desc: 'Spawn multiple pets with unique personalities. Watch them interact on your screen.'
         },
         eating: {
-          title: 'File Eating System',
-          desc: 'A fun and interactive way to clean your workspace. Simply drag unwanted files onto your pet and watch them disappear.'
+          title: 'File Clean System',
+          desc: 'Clean your workspace. Drag unwanted files onto your pet to delete them.'
         },
         custom: {
           title: 'PetDex & Custom Pets',
-          desc: 'Import from our massive PetDex library or upload your own pixel art to create a truly unique companion.'
+          desc: 'Import pets from the PetDex library or upload your own pixel art.'
         },
         focus_mode: 'Focus mode'
       },
@@ -191,7 +256,17 @@ const resources = {
           guide_1: 'The Spritesheet image must contain exactly 9 rows of frames for each character state.',
           guide_2: 'Every row must have the same number of frames (columns). Default is 4 columns.',
           guide_3: 'Characters should face Right by default for proper animation alignment.',
-          view_docs: 'View Full Documentation'
+          view_docs: 'View Full Documentation',
+          actions: {
+            idle: 'Idle (Row 1)',
+            walk_right: 'Walk Right (Row 2)',
+            walk_left: 'Walk Left (Row 3)',
+            greet: 'Greet (Row 4)',
+            special: 'Special (Row 5)',
+            sad: 'Sad (Row 6)',
+            sleep: 'Sleep (Row 7)',
+            run: 'Run (Row 8)'
+          }
         }
       },
       admin: {
@@ -354,13 +429,78 @@ const resources = {
       },
       wallet: {
         modal_title: 'Kết nối ví của bạn',
-        modal_subtitle: 'Chọn phương thức phù hợp để liên kết tài sản của bạn với MiniPet'
+        modal_subtitle: 'Chọn phương thức phù hợp để liên kết tài sản của bạn với MiniPet',
+        social_login_a: 'Phương án A: Không cần ví (Sui zkLogin)',
+        social_login_desc: 'Bảo mật bằng zkLogin, cực kỳ nhanh gọn',
+        recommend: 'Khuyên dùng',
+        or: 'Hoặc',
+        extension_login_b: 'Phương án B: Ví Sui Extension (Ví Slug)',
+        extension_desc: 'Sử dụng Sui Wallet, Suiet hoặc các ví extension khác đã cài trên trình duyệt của bạn.',
+        no_extension: 'Chưa phát hiện thấy ví Extension nào',
+        download_extension: 'Tải Sui Wallet trên Chrome Web Store →',
+        safe_note: 'MiniPet không bao giờ lưu trữ khóa riêng tư của bạn. Giao dịch luôn an toàn.'
+      },
+      sync: {
+        login_title: 'Đăng nhập MiniPet',
+        sync_title: 'Đồng bộ ví MiniPet',
+        login_desc: 'Kết nối qua ví Sui extension hoặc Đăng nhập trực tiếp bằng Google (zkLogin).',
+        sync_desc: 'Kết nối qua ví Sui extension hoặc Đăng nhập trực tiếp bằng Google (zkLogin) để đồng bộ tài sản xuống app.',
+        option_a: 'Phương án A: Đăng nhập Google (zkLogin)',
+        option_b: 'Phương án B: Kết nối Ví Extension',
+        connecting: 'Đang kết nối zkLogin...',
+        loading_wait: 'Vui lòng đợi trong giây lát',
+        connect_success: 'Kết nối ví thành công! 🎉',
+        connect_success_detail: 'Hãy nhấn nút "Đồng bộ với Desktop App" ở bên dưới để hoàn tất liên kết ví với ứng dụng.',
+        sync_success: 'Đã gửi yêu cầu đồng bộ tới Desktop App! 🚀',
+        sync_success_detail: 'Địa chỉ ví của bạn đã được tự động copy vào clipboard làm dự phòng. Nếu ứng dụng không nhận được, bạn hãy click chuột trái 1 lần vào chú Pet trên màn hình để đồng bộ tức thì nhé!',
+        sync_failed: 'Đồng bộ thất bại. Hãy chắc chắn bạn đã mở và chạy ứng dụng MiniPet.',
+        google_client_id_label: 'Google Client ID (OAuth Web):',
+        google_client_id_placeholder: 'Nhập Google Client ID của bạn...',
+        google_client_id_guide: '* Hướng dẫn: Lấy Client ID từ Google Cloud (Thêm {{origin}}/sync-login vào Redirect URIs)',
+        google_login_btn: 'Đăng nhập bằng Google',
+        sync_desktop_btn: 'Đồng bộ với Desktop App',
+        change_account: 'Đổi tài khoản khác',
+        troubleshoot: 'Gặp sự cố? Hãy chắc chắn rằng bạn đã mở MiniPet trên máy tính.',
+        back_home: 'Quay lại trang chủ',
+        alert_enter_client_id: 'Vui lòng nhập Google Client ID để bắt đầu đăng nhập bằng Google.',
+        error_decode: 'Lỗi giải mã token hoặc tính toán địa chỉ ví zkLogin: ',
+        error_init: 'Không thể khởi tạo yêu cầu zkLogin: '
+      },
+      profile: {
+        title: 'Profile Cá Nhân',
+        subtitle: 'Quản lý trạng thái và cảm xúc của Pet theo tâm trạng của bạn.',
+        need_connect: 'Vui lòng kết nối ví',
+        need_connect_desc: 'Kết nối ví của bạn để xem và tương tác với MiniPet.',
+        no_pets: 'Chưa có Pet nào',
+        no_pets_desc: 'Bạn chưa sở hữu MiniPet NFT nào trong ví này.',
+        adopt_now: 'Nhận Pet ngay',
+        your_pets: 'Pet của bạn',
+        mood_label: 'Tâm trạng',
+        how_feel: 'Bạn đang cảm thấy thế nào?',
+        update_btn: 'Cập nhật tâm trạng cho Pet',
+        updating: 'Đang cập nhật Blockchain...',
+        tx_note: '*Thao tác này yêu cầu xác nhận giao dịch trên ví Sui của bạn để cập nhật trạng thái On-chain.',
+        update_success: 'Cập nhật cảm xúc thành công!',
+        update_failed: 'Có lỗi xảy ra khi cập nhật cảm xúc: ',
+        error_retry: 'Lỗi: Vui lòng thử lại.',
+        moods: {
+          sad: 'Buồn bã',
+          tired: 'Mệt mỏi',
+          normal: 'Bình thường',
+          happy: 'Vui vẻ',
+          ecstatic: 'Hạnh phúc'
+        }
+      },
+      download_cta: {
+        ready: 'Sẵn sàng trải nghiệm?',
+        title: 'Nhận MiniPet ngay hôm nay!',
+        desc: 'MiniPet miễn phí, mã nguồn mở và hoạt động riêng tư. Tải bản cài đặt cho macOS hoặc Windows để bắt đầu.'
       },
       hero: {
         title1: 'Gặp gỡ những',
         title2: 'người bạn',
         title3: 'máy tính mới.',
-        desc: 'MiniPet là ứng dụng máy tính nhẹ nhàng mang những người bạn pixel đáng yêu đến không gian làm việc của bạn. Chúng biết đi, nói và thậm chí "ăn" những file rác của bạn.',
+        desc: 'MiniPet đưa thú cưng pixel lên màn hình máy tính của bạn. Người bạn nhỏ này biết đi, nói chuyện và dọn dẹp các tệp tin rác khi bạn làm việc.',
         getFree: 'Tải MiniPet miễn phí',
         source: 'Mã nguồn',
         noAds: 'Không quảng cáo',
@@ -369,26 +509,26 @@ const resources = {
       },
       features: {
         badge: 'Bạn nhỏ, niềm vui lớn',
-        desc: 'Một người bạn máy tính đơn giản, thú vị được thiết kế để giúp bạn làm việc hiệu quả và luôn mỉm cười.',
+        desc: 'Người bạn đồng hành giúp bạn tập trung và làm việc hiệu quả hơn.',
         companion: {
           title: 'Bạn đồng hành trực tiếp',
-          desc: 'Thú cưng pixel sống ngay trên màn hình của bạn — đi bộ, trò chuyện và mang lại niềm vui cho mỗi phiên làm việc.'
+          desc: 'Thú cưng pixel hoạt động trực tiếp trên màn hình. Chúng đi bộ, trò chuyện và đồng hành cùng bạn.'
         },
         pomodoro: {
           title: 'Đồng hồ Pomodoro',
-          desc: 'Chu kỳ làm việc/nghỉ ngơi có thể tùy chỉnh với thú cưng — nhắc nhở nhẹ nhàng khi đến lúc nghỉ ngơi.'
+          desc: 'Tự động chia thời gian làm việc và nghỉ ngơi. Thú cưng sẽ nhắc bạn khi cần thư giãn.'
         },
         multi: {
           title: 'Hỗ trợ nhiều Pet',
-          desc: 'Tại sao phải chọn một? Nuôi nhiều pet với cá cá tính riêng biệt và xem chúng tương tác với nhau.'
+          desc: 'Nuôi nhiều thú cưng cùng lúc. Chúng sẽ tự tương tác với nhau trên màn hình của bạn.'
         },
         eating: {
-          title: 'Hệ thống ăn File',
-          desc: 'Cách dọn dẹp màn hình vui nhộn và tương tác. Chỉ cần kéo các file không dùng tới vào pet và xem chúng biến mất.'
+          title: 'Hệ thống dọn dẹp tệp tin',
+          desc: 'Dọn dẹp màn hình nhanh gọn. Kéo thả các tệp tin rác vào thú cưng để đưa chúng vào thùng rác.'
         },
         custom: {
           title: 'PetDex & Custom Pets',
-          desc: 'Nhập từ thư viện PetDex khổng lồ hoặc tải lên pixel art của riêng bạn để tạo ra một người bạn thực sự độc đáo.'
+          desc: 'Chọn thú cưng từ thư viện PetDex hoặc tự tải lên ảnh pixel của riêng bạn.'
         },
         focus_mode: 'Chế độ tập trung'
       },
@@ -521,7 +661,17 @@ const resources = {
           guide_1: 'Hình ảnh Spritesheet phải được chia làm 9 dòng hoạt ảnh tương ứng với các trạng thái của Pet.',
           guide_2: 'Tất cả các dòng phải có cùng số lượng khung hình (Cột). Mặc định là 4 cột.',
           guide_3: 'Nhân vật nên hướng mặt sang bên Phải làm chuẩn.',
-          view_docs: 'Xem tài liệu đầy đủ'
+          view_docs: 'Xem tài liệu đầy đủ',
+          actions: {
+            idle: 'Idle (Đứng im - Dòng 1)',
+            walk_right: 'Walk Right (Đi phải - Dòng 2)',
+            walk_left: 'Walk Left (Đi trái - Dòng 3)',
+            greet: 'Greet (Chào hỏi - Dòng 4)',
+            special: 'Special (Đặc biệt - Dòng 5)',
+            sad: 'Sad (U sầu - Dòng 6)',
+            sleep: 'Sleep (Ngủ/Chờ - Dòng 7)',
+            run: 'Run (Chạy nhanh - Dòng 8)'
+          }
         }
       },
       admin: {
@@ -690,7 +840,7 @@ const resources = {
         title1: '遇见你的新',
         title2: '桌面',
         title3: '伙伴。',
-        desc: 'MiniPet 是一款轻量级的桌面应用程序，可为您的工作空间带来可爱的像素朋友。它们会走、会说，甚至会在您工作时“吃掉”您不需要的文件。',
+        desc: 'MiniPet 桌面像素宠物。在您工作时，您的宠物会行走、交谈并清理不需要的文件。',
         getFree: '免费获取 MiniPet',
         source: '源代码',
         noAds: '无广告',
@@ -699,26 +849,26 @@ const resources = {
       },
       features: {
         badge: '小伴侣，大快乐',
-        desc: '一个简单、快乐的桌面伴侣，旨在让您在一天中保持高效并保持微笑。',
+        desc: '与桌面宠物一起保持专注和高效。',
         companion: {
           title: '实时桌面伴侣',
-          desc: '您的像素宠物就生活在您的屏幕上——行走、交谈，并为每次工作会议带来欢乐。'
+          desc: '您的像素宠物直接在屏幕上行走和交谈，陪伴您的每一个工作日。'
         },
         pomodoro: {
           title: '番茄钟',
-          desc: '与您的宠物一起定制工作/休息周期——在需要休息时轻轻提醒您。'
+          desc: '自定义工作与休息周期。当需要休息时，宠物会给您轻声提示。'
         },
         multi: {
           title: '多宠物支持',
-          desc: '为什么要满足于一个？产生多个具有独特个性的宠物，并观察它们彼此互动。'
+          desc: '生成多个具有独特个性的宠物。在您的屏幕上观看它们互动。'
         },
         eating: {
-          title: '文件吞噬系统',
-          desc: '一种清理工作空间的有趣且互动的方式。只需将不需要的文件拖到您的宠物身上，然后看着它们消失。'
+          title: '文件清理系统',
+          desc: '清理您的工作空间。将不需要的文件拖到宠物身上即可将其删除。'
         },
         custom: {
           title: 'PetDex 和自定义宠物',
-          desc: '从我们庞大的 PetDex 库中导入或上传您自己的像素艺术，以创建一个真正独特的伙伴。'
+          desc: '从 PetDex 库导入宠物或上传您自己的像素画。'
         }
       },
       download: {
@@ -875,7 +1025,7 @@ const resources = {
     translation: {
       seo: {
         title: 'MiniPet - Vos Compagnons Pixel Adorables pour Bureau',
-        description: 'MiniPet est une application de bureau légère qui apporte de mignons amis pixel à votre espace de travail. Boostez votre productivité với Pomodoro.',
+        description: 'MiniPet est une application de bureau légère qui apporte de mignons amis pixel à votre espace de travail. Boostez votre productivité avec Pomodoro.',
         keywords: 'minipet, minipets, mini pet, mini pets, mini pet app, mini pet apps, virtual pet, helloquocbao, qbao, pet de bureau, pixel pet, minuteur pomodoro, compagnon de bureau, pet virtuel, pet interactif, minipet officiel'
       },
       nav: {
@@ -918,7 +1068,7 @@ const resources = {
         },
         multi: {
           title: 'Support Multi-Pet',
-          desc: 'Pourquoi se contenter d\'un seul ? Créez plusieurs pets avec des personnalités uniques et regardez-les interagir les uns với les autres.'
+          desc: 'Pourquoi se contenter d\'un seul ? Créez plusieurs pets avec des personnalités uniques et regardez-les interagir les uns avec les autres.'
         },
         eating: {
           title: 'Système Mangeur de Fichiers',
@@ -960,7 +1110,7 @@ const resources = {
           review: 'Pour les fonctionnalités d\'aperçu.'
         },
         section3: 'Direction par Défaut',
-        section3_desc: 'Par défaut, le système suppose que toutes les images sont tournées vers la droite. Le système retournera automatiquement l\'image khi le pet se déplace vers la gauche.',
+        section3_desc: 'Par défaut, le système suppose que toutes les images sont tournées vers la droite. Le système retournera automatiquement l\'image lorsque le pet se déplace vers la gauche.',
         section3_note: 'Important : si votre personnage est tourné vers la gauche par défaut, vous devez ajouter "facingRight": false à votre fichier pet.json.',
         section4: 'Exemple Réel : Black Wukong',
         section4_desc: 'Un échantillon de personnage complet pour votre référence.',
@@ -1226,12 +1376,47 @@ const resources = {
   }
 };
 
+// Deep merge helper to ensure that incomplete translation blocks inherit from English
+function deepMerge(target: any, source: any) {
+  const output = { ...target };
+  if (source && typeof source === 'object') {
+    for (const key of Object.keys(source)) {
+      if (source[key] && typeof source[key] === 'object') {
+        if (!(key in target)) {
+          output[key] = source[key];
+        } else {
+          output[key] = deepMerge(target[key], source[key]);
+        }
+      } else {
+        output[key] = source[key];
+      }
+    }
+  }
+  return output;
+}
+
+const resourcesWithFallbacks: any = {};
+for (const lang of Object.keys(resources)) {
+  if (lang === 'en') {
+    resourcesWithFallbacks[lang] = resources[lang];
+  } else {
+    resourcesWithFallbacks[lang] = {
+      translation: deepMerge(resources.en.translation, (resources as any)[lang].translation || {})
+    };
+  }
+}
+
 i18n
   .use(LanguageDetector)
   .use(initReactI18next)
   .init({
-    resources,
+    resources: resourcesWithFallbacks,
     fallbackLng: 'en',
+    detection: {
+      order: ['querystring', 'localStorage', 'cookie', 'navigator', 'htmlTag'],
+      lookupQuerystring: 'lang',
+      caches: ['localStorage', 'cookie']
+    },
     interpolation: {
       escapeValue: false
     }

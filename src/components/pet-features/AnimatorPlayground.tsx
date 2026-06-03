@@ -5,15 +5,15 @@ import { useTranslation } from 'react-i18next';
 import { Play, Pause } from 'lucide-react';
 
 const actionFrames: Record<number, number> = {
-  0: 6, // Idle
-  1: 8, // Walk Right
-  2: 8, // Walk Left
-  3: 4, // Greet
-  4: 5, // Special
-  5: 8, // Sad
-  6: 6, // Sleep
-  7: 6, // Run
-  8: 6  // Review
+  0: 8, // Idle
+  1: 8, // Run
+  2: 8, // Drag
+  3: 8, // Greet/Notify
+  4: 8, // Sad/Fall
+  5: 8, // Stun/Dizzy
+  6: 8, // Save Money
+  7: 8, // Sleep/Curious
+  8: 8  // Bonk/Hammer action
 };
 
 export const AnimatorPlayground = () => {
@@ -25,7 +25,7 @@ export const AnimatorPlayground = () => {
   // Animation Loop
   useEffect(() => {
     if (!isPlaying) return;
-    const maxFrames = actionFrames[activeAction] || 4;
+    const maxFrames = actionFrames[activeAction] || 8;
     const interval = setInterval(() => {
       setCurrentFrame(f => (f + 1) % maxFrames);
     }, 150);
@@ -38,26 +38,28 @@ export const AnimatorPlayground = () => {
   }, [activeAction]);
 
   const actionsList = [
-    { id: 0, label: t('pet_features.commands.actions.idle'), icon: '😴' },
-    { id: 1, label: t('pet_features.commands.actions.walk'), icon: '🐾' },
-    { id: 3, label: t('pet_features.commands.actions.greet'), icon: '👋' },
-    { id: 4, label: t('pet_features.commands.actions.eat'), icon: '🍕' },
-    { id: 5, label: t('pet_features.commands.actions.sad'), icon: '😢' },
-    { id: 6, label: t('pet_features.commands.actions.sleep'), icon: '🌙' },
-    { id: 7, label: t('pet_features.commands.actions.run'), icon: '⚡' },
-    { id: 8, label: t('pet_features.commands.actions.pickup'), icon: '🛸' }
+    { id: 0, label: 'Đứng yên', icon: '😴' },
+    { id: 1, label: 'Chạy bộ', icon: '🐾' },
+    { id: 2, label: 'Giận dữ', icon: '💢' },
+    { id: 3, label: 'Chào', icon: '👋' },
+    { id: 4, label: 'Buồn bã', icon: '😢' },
+    { id: 5, label: 'Choáng váng', icon: '😵' },
+    { id: 6, label: 'Cất tiền', icon: '💰' },
+    { id: 7, label: 'Tò mò', icon: '🤔' },
+    { id: 8, label: 'Gõ búa', icon: '🔨' }
   ];
 
   const getActionDescription = (id: number) => {
     switch (id) {
-      case 0: return t('pet_features.commands.action_descs.idle');
-      case 1: return t('pet_features.commands.action_descs.walk');
-      case 3: return t('pet_features.commands.action_descs.greet');
-      case 4: return t('pet_features.commands.action_descs.eat');
-      case 5: return t('pet_features.commands.action_descs.sad');
-      case 6: return t('pet_features.commands.action_descs.sleep');
-      case 7: return t('pet_features.commands.action_descs.run');
-      case 8: return t('pet_features.commands.action_descs.pickup');
+      case 0: return 'Pet đứng yên thở nhẹ nhàng';
+      case 1: return 'Pet chạy tung tăng về bên phải';
+      case 2: return 'Pet tức giận đập chân phẫn nộ';
+      case 3: return 'Pet vẫy tay chào thân thiện';
+      case 4: return 'Pet buồn bã ủ rũ cúi đầu';
+      case 5: return 'Pet bị choáng váng nổi sao xoay quanh đầu';
+      case 6: return 'Pet ôm túi tiền cất đi cẩn thận';
+      case 7: return 'Pet suy nghĩ tò mò nghiêng đầu';
+      case 8: return 'Pet cầm búa gõ liên tục';
       default: return '';
     }
   };
@@ -66,7 +68,7 @@ export const AnimatorPlayground = () => {
   // background-size: 800% 900% (8 columns, 9 rows)
   // X coordinate ranges from 0 to 7. posY ranges from 0 to 8.
   const posX = currentFrame * (100 / 7);
-  const posY = activeAction * 12.5; // activeAction goes from 0 to 8. 100 / 8 = 12.5
+  const posY = activeAction * 12.5; // activeAction goes from 0 to 8. 100 / 8 = 12.5% per row
 
   return (
     <div className="lg:col-span-7 bg-white/40 dark:bg-slate-900/40 backdrop-blur-xl border border-white/50 dark:border-slate-800/40 shadow-sm rounded-3xl p-6 sm:p-8 flex flex-col">
@@ -104,7 +106,7 @@ export const AnimatorPlayground = () => {
         <div 
           className="w-28 h-28 select-none pointer-events-none pixel-art transform transition-transform group-hover:scale-105 duration-300"
           style={{
-            backgroundImage: "url('/cat/spritesheet.png')",
+            backgroundImage: "url('/cat/spritesheet.webp')",
             backgroundSize: "800% 900%",
             backgroundPosition: `${posX}% ${posY}%`,
             backgroundRepeat: 'no-repeat',
