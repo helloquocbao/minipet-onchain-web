@@ -14,7 +14,7 @@ import {
 
 export default function MintSlotDetailPage() {
   const router = useRouter();
-  const { t, i18n } = useTranslation();
+  const { i18n } = useTranslation();
   const isVi = i18n.language?.startsWith('vi');
   const activeAddress = useActiveAddress();
   const { execute: signAndExecuteTransaction } = useTransactionExecutor();

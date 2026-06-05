@@ -3,7 +3,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import Link from 'next/link';
-import { ArrowLeft, BookOpen, FolderOpen, Image, RefreshCw, FileCode, CheckCircle2, ChevronRight } from 'lucide-react';
+import { ArrowLeft, BookOpen, FolderOpen, Image, RefreshCw, FileCode, CheckCircle2 } from 'lucide-react';
 
 const Container = ({ children, className = '' }: { children: React.ReactNode; className?: string }) => (
   <div className={`container mx-auto px-4 sm:px-6 lg:px-8 ${className}`}>{children}</div>
