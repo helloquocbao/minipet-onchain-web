@@ -1,10 +1,10 @@
 import { getJsonRpcFullnodeUrl as getFullnodeUrl, SuiJsonRpcClient as SuiClient } from '@mysten/sui/jsonRpc';
 
-export const PACKAGE_ID = process.env.NEXT_PUBLIC_PACKAGE_ID || '0xfc0ec477ca9f6173716b7e436924cd5e30a3274b888707a82706f4e6d86c12a3';
-export const PET_TOKEN_PACKAGE_ID = process.env.NEXT_PUBLIC_PET_TOKEN_PACKAGE_ID || '0xf20998a7f30a94ead030ad6528899aafff4693900fb4b547f59882615a0c24a4';
-export const TREASURY_CAP_ID = process.env.NEXT_PUBLIC_TREASURY_CAP_ID || '0x176bd212dde2662120bd13e22a71eafbb3d7e14d6c9042ec5497f82d97ae1bef';
-export const GLOBAL_CONFIG_ID = process.env.NEXT_PUBLIC_GLOBAL_CONFIG_ID || '0xffc5bb02aa137b5df823f9a241196866a827f352b80c8c5d88e757d6a3e667f8';
-export const ADMIN_CAP_ID = process.env.NEXT_PUBLIC_ADMIN_CAP_ID || '0xa014c6109b4ec82dc35adfb53fd17700ab93cd2e4547796d93dde22915e93d00';
+export const PACKAGE_ID = process.env.NEXT_PUBLIC_PACKAGE_ID || '0x24487e4dde2fe739343f4e2e6ea309c473e60dc4fd17f1cec6dfb76bd14dac7e';
+export const PET_TOKEN_PACKAGE_ID = process.env.NEXT_PUBLIC_PET_TOKEN_PACKAGE_ID || '0x86d199f688b48c1af1bbead183e9bcb080d1cc9cd600161421a0b189b95bc588';
+export const TREASURY_CAP_ID = process.env.NEXT_PUBLIC_TREASURY_CAP_ID || '0x24feeba4da2a36ff093d1050fa48b08f1ea25668b6d7401ff29970f99eb09937';
+export const GLOBAL_CONFIG_ID = process.env.NEXT_PUBLIC_GLOBAL_CONFIG_ID || '0xf99cb5d4e97ba62b58070b71c321e666f543950a22c33e2eb96fb952c8c2a139';
+export const ADMIN_CAP_ID = process.env.NEXT_PUBLIC_ADMIN_CAP_ID || '0x1e3aeef533bc5d7de52885da1d6fb95771a9275270e1521809609100383ec1ce';
 export const PET_TOKEN_TYPE = `${PET_TOKEN_PACKAGE_ID}::pet_token::PET_TOKEN`;
 
 const network = (process.env.NEXT_PUBLIC_SUI_NETWORK as 'testnet' | 'mainnet' | 'devnet') || 'testnet';

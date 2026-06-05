@@ -14,7 +14,7 @@ export function CustomPetClient() {
     uploading,
     hasSlot,
     loadingSlot,
-    handleFileUpload,
+    handleFileSelect,
     handleMint,
     handleGeneratePet,
     baseImage,
@@ -44,7 +44,7 @@ export function CustomPetClient() {
             uploading={uploading}
             hasSlot={hasSlot}
             loadingSlot={loadingSlot}
-            handleFileUpload={handleFileUpload}
+            handleFileSelect={handleFileSelect}
             handleMint={handleMint}
             handleGeneratePet={handleGeneratePet}
             baseImage={baseImage}

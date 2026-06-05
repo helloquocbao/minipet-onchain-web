@@ -12,7 +12,7 @@ const Container = ({ children, className = '' }: { children: React.ReactNode; cl
 export const Footer = () => {
   const { t } = useTranslation();
   return (
-    <footer className="relative border-t border-gray-200/60 dark:border-white/10 pt-20 pb-12 overflow-hidden bg-transparent">
+    <footer className="relative border-t border-gray-200/60 dark:border-white/10 pt-20 md:pt-24 pb-12 overflow-hidden bg-transparent">
       {/* Background soft blur */}
       <div className="absolute bottom-[-100px] left-[50%] -translate-x-1/2 w-[600px] h-[300px] rounded-full bg-indigo-500/5 blur-[120px] pointer-events-none -z-10" />
 
@@ -48,6 +48,7 @@ export const Footer = () => {
               <li><Link href="/pet-features" className="text-sm font-semibold text-gray-500 dark:text-gray-400 hover:text-indigo-500 dark:hover:text-indigo-400 transition-colors no-underline">Features</Link></li>
               <li><Link href="/market" className="text-sm font-semibold text-gray-500 dark:text-gray-400 hover:text-indigo-500 dark:hover:text-indigo-400 transition-colors no-underline">Pet Market</Link></li>
               <li><Link href="/custom-pet" className="text-sm font-semibold text-gray-500 dark:text-gray-400 hover:text-indigo-500 dark:hover:text-indigo-400 transition-colors no-underline">Custom Creator</Link></li>
+              <li><Link href="/roadmap" className="text-sm font-semibold text-gray-500 dark:text-gray-400 hover:text-indigo-500 dark:hover:text-indigo-400 transition-colors no-underline">Roadmap</Link></li>
             </ul>
           </div>
 

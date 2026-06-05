@@ -6,6 +6,7 @@ import { FcGoogle } from 'react-icons/fc';
 import { useWallets, useConnectWallet } from '@mysten/dapp-kit';
 import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
+import { suiClient } from '../../services/blockchain/sui';
 
 interface WalletConnectModalProps {
   isOpen: boolean;
@@ -60,12 +61,19 @@ export function WalletConnectModal({ isOpen, onClose }: WalletConnectModalProps)
       const { Ed25519Keypair } = await import('@mysten/sui/keypairs/ed25519');
       const { generateNonce, generateRandomness } = await import('@mysten/sui/zklogin');
       
+      // Fetch current epoch for valid maxEpoch
+      const { epoch } = await suiClient.getLatestSuiSystemState();
+      const maxEpoch = Number(epoch) + 2;
+
+      // Fixed salt stored in sessionStorage for consistency
+      const salt = '0';
+      sessionStorage.setItem('zklogin_salt', salt);
+
       const ephemeralKeypair = new Ed25519Keypair();
       localStorage.setItem('zklogin_ephemeral_private_key', ephemeralKeypair.getSecretKey());
       
       const randomness = generateRandomness();
       localStorage.setItem('zklogin_randomness', randomness);
-      const maxEpoch = 999999999;
       localStorage.setItem('zklogin_max_epoch', maxEpoch.toString());
       
       const nonce = generateNonce(ephemeralKeypair.getPublicKey(), maxEpoch, randomness);

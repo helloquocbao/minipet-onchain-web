@@ -1,11 +1,13 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { 
   Dna, 
   AlertCircle, 
   Loader2, 
   Check, 
   Upload, 
-  Sparkles 
+  Sparkles,
+  FileImage,
+  Layers
 } from 'lucide-react';
 import { WalrusService } from '../../services/walrus';
 import { PetData } from '../../hooks/useCustomPet';
@@ -16,7 +18,7 @@ interface CustomPetFormProps {
   uploading: { image: boolean; sprite: boolean };
   hasSlot: boolean;
   loadingSlot: boolean;
-  handleFileUpload: (file: File, type: 'image' | 'sprite') => Promise<void>;
+  handleFileSelect: (file: File, type: 'image' | 'sprite') => void;
   handleMint: () => Promise<void>;
   handleGeneratePet: () => Promise<void>;
   baseImage: File | null;
@@ -34,8 +36,7 @@ export const CustomPetForm: React.FC<CustomPetFormProps> = ({
   uploading,
   hasSlot,
   loadingSlot,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  handleFileUpload,
+  handleFileSelect,
   handleMint,
   handleGeneratePet,
   baseImage,
@@ -46,6 +47,9 @@ export const CustomPetForm: React.FC<CustomPetFormProps> = ({
   t,
   navigate
 }) => {
+  const [creationMode, setCreationMode] = useState<'manual' | 'ai'>('manual');
+  const isVi = t('locale') === 'vi';
+
   return (
     <div className="lg:col-span-7 bg-white dark:bg-gray-900 rounded-[2.5rem] p-8 md:p-10 shadow-2xl shadow-indigo-500/5 border border-gray-100 dark:border-gray-800">
       <div className="flex items-center gap-4 mb-8">
@@ -66,7 +70,7 @@ export const CustomPetForm: React.FC<CustomPetFormProps> = ({
             <p>{t('custom.no_slot.desc')}</p>
             <button 
               onClick={() => navigate('/market')}
-              className="mt-2 text-indigo-600 dark:text-indigo-400 font-bold hover:underline"
+              className="mt-2 text-indigo-600 dark:text-indigo-400 font-bold hover:underline bg-transparent border-none cursor-pointer"
             >
               {t('custom.no_slot.go_market')} &rarr;
             </button>
@@ -83,162 +87,319 @@ export const CustomPetForm: React.FC<CustomPetFormProps> = ({
           <input 
             type="text" 
             placeholder={t('custom.form.name_placeholder')}
-            className="w-full bg-gray-50 dark:bg-gray-800 border-none rounded-2xl p-4 font-bold focus:ring-2 focus:ring-indigo-500 transition-all text-gray-900 dark:text-white"
+            className="w-full bg-gray-50 dark:bg-gray-800 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 font-bold focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500/50 transition-all text-gray-900 dark:text-white"
             value={petData.name}
             onChange={(e) => setPetData({...petData, name: e.target.value, slug: e.target.value.toLowerCase().replace(/\s+/g, '-')})}
           />
         </div>
 
-        {generationStep === 'upload' ? (
-          <div className="space-y-6">
-            <div>
-              <label className="block text-sm font-bold text-gray-500 dark:text-gray-400 mb-2 uppercase tracking-wider">
-                Upload Base Image for AI Generation
-              </label>
-              <div className="relative group">
-                <div className={`aspect-video rounded-3xl border-2 border-dashed flex flex-col items-center justify-center transition-all ${baseImage ? 'border-indigo-500 bg-indigo-50/50 dark:bg-indigo-900/10' : 'border-gray-200 dark:border-gray-700 group-hover:border-indigo-400'}`}>
-                  {baseImage ? (
-                    <div className="text-center p-2 h-full w-full flex flex-col items-center justify-center relative">
-                      <img 
-                        src={URL.createObjectURL(baseImage)} 
-                        alt="Base Preview" 
-                        className="w-full h-full object-contain rounded-2xl max-h-48"
-                      />
-                      <div className="absolute bottom-4 bg-white/90 dark:bg-gray-900/90 backdrop-blur px-3 py-1.5 rounded-full shadow-sm flex items-center gap-2">
-                        <Check className="text-green-500" size={16} />
-                        <span className="text-xs font-black text-green-600 dark:text-green-400 uppercase">
-                          Image Selected
-                        </span>
-                      </div>
-                    </div>
-                  ) : (
-                    <>
-                      <Upload className="text-gray-400 group-hover:text-indigo-400 mb-3" size={40} />
-                      <p className="text-sm font-bold text-gray-400 uppercase">Click or drag to upload base image</p>
-                    </>
-                  )}
-                  <input 
-                    type="file" 
-                    className="absolute inset-0 opacity-0 cursor-pointer" 
-                    accept="image/*"
-                    onChange={(e) => e.target.files?.[0] && setBaseImage(e.target.files[0])}
-                  />
-                </div>
-              </div>
-            </div>
-
-            <button 
-              onClick={handleGeneratePet}
-              disabled={!hasSlot || !petData.name || !baseImage || isGenerating}
-              className="w-full bg-indigo-600 hover:bg-indigo-700 text-white rounded-2xl py-5 font-black text-lg shadow-xl hover:shadow-indigo-500/30 hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-50 disabled:hover:scale-100 flex items-center justify-center gap-3"
+        {/* Creation Mode Switcher */}
+        <div className="flex bg-slate-100 dark:bg-slate-800/80 p-1 rounded-2xl border border-slate-250/20 max-w-md">
+          <button
+            type="button"
+            onClick={() => setCreationMode('manual')}
+            className={`flex-1 py-3 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 cursor-pointer ${creationMode === 'manual' ? 'bg-white dark:bg-slate-900 text-indigo-650 dark:text-indigo-400 shadow-md font-extrabold' : 'text-gray-550 hover:text-gray-800'}`}
+          >
+            <Upload size={14} />
+            {isVi ? 'Tự tải lên (GIF & Spritesheet)' : 'Manual File Upload'}
+          </button>
+          <div className="relative group flex-1">
+            <button
+              type="button"
+              disabled
+              className="w-full py-3 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 cursor-not-allowed opacity-50 text-gray-400 dark:text-gray-500"
             >
-              {isGenerating ? (
-                <>
-                  <Loader2 className="animate-spin" size={24} />
-                  Generating AI Pet...
-                </>
-              ) : (
-                <>
-                  <Sparkles size={24} />
-                  Generate with AI
-                </>
-              )}
+              <Sparkles size={14} />
+              {isVi ? 'Tạo bằng AI (Từ ảnh mẫu)' : 'AI Companion Generator'}
             </button>
+            <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-1.5 bg-gray-900 dark:bg-gray-800 text-white text-[10px] font-bold rounded-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap shadow-lg z-10">
+              {isVi ? 'Chờ ở mainnet' : 'Coming soon on Mainnet'}
+              <div className="absolute top-full left-1/2 transform -translate-x-1/2 border-4 border-transparent border-t-gray-900 dark:border-t-gray-800"></div>
+            </div>
           </div>
-        ) : (
+        </div>
+
+        {/* Manual Upload Mode */}
+        {creationMode === 'manual' && (
           <div className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* Generated Avatar */}
-              <div>
-                <label className="block text-sm font-bold text-gray-500 dark:text-gray-400 mb-2 uppercase tracking-wider">
-                  Generated Avatar
+              {/* SPOT 1: ON-CHAIN GIF / AVATAR */}
+              <div className="flex flex-col">
+                <label className="block text-xs font-extrabold text-gray-500 dark:text-gray-400 mb-2 uppercase tracking-wider">
+                  {isVi ? '1. Ảnh động hiển thị (GIF)' : '1. On-Chain Avatar (GIF)'}
                 </label>
-                <div className="relative group">
-                  <div className="aspect-square rounded-3xl border-2 border-green-500 bg-green-50/50 dark:bg-green-900/10 flex flex-col items-center justify-center transition-all">
+                <div className="relative group flex-1">
+                  <div className={`aspect-square rounded-3xl border-2 border-dashed flex flex-col items-center justify-center p-4 transition-all min-h-[200px] ${petData.imageBlob ? 'border-emerald-500 bg-emerald-50/10 dark:bg-emerald-950/10' : 'border-gray-200 dark:border-gray-800 group-hover:border-indigo-400'}`}>
                     {uploading.image ? (
-                      <Loader2 className="animate-spin text-indigo-500" size={32} />
+                      <div className="text-center">
+                        <Loader2 className="animate-spin text-indigo-500 mx-auto mb-2" size={32} />
+                        <span className="text-[10px] font-bold text-gray-450 uppercase">Uploading...</span>
+                      </div>
                     ) : petData.imageBlob ? (
                       <div className="text-center p-2 h-full w-full flex flex-col items-center justify-center relative">
                         <img 
-                          src={WalrusService.getBlobUrl(petData.imageBlob)} 
-                          alt="Avatar Preview" 
+                          src={petData.imageBlob.startsWith('blob:') || petData.imageBlob.startsWith('/') ? petData.imageBlob : WalrusService.getBlobUrl(petData.imageBlob)} 
+                          alt="Avatar Uploaded" 
                           className="w-full h-full object-contain rounded-2xl max-h-32"
                         />
-                        <div className="absolute bottom-2 bg-white/90 dark:bg-gray-900/90 backdrop-blur px-2.5 py-1 rounded-full shadow-sm flex items-center gap-1">
-                          <Check className="text-green-500 animate-bounce" size={14} />
-                          <span className="text-[10px] font-black text-green-600 dark:text-green-400 uppercase">
-                            Generated & Uploaded
+                        <div className="absolute bottom-2 bg-white/95 dark:bg-gray-900/95 shadow px-2.5 py-1 rounded-full flex items-center gap-1">
+                          <Check className="text-green-500" size={12} />
+                          <span className="text-[9px] font-black text-green-600 dark:text-green-400 uppercase">
+                            GIF Ready
                           </span>
                         </div>
                       </div>
-                    ) : null}
+                    ) : (
+                      <div className="text-center flex flex-col items-center justify-center p-4 cursor-pointer">
+                        <FileImage className="text-gray-400 group-hover:text-indigo-400 mb-2" size={32} />
+                        <span className="text-[11px] font-extrabold text-gray-500 dark:text-gray-400 uppercase block mb-1">
+                          {isVi ? 'Chọn file GIF/PNG' : 'Select GIF / Image'}
+                        </span>
+                        <span className="text-[9px] text-gray-400 normal-case block">
+                          {isVi ? 'Dùng làm ảnh đại diện NFT' : 'Used as the NFT on-chain avatar'}
+                        </span>
+                      </div>
+                    )}
+                    <input 
+                      type="file" 
+                      className="absolute inset-0 opacity-0 cursor-pointer" 
+                      accept="image/gif"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (file) {
+                          if (file.type !== 'image/gif') {
+                            alert(isVi ? 'Vui lòng chọn tệp tin định dạng GIF!' : 'Please upload a GIF file!');
+                            return;
+                          }
+                          handleFileSelect(file, 'image');
+                        }
+                      }}
+                    />
                   </div>
                 </div>
               </div>
 
-              {/* Generated Sprite */}
-              <div>
-                <label className="block text-sm font-bold text-gray-500 dark:text-gray-400 mb-2 uppercase tracking-wider">
-                  Generated Sprite
+              {/* SPOT 2: COMPANION SPRITESHEET */}
+              <div className="flex flex-col">
+                <label className="block text-xs font-extrabold text-gray-500 dark:text-gray-400 mb-2 uppercase tracking-wider">
+                  {isVi ? '2. Spritesheet hoạt ảnh' : '2. Companion Spritesheet'}
                 </label>
-                <div className="relative group">
-                  <div className="aspect-square rounded-3xl border-2 border-green-500 bg-green-50/50 dark:bg-green-900/10 flex flex-col items-center justify-center transition-all">
-                    {uploading.sprite ? (
-                      <Loader2 className="animate-spin text-indigo-500" size={32} />
-                    ) : petData.spriteBlob ? (
+                <div className="relative group flex-1">
+                  <div className={`aspect-square rounded-3xl border-2 border-dashed flex flex-col items-center justify-center p-4 transition-all min-h-[200px] ${petData.spriteBlob ? 'border-emerald-500 bg-emerald-50/10 dark:bg-emerald-950/10' : 'border-gray-200 dark:border-gray-800 group-hover:border-indigo-400'}`}>
+                    {petData.spriteBlob ? (
                       <div className="text-center p-2 h-full w-full flex flex-col items-center justify-center relative">
                         <img 
-                          src={WalrusService.getBlobUrl(petData.spriteBlob)} 
-                          alt="Sprite Preview" 
+                          src={petData.spriteBlob.startsWith('blob:') || petData.spriteBlob.startsWith('/') ? petData.spriteBlob : WalrusService.getBlobUrl(petData.spriteBlob)} 
+                          alt="Spritesheet Uploaded" 
                           className="w-full h-full object-contain rounded-2xl max-h-32"
                         />
-                        <div className="absolute bottom-2 bg-white/90 dark:bg-gray-900/90 backdrop-blur px-2.5 py-1 rounded-full shadow-sm flex items-center gap-1">
-                          <Check className="text-green-500 animate-bounce" size={14} />
-                          <span className="text-[10px] font-black text-green-600 dark:text-green-400 uppercase">
-                            Generated & Uploaded
+                        <div className="absolute bottom-2 bg-white/95 dark:bg-gray-900/95 shadow px-2.5 py-1 rounded-full flex items-center gap-1">
+                          <Check className="text-green-500" size={12} />
+                          <span className="text-[9px] font-black text-green-600 dark:text-green-400 uppercase">
+                            Preview Ready
                           </span>
                         </div>
                       </div>
-                    ) : null}
+                    ) : (
+                      <div className="text-center flex flex-col items-center justify-center p-4 cursor-pointer">
+                        <Layers className="text-gray-400 group-hover:text-indigo-400 mb-2" size={32} />
+                        <span className="text-[11px] font-extrabold text-gray-500 dark:text-gray-400 uppercase block mb-1">
+                          {isVi ? 'Chọn file Spritesheet' : 'Select Spritesheet'}
+                        </span>
+                        <span className="text-[9px] text-gray-400 normal-case block">
+                          {isVi ? 'Bao gồm 9 dòng hoạt ảnh' : 'Divided into 9 custom animation rows'}
+                        </span>
+                      </div>
+                    )}
+                    <input 
+                      type="file" 
+                      className="absolute inset-0 opacity-0 cursor-pointer" 
+                      accept="image/*"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (file) {
+                          const localUrl = URL.createObjectURL(file);
+                          setPetData(prev => ({ 
+                            ...prev, 
+                            spriteBlob: localUrl,
+                            spriteObjId: '0x0000000000000000000000000000000000000000000000000000000000000000'
+                          }));
+                        }
+                      }}
+                    />
                   </div>
                 </div>
               </div>
             </div>
 
-            {/* Sponsorship Badge */}
-            <div className="bg-indigo-50 dark:bg-indigo-900/20 p-5 rounded-3xl border border-indigo-100 dark:border-indigo-800">
-              <div className="flex gap-4">
-                <Sparkles className="text-indigo-500 shrink-0 mt-0.5" size={20} />
-                <p className="text-xs text-indigo-900 dark:text-indigo-300 font-medium leading-relaxed">
-                  <strong>{t('custom.form.sponsor_badge')}:</strong> {t('custom.form.sponsor_desc')}
-                </p>
-              </div>
-            </div>
+            {/* Direct Mint Button for Manual Upload */}
+            <button 
+              onClick={handleMint}
+              disabled={!hasSlot || !petData.name || !petData.imageBlob || !petData.spriteBlob || uploading.image || uploading.sprite}
+              className="w-full bg-indigo-600 hover:bg-indigo-700 text-white rounded-2xl py-4.5 font-black text-base shadow-xl hover:shadow-indigo-500/20 hover:scale-[1.01] active:scale-[0.99] transition-all disabled:opacity-50 disabled:hover:scale-100 flex items-center justify-center gap-2 cursor-pointer"
+            >
+              <Sparkles size={18} />
+              {isVi ? 'Đúc Custom Pet NFT (MIPET)' : 'Mint Custom Pet NFT'}
+            </button>
+          </div>
+        )}
 
-            <div className="flex gap-4">
-              <button 
-                onClick={() => {
-                  setGenerationStep('upload');
-                  setBaseImage(null);
-                  setPetData(prev => ({...prev, imageBlob: '', imageObjId: '', spriteBlob: '', spriteObjId: ''}));
-                }}
-                className="w-1/3 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-2xl py-5 font-black text-lg shadow-xl hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center"
-              >
-                Retrying
-              </button>
-              
-              <button 
-                onClick={handleMint}
-                disabled={!hasSlot || !petData.name || !petData.imageBlob || !petData.spriteBlob || uploading.image || uploading.sprite}
-                className="w-2/3 bg-black dark:bg-white dark:text-black text-white rounded-2xl py-5 font-black text-lg shadow-xl hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-50 disabled:hover:scale-100 flex items-center justify-center gap-3"
-              >
-                <Sparkles size={24} />
-                {t('custom.form.mint_btn')}
-              </button>
-            </div>
+        {/* AI Generator Mode */}
+        {creationMode === 'ai' && (
+          <div>
+            {generationStep === 'upload' ? (
+              <div className="space-y-6">
+                <div>
+                  <label className="block text-sm font-bold text-gray-500 dark:text-gray-400 mb-2 uppercase tracking-wider">
+                    Upload Base Image for AI Generation
+                  </label>
+                  <div className="relative group">
+                    <div className={`aspect-video rounded-3xl border-2 border-dashed flex flex-col items-center justify-center transition-all ${baseImage ? 'border-indigo-500 bg-indigo-50/50 dark:bg-indigo-900/10' : 'border-gray-200 dark:border-gray-800 group-hover:border-indigo-400'}`}>
+                      {baseImage ? (
+                        <div className="text-center p-2 h-full w-full flex flex-col items-center justify-center relative">
+                          <img 
+                            src={URL.createObjectURL(baseImage)} 
+                            alt="Base Preview" 
+                            className="w-full h-full object-contain rounded-2xl max-h-48"
+                          />
+                          <div className="absolute bottom-4 bg-white/90 dark:bg-gray-900/90 backdrop-blur px-3 py-1.5 rounded-full shadow-sm flex items-center gap-2">
+                            <Check className="text-green-500" size={16} />
+                            <span className="text-xs font-black text-green-600 dark:text-green-400 uppercase">
+                              Image Selected
+                            </span>
+                          </div>
+                        </div>
+                      ) : (
+                        <>
+                          <Upload className="text-gray-400 group-hover:text-indigo-400 mb-3" size={40} />
+                          <p className="text-sm font-bold text-gray-400 uppercase">Click or drag to upload base image</p>
+                        </>
+                      )}
+                      <input 
+                        type="file" 
+                        className="absolute inset-0 opacity-0 cursor-pointer" 
+                        accept="image/*"
+                        onChange={(e) => e.target.files?.[0] && setBaseImage(e.target.files[0])}
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <button 
+                  onClick={handleGeneratePet}
+                  disabled={!hasSlot || !petData.name || !baseImage || isGenerating}
+                  className="w-full bg-indigo-600 hover:bg-indigo-700 text-white rounded-2xl py-5 font-black text-lg shadow-xl hover:shadow-indigo-500/30 hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-50 disabled:hover:scale-100 flex items-center justify-center gap-3 cursor-pointer"
+                >
+                  {isGenerating ? (
+                    <>
+                      <Loader2 className="animate-spin" size={24} />
+                      Generating AI Pet...
+                    </>
+                  ) : (
+                    <>
+                      <Sparkles size={24} />
+                      Generate with AI
+                    </>
+                  )}
+                </button>
+              </div>
+            ) : (
+              <div className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {/* Generated Avatar */}
+                  <div>
+                    <label className="block text-sm font-bold text-gray-500 dark:text-gray-400 mb-2 uppercase tracking-wider">
+                      Generated Avatar
+                    </label>
+                    <div className="relative group">
+                      <div className="aspect-square rounded-3xl border-2 border-green-500 bg-green-50/50 dark:bg-green-900/10 flex flex-col items-center justify-center transition-all">
+                        {uploading.image ? (
+                          <Loader2 className="animate-spin text-indigo-500" size={32} />
+                        ) : petData.imageBlob ? (
+                          <div className="text-center p-2 h-full w-full flex flex-col items-center justify-center relative">
+                            <img 
+                              src={WalrusService.getBlobUrl(petData.imageBlob)} 
+                              alt="Avatar Preview" 
+                              className="w-full h-full object-contain rounded-2xl max-h-32"
+                            />
+                            <div className="absolute bottom-2 bg-white/90 dark:bg-gray-900/90 backdrop-blur px-2.5 py-1 rounded-full shadow-sm flex items-center gap-1">
+                              <Check className="text-green-500 animate-bounce" size={14} />
+                              <span className="text-[10px] font-black text-green-600 dark:text-green-400 uppercase">
+                                Generated & Uploaded
+                              </span>
+                            </div>
+                          </div>
+                        ) : null}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Generated Sprite */}
+                  <div>
+                    <label className="block text-sm font-bold text-gray-500 dark:text-gray-400 mb-2 uppercase tracking-wider">
+                      Generated Sprite
+                    </label>
+                    <div className="relative group">
+                      <div className="aspect-square rounded-3xl border-2 border-green-500 bg-green-50/50 dark:bg-green-900/10 flex flex-col items-center justify-center transition-all">
+                        {uploading.sprite ? (
+                          <Loader2 className="animate-spin text-indigo-500" size={32} />
+                        ) : petData.spriteBlob ? (
+                          <div className="text-center p-2 h-full w-full flex flex-col items-center justify-center relative">
+                            <img 
+                              src={WalrusService.getBlobUrl(petData.spriteBlob)} 
+                              alt="Sprite Preview" 
+                              className="w-full h-full object-contain rounded-2xl max-h-32"
+                            />
+                            <div className="absolute bottom-2 bg-white/90 dark:bg-gray-900/90 backdrop-blur px-2.5 py-1 rounded-full shadow-sm flex items-center gap-1">
+                              <Check className="text-green-500 animate-bounce" size={14} />
+                              <span className="text-[10px] font-black text-green-600 dark:text-green-400 uppercase">
+                                Generated & Uploaded
+                              </span>
+                            </div>
+                          </div>
+                        ) : null}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Sponsorship Badge */}
+                <div className="bg-indigo-50 dark:bg-indigo-900/20 p-5 rounded-3xl border border-indigo-100 dark:border-indigo-800">
+                  <div className="flex gap-4">
+                    <Sparkles className="text-indigo-500 shrink-0 mt-0.5" size={20} />
+                    <p className="text-xs text-indigo-900 dark:text-indigo-300 font-medium leading-relaxed">
+                      <strong>{t('custom.form.sponsor_badge')}:</strong> {t('custom.form.sponsor_desc')}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex gap-4">
+                  <button 
+                    onClick={() => {
+                      setGenerationStep('upload');
+                      setBaseImage(null);
+                      setPetData(prev => ({...prev, imageBlob: '', imageObjId: '', spriteBlob: '', spriteObjId: ''}));
+                    }}
+                    className="w-1/3 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-2xl py-5 font-black text-lg shadow-xl hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center cursor-pointer"
+                  >
+                    Retrying
+                  </button>
+                  
+                  <button 
+                    onClick={handleMint}
+                    disabled={!hasSlot || !petData.name || !petData.imageBlob || !petData.spriteBlob || uploading.image || uploading.sprite}
+                    className="w-2/3 bg-black dark:bg-white dark:text-black text-white rounded-2xl py-5 font-black text-lg shadow-xl hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-50 disabled:hover:scale-100 flex items-center justify-center gap-3 cursor-pointer"
+                  >
+                    <Sparkles size={24} />
+                    {t('custom.form.mint_btn')}
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
         )}
       </div>
     </div>
   );
 };
+
