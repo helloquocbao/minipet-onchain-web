@@ -83,16 +83,14 @@ export default function PetDetailPage({ params }: { params: Promise<{ id: string
 
   const getSelectedSpriteUrl = () => {
     if (!pet) return '';
-    let url = '';
     switch (selectedRarity) {
-      case 'rare': url = pet.sprite_url_rare; break;
-      case 'super_rare': url = pet.sprite_url_super_rare; break;
-      case 'legendary': url = pet.sprite_url_legendary; break;
+      case 'rare': return pet.sprite_url_rare || pet.sprite_url_normal;
+      case 'super_rare': return pet.sprite_url_super_rare || pet.sprite_url_normal;
+      case 'legendary': return pet.sprite_url_legendary || pet.sprite_url_normal;
       case 'normal':
       default:
-        url = pet.sprite_url_normal; break;
+        return pet.sprite_url_normal;
     }
-    return url || pet.sprite_url_normal;
   };
 
   const rarityConfig = {
