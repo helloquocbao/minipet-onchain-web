@@ -12,6 +12,7 @@ const resources = {
       },
       nav: {
         features: 'Features',
+        roadmap: 'Roadmap',
         docs: 'Custom Pets',
         download: 'Download Free',
         market: 'Market',
@@ -92,38 +93,38 @@ const resources = {
         desc: 'MiniPet is free, open-source, and private. Download for macOS or Windows to start.'
       },
       hero: {
-        title1: 'Meet your new',
-        title2: 'desktop',
-        title3: 'companions.',
-        desc: 'MiniPet places pixel pets on your desktop. Your companion walks, talks, and cleans up unwanted files while you work.',
-        getFree: 'Get MiniPet Free',
+        title1: 'The Era of',
+        title2: 'Agentic AI',
+        title3: 'Live on your desktop.',
+        desc: 'Forget static, soulless collectibles. Meet your autonomous AI companion—an intelligent desktop agent powered by Sui & Walrus, designed to assist with productivity, manage workspace, and execute secure on-chain transactions via simple chat commands.',
+        getFree: 'Summon Your Pet',
         source: 'Source Code',
         noAds: 'No Ads',
-        noAccount: 'No Account Needed',
+        noAccount: 'On-Chain Assets',
         privacy: '100% Privacy'
       },
       features: {
-        badge: 'Small companion, big joy',
-        desc: 'Stay focused and productive with a desktop companion.',
+        badge: 'Tauri Desktop + Agentic AI',
+        desc: 'A smart, lightweight desktop companion merging autonomous AI workflows with secure, chat-driven Web3 transactions.',
         companion: {
-          title: 'Live Desktop Companion',
-          desc: 'Your pixel pet walks and talks directly on your screen to brighten your workday.'
+          title: 'Transactional AI Agent',
+          desc: 'Running natively on your desktop (highly optimized), your companion is an active on-chain execution agent. Send simple text messages to query balances, transfer tokens, swap assets, or trigger smart contracts instantly from your chat window.'
         },
         pomodoro: {
-          title: 'Pomodoro Timer',
-          desc: 'Customize work and break cycles. Your pet nudges you when it is time to rest.'
+          title: 'Shared Focus Cycles',
+          desc: 'Work together, rest together. Your companion follows your Pomodoro cycles, sleeping when you take a break and encouraging you to focus.'
         },
         multi: {
-          title: 'Multi-Pet Support',
+          title: 'Multi-Pet Playground',
           desc: 'Spawn multiple pets with unique personalities. Watch them interact on your screen.'
         },
         eating: {
-          title: 'File Clean System',
-          desc: 'Clean your workspace. Drag unwanted files onto your pet to delete them.'
+          title: 'Interactive Trash Devourer',
+          desc: 'Drag unwanted files onto your companion. Watch them happily swallow the files to clean your desktop.'
         },
         custom: {
-          title: 'PetDex & Custom Pets',
-          desc: 'Import pets from the PetDex library or upload your own pixel art.'
+          title: 'Decentralized Custom Minting',
+          desc: 'Design your companion locally, then upload sprites to Walrus storage and mint a secure SUI NFT directly from the Tauri client, granting you 100% asset provenance.'
         },
         focus_mode: 'Focus mode'
       },
@@ -157,15 +158,42 @@ const resources = {
           row: 'Row',
           action: 'Action',
           desc: 'Detail Description',
-          idle: 'Stay still and wait.',
-          walkR: 'Walk to the right.',
-          walkL: 'Walk to the left.',
-          greet: 'Greet the user.',
-          action_spec: 'Special action (Eat file, jump...).',
-          failed: 'Sad, disappointed, or dropped.',
-          waiting: 'Waiting too long, sleeping, or being picked up.',
-          running: 'Run fast.',
-          review: 'For preview features.'
+          idle: {
+            title: 'Idle',
+            desc: 'Stay still, breathe, or blink.'
+          },
+          walkRun: {
+            title: 'Walk & Run',
+            desc: 'Walk and run animations. Automatically flipped when moving left.'
+          },
+          angry: {
+            title: 'Angry',
+            desc: 'Teased or angry state when picked up or dragged.'
+          },
+          notify: {
+            title: 'Notify / Greet',
+            desc: 'Greet the user or show notification bubble speeches.'
+          },
+          fall: {
+            title: 'Fall',
+            desc: 'Drop down vertically under gravity physics.'
+          },
+          stun: {
+            title: 'Stun / Dizzy',
+            desc: 'Stunned or dizzy state when dragged repeatedly.'
+          },
+          happyEat: {
+            title: 'Happy / Eat / Save',
+            desc: 'Vocal happy reaction, eating trash files, or collecting SUI coins.'
+          },
+          think: {
+            title: 'Think / Pomodoro',
+            desc: 'Pomodoro focus countdown or deep thinking state.'
+          },
+          bonk: {
+            title: 'Bonk / Strike',
+            desc: 'Head bonk or hammer hitting animation.'
+          }
         },
         section3: 'Default Direction',
         section3_desc: 'By default, the system assumes all images are facing right. The system will automatically flip the image when the pet moves left.',
@@ -349,8 +377,8 @@ const resources = {
         hero_desc: "MiniPet is not just an ordinary screen pet. It is a smart AI assistant, a productivity partner, and a decentralized web3 companion.",
         sections: {
           ai_chat: {
-            title: "AI Chat Assistant",
-            desc: "Double-click your pet to open the chat window. Engage in conversations, ask questions, write code, or just chat. The AI is always on and ready to help, running seamlessly in the background."
+            title: "Transactional AI Agent",
+            desc: "Double-click your pet to open the chat window. Your pixel companion is an autonomous on-chain execution agent—simply send text messages to query balances, transfer tokens, swap assets, or perform secure Web3 transactions instantly from your screen."
           },
           pomodoro: {
             title: "Pomodoro Focus Timer",
@@ -399,11 +427,12 @@ const resources = {
           }
         },
         how_to: {
-          title: "How to Control Your Pet",
-          step1: "Double-Click: Open or close the AI chat bubble to talk to your pet.",
-          step2: "Click & Drag: Drag your pet anywhere on your screen. Release to let it fall with gravity.",
-          step3: "Drag Files: Hover a desktop file over your pet to 'feed' it and send the file to the Recycle Bin.",
-          step4: "Right-Click: Access the pet's context menu to customize settings, switch skins, start Pomodoro, or exit."
+          title: "Control Your Autonomous AI Agent",
+          step1: "Agentic Chat: Double-click to wake up your companion. Query it to write code, browse the web, or delegate focus tasks.",
+          step2: "Gravity & Physics: Click & drag your pet anywhere on your screen. Release to let gravity take over.",
+          step3: "Workflow Actions: Drag and drop files onto your AI agent to trigger cleaning scripts and empty your workspace trash.",
+          step4: "Agent Configuration: Right-click to change LLM models, customize agent settings, swap skins, or set Pomodoro timers.",
+          note: "Equipped with advanced agentic workflows, MiniPet interacts dynamically with your screen to actively assist your daily work."
         }
       }
     }
@@ -412,12 +441,13 @@ const resources = {
     translation: {
       seo: {
         title: 'MiniPet - Những người bạn Pixel đáng yêu trên máy tính',
-        description: 'MiniPet là ứng dụng máy tính nhẹ nhàng mang những người bạn pixel đến không gian làm việc của bạn. Tăng năng suất với Pomodoro và tận hưởng niềm vui với thú cưng máy tính.',
+        description: 'MiniPet là ứng dụng máy tính nhẹ nhàng mang những người bạn pixel đến không gian làm việc của bạn. Tăng năng suất với Pomodoro và tận hiện niềm vui với thú cưng máy tính.',
         keywords: 'minipet, minipets, mini pet, mini pets, mini pet app, mini pet apps, virtual pet, qbao, thú cưng máy tính, pet máy tính, pixel pet, pomodoro, bạn đồng hành máy tính, thú cưng ảo, minipet chính thức'
       },
       nav: {
         features: 'Tính năng',
-        docs: 'Custom Pets',
+        roadmap: 'Lộ trình',
+        docs: 'Tự Thiết Kế Pet',
         download: 'Tải miễn phí',
         market: 'Cửa hàng',
         admin: 'Quản trị',
@@ -434,7 +464,7 @@ const resources = {
         social_login_desc: 'Bảo mật bằng zkLogin, cực kỳ nhanh gọn',
         recommend: 'Khuyên dùng',
         or: 'Hoặc',
-        extension_login_b: 'Phương án B: Ví Sui Extension (Ví Slug)',
+        extension_login_b: 'Phương án B: Tiện ích mở rộng Ví Sui (Sui Wallet Extension)',
         extension_desc: 'Sử dụng Sui Wallet, Suiet hoặc các ví extension khác đã cài trên trình duyệt của bạn.',
         no_extension: 'Chưa phát hiện thấy ví Extension nào',
         download_extension: 'Tải Sui Wallet trên Chrome Web Store →',
@@ -443,8 +473,8 @@ const resources = {
       sync: {
         login_title: 'Đăng nhập MiniPet',
         sync_title: 'Đồng bộ ví MiniPet',
-        login_desc: 'Kết nối qua ví Sui extension hoặc Đăng nhập trực tiếp bằng Google (zkLogin).',
-        sync_desc: 'Kết nối qua ví Sui extension hoặc Đăng nhập trực tiếp bằng Google (zkLogin) để đồng bộ tài sản xuống app.',
+        login_desc: 'Kết nối qua tiện ích mở rộng ví Sui hoặc Đăng nhập trực tiếp bằng Google (zkLogin).',
+        sync_desc: 'Kết nối qua tiện ích mở rộng ví Sui hoặc Đăng nhập trực tiếp bằng Google (zkLogin) để đồng bộ tài sản xuống app.',
         option_a: 'Phương án A: Đăng nhập Google (zkLogin)',
         option_b: 'Phương án B: Kết nối Ví Extension',
         connecting: 'Đang kết nối zkLogin...',
@@ -497,38 +527,38 @@ const resources = {
         desc: 'MiniPet miễn phí, mã nguồn mở và hoạt động riêng tư. Tải bản cài đặt cho macOS hoặc Windows để bắt đầu.'
       },
       hero: {
-        title1: 'Gặp gỡ những',
-        title2: 'người bạn',
-        title3: 'máy tính mới.',
-        desc: 'MiniPet đưa thú cưng pixel lên màn hình máy tính của bạn. Người bạn nhỏ này biết đi, nói chuyện và dọn dẹp các tệp tin rác khi bạn làm việc.',
-        getFree: 'Tải MiniPet miễn phí',
+        title1: 'Kỷ nguyên',
+        title2: 'Agentic AI',
+        title3: 'Ngay trên màn hình của bạn.',
+        desc: 'Không còn là những vật phẩm kỹ thuật số tĩnh lặng. MiniPet đánh thức những Tác Nhân AI Tự Trị (Agentic AI) sống động trên desktop của bạn — vừa đồng hành tăng hiệu suất làm việc, vừa trực tiếp thực thi các giao dịch on-chain bảo mật chỉ qua những dòng chat tự nhiên.',
+        getFree: 'Triệu hồi Thú cưng',
         source: 'Mã nguồn',
         noAds: 'Không quảng cáo',
-        noAccount: 'Không cần tài khoản',
+        noAccount: 'Sở hữu On-Chain',
         privacy: 'Riêng tư 100%'
       },
       features: {
-        badge: 'Bạn nhỏ, niềm vui lớn',
-        desc: 'Người bạn đồng hành giúp bạn tập trung và làm việc hiệu quả hơn.',
+        badge: 'Tauri Desktop + Agentic AI',
+        desc: 'Trợ lý máy tính thông minh siêu nhẹ, kết hợp hoàn hảo giữa luồng xử lý AI tự trị và giao dịch Web3 on-chain bảo mật bằng tin nhắn hội thoại.',
         companion: {
-          title: 'Bạn đồng hành trực tiếp',
-          desc: 'Thú cưng pixel hoạt động trực tiếp trên màn hình. Chúng đi bộ, trò chuyện và đồng hành cùng bạn.'
+          title: 'Trợ Lý AI Giao Dịch Tự Trị',
+          desc: 'Tối ưu hóa bằng Tauri siêu nhẹ và tiết kiệm tài nguyên, thú cưng của bạn là một tác nhân AI (AI Agent) tự trị có thể ký duyệt giao dịch Web3, hoán đổi tài sản (swap) hay kiểm tra số dư ví trực tiếp từ cuộc hội thoại tự nhiên của bạn.'
         },
         pomodoro: {
-          title: 'Đồng hồ Pomodoro',
-          desc: 'Tự động chia thời gian làm việc và nghỉ ngơi. Thú cưng sẽ nhắc bạn khi cần thư giãn.'
+          title: 'Nhịp sinh học tập trung',
+          desc: 'Cùng làm việc, cùng nghỉ ngơi. Người bạn nhỏ sẽ ngủ khi bạn thư giãn và đồng hành, cổ vũ bạn trong những chu kỳ Pomodoro tập trung cao độ.'
         },
         multi: {
-          title: 'Hỗ trợ nhiều Pet',
-          desc: 'Nuôi nhiều thú cưng cùng lúc. Chúng sẽ tự tương tác với nhau trên màn hình của bạn.'
+          title: 'Khu vui chơi đa thú cưng',
+          desc: 'Nuôi nhiều thú cưng cùng lúc. Chúng sẽ tự chạy nhảy, rượt đuổi và tương tác với nhau trên màn hình của bạn.'
         },
         eating: {
-          title: 'Hệ thống dọn dẹp tệp tin',
-          desc: 'Dọn dẹp màn hình nhanh gọn. Kéo thả các tệp tin rác vào thú cưng để đưa chúng vào thùng rác.'
+          title: 'Dọn rác tương tác thông minh',
+          desc: 'Dọn dẹp màn hình nhanh gọn. Kéo thả các tệp tin rác vào thú cưng để chúng vui vẻ "nuốt chửng" và đưa tệp vào thùng rác hệ thống.'
         },
         custom: {
-          title: 'PetDex & Custom Pets',
-          desc: 'Chọn thú cưng từ thư viện PetDex hoặc tự tải lên ảnh pixel của riêng bạn.'
+          title: 'Đúc Pet Tự Thiết Kế Phi Tập Trung',
+          desc: 'Tự thiết kế pet trên máy tính, lưu trữ spritesheet vĩnh viễn trên Walrus và đúc thành Sui NFT độc bản trực tiếp từ Tauri client với quyền sở hữu tài sản tuyệt đối.'
         },
         focus_mode: 'Chế độ tập trung'
       },
@@ -536,7 +566,7 @@ const resources = {
         title: 'Sẵn sàng gặp gỡ bạn đồng hành?',
         desc: 'Chọn nền tảng của bạn và bắt đầu hành trình với MiniPet ngay hôm nay. Hoàn toàn miễn phí.',
         macDesc: 'Hỗ trợ Intel & Apple Silicon',
-        winExeDesc: 'Bản cài đặt tiêu chuẩn cho Windows',
+        winDesc: 'Bản cài đặt tiêu chuẩn cho Windows',
         winZipDesc: 'Bản Portable (Không cần cài đặt)',
         btn: 'Tải về',
         coming_soon: 'Sắp ra mắt',
@@ -553,7 +583,7 @@ const resources = {
       docs: {
         back: 'Quay lại trang chủ',
         title: 'Quy chuẩn Custom Pet',
-        desc: 'Hướng dẫn cấu trúc file để upload thú cưng tùy chỉnh (Custom Pet) của bạn lên hệ thống MiniPet.',
+        desc: 'Hướng dẫn cấu trúc file để tải thú cưng tùy chỉnh (Custom Pet) của bạn lên hệ thống MiniPet.',
         section1: 'Cấu trúc thư mục',
         section1_desc: 'Một thú cưng hoàn chỉnh cần bao gồm 2 file bắt buộc đặt chung trong một thư mục:',
         section2: 'Spritesheet (9 Dòng)',
@@ -562,15 +592,42 @@ const resources = {
           row: 'Dòng',
           action: 'Hành động',
           desc: 'Mô tả chi tiết',
-          idle: 'Đứng im chờ đợi.',
-          walkR: 'Đi bộ sang hướng phải.',
-          walkL: 'Đi bộ sang hướng trái.',
-          greet: 'Chào hỏi người dùng.',
-          action_spec: 'Hành động đặc biệt (Ăn file, nhảy...).',
-          failed: 'Buồn bã, thất vọng, hoặc bị rơi.',
-          waiting: 'Đợi quá lâu, đi ngủ, hoặc bị nhấc lên.',
-          running: 'Chạy nhanh.',
-          review: 'Dành cho các tính năng xem trước.'
+          idle: {
+            title: 'Đứng im (Idle)',
+            desc: 'Đứng im chờ đợi, thở nhẹ hoặc chớp mắt.'
+          },
+          walkRun: {
+            title: 'Đi bộ / Chạy bộ',
+            desc: 'Hoạt ảnh di chuyển bộ và chạy nhanh qua lại. Tự động lật ngược khi đi sang trái.'
+          },
+          angry: {
+            title: 'Tức giận (Angry)',
+            desc: 'Hoạt ảnh tức giận hoặc bị trêu ghẹo khi bị chuột nhấc lên/kéo rê.'
+          },
+          notify: {
+            title: 'Chào hỏi / Thông báo',
+            desc: 'Chào hỏi người dùng hoặc khi hiện hội thoại thông báo.'
+          },
+          fall: {
+            title: 'Rơi tự do (Fall)',
+            desc: 'Rơi tự do từ trên cao xuống theo vật lý trọng lực.'
+          },
+          stun: {
+            title: 'Choáng váng (Stun)',
+            desc: 'Choáng váng, hoa mắt khi bị nhấc lên thả xuống liên tục.'
+          },
+          happyEat: {
+            title: 'Vui vẻ / Ăn rác / Nhận SUI',
+            desc: 'Phản ứng vui vẻ, ăn file rác (dọn rác), hoặc nhận token SUI.'
+          },
+          think: {
+            title: 'Tập trung / Suy nghĩ',
+            desc: 'Trạng thái tập trung đếm ngược Pomodoro hoặc suy nghĩ.'
+          },
+          bonk: {
+            title: 'Húc đầu / Gõ búa (Bonk)',
+            desc: 'Hoạt ảnh húc đầu vào cạnh màn hình hoặc gõ búa.'
+          }
         },
         section3: 'Hướng mặc định',
         section3_desc: 'Theo mặc định, hệ thống sẽ ngầm hiểu tất cả các hình ảnh đang quay mặt sang phải. Hệ thống sẽ tự động lật ngược hình khi pet di chuyển sang trái.',
@@ -601,7 +658,7 @@ const resources = {
           stats_showing: 'Hiển thị {{count}} trên {{total}} thú cưng'
         },
         custom_slot: {
-          title: 'Ô tạo Pet tùy chỉnh',
+          title: 'Slot đúc Pet tự thiết kế',
           desc: 'Tự thiết kế người bạn pixel của riêng bạn'
         },
         pet_card: {
@@ -612,27 +669,27 @@ const resources = {
         },
         mint_section: {
           title: 'Không tìm thấy thú cưng ưng ý?',
-          desc: 'Mua một ô đúc (Mint Slot) và tải lên spritesheet của riêng bạn để tạo ra một người bạn đồng hành thực sự độc nhất vô nhị mà chỉ bạn sở hữu.',
-          buy_btn: 'Mua ô đúc (Mint Slot)',
+          desc: 'Mua một Slot đúc Pet (Mint Slot) và tải lên spritesheet của riêng bạn để tạo ra một người bạn đồng hành thực sự độc nhất vi nhị mà chỉ bạn sở hữu.',
+          buy_btn: 'Mua Slot đúc Pet (Mint Slot)',
           view_guide: 'Xem hướng dẫn'
         },
         alerts: {
-          need_mipet: 'Bạn cần token MIPET để mua ô đúc!',
+          need_mipet: 'Bạn cần token MIPET để mua Slot đúc Pet!',
           buy_pet_success: 'Nhận nuôi thú cưng thành công! Hãy kiểm tra Ứng dụng Desktop hoặc trang Cá nhân.',
-          buy_slot_success: 'Mua ô đúc (Mint Slot) thành công! Đang chuyển hướng đến trang tạo...',
-          buy_custom_slot_success: 'Mua ô đúc (Mint Slot) thành công! Đang chuyển hướng đến trang chỉnh sửa...',
-          has_slot: 'Bạn đã có sẵn ô đúc (Mint Slot)! Đang chuyển hướng đến trang tạo...',
-          has_slot_custom: 'Bạn đã có sẵn ô đúc (Mint Slot)! Đang chuyển hướng đến trang chỉnh sửa thú cưng...',
+          buy_slot_success: 'Mua Slot đúc Pet (Mint Slot) thành công! Đang chuyển hướng đến trang tạo...',
+          buy_custom_slot_success: 'Mua Slot đúc Pet (Mint Slot) thành công! Đang chuyển hướng đến trang tự thiết kế...',
+          has_slot: 'Bạn đã có sẵn Slot đúc Pet (Mint Slot)! Đang chuyển hướng đến trang tạo...',
+          has_slot_custom: 'Bạn đã có sẵn Slot đúc Pet (Mint Slot)! Đang chuyển hướng đến trang tự thiết kế thú cưng...',
           buy_failed: 'Giao dịch thất bại hoặc bị từ chối: {{error}}'
         }
       },
       custom: {
         back: 'Quay lại',
-        title: 'Đúc Pet tùy chỉnh',
+        title: 'Tạo Pet Tự Thiết Kế',
         subtitle: 'Tạo người bạn phi tập trung độc nhất của bạn',
         no_slot: {
-          title: 'Không tìm thấy ô đúc',
-          desc: 'Bạn cần mua một Ô đúc (Mint Slot) trong Cửa hàng trước.',
+          title: 'Không tìm thấy Slot đúc Pet',
+          desc: 'Bạn cần mua một Slot đúc Pet (Mint Slot) trong Cửa hàng trước.',
           go_market: 'Đến Cửa hàng'
         },
         form: {
@@ -643,20 +700,20 @@ const resources = {
           upload_hint: 'Chọn tệp',
           uploaded_hint: 'Đã tải lên Walrus',
           sponsor_badge: 'Admin tài trợ',
-          sponsor_desc: 'Phí tải lên của bạn đã được bao trả! Thú cưng của bạn sẽ được lưu trữ vĩnh viễn trên Walrus.',
-          mint_btn: 'Đúc Pet tùy chỉnh'
+          sponsor_desc: 'Phí tải lên của bạn đã được tài trợ hoàn toàn! Thú cưng của bạn sẽ được lưu trữ vĩnh viễn trên Walrus.',
+          mint_btn: 'Tạo Pet Tự Thiết Kế'
         },
         alerts: {
-          mint_success: 'Đã đúc Pet tùy chỉnh thành công! Được tài trợ bởi Admin ✨',
+          mint_success: 'Đã tạo Pet tự thiết kế thành công! Được tài trợ hoàn toàn bởi Admin ✨',
           upload_failed: 'Tải lên Walrus thất bại. Vui lòng thử lại.',
           sponsor_unavailable: 'Dịch vụ tài trợ của Admin hiện không khả dụng.',
-          mint_failed: 'Đúc Pet tùy chỉnh thất bại: {{error}}'
+          mint_failed: 'Tạo Pet tự thiết kế thất bại: {{error}}'
         },
         preview: {
           title: 'Xem trước hoạt ảnh',
           desc: 'Kiểm tra chuyển động của Pet trước khi đúc lên Blockchain.',
           no_sprite: 'Chưa tải lên Spritesheet',
-          frames_per_row: 'Số khung hình / dòng',
+          frames_per_row: 'Số khung hình mỗi dòng',
           guidelines_title: 'Quy chuẩn Spritesheet',
           guide_1: 'Hình ảnh Spritesheet phải được chia làm 9 dòng hoạt ảnh tương ứng với các trạng thái của Pet.',
           guide_2: 'Tất cả các dòng phải có cùng số lượng khung hình (Cột). Mặc định là 4 cột.',
@@ -687,14 +744,14 @@ const resources = {
           package_id: 'ID Gói (Package ID)',
           mipet_token: 'Token MIPET',
           status: 'Trạng thái Quản trị',
-          authorized: 'ĐÃ XÁC THỰC',
+          authorized: 'CÓ QUYỀN TRUY CẬP',
           custom_mint_progress: 'Số Pet Custom đã đúc',
-          slot_price: 'Giá mua Mint Slot',
-          slot_price_desc: 'Mức phí người dùng cần trả để tự đúc Custom Pet',
-          treasury_addr: 'Địa chỉ ví Treasury nhận phí',
+          slot_price: 'Giá mua Slot đúc Pet',
+          slot_price_desc: 'Mức phí người dùng cần trả để tự tạo Custom Pet',
+          treasury_addr: 'Địa chỉ ví Quỹ (Treasury) nhận phí',
           treasury_desc: 'Nhận tất cả phí thu được từ việc mua slot hoặc mua pet',
           welcome: 'Chào mừng trở lại, Admin',
-          welcome_desc: 'Sử dụng thanh điều hướng phía trên để quản lý Cửa hàng, đúc token MIPET hoặc điều chỉnh các thông số hệ thống toàn cầu như phí và giới hạn.'
+          welcome_desc: 'Sử dụng thanh điều hướng phía trên để quản lý Cửa hàng, phát hành token MIPET hoặc điều chỉnh các thông số hệ thống chung như phí và giới hạn.'
         },
         store: {
           add_title: 'Thêm mẫu Pet mới',
@@ -708,32 +765,32 @@ const resources = {
           confirm_btn: 'Xác nhận và Thêm vào Cửa hàng'
         },
         economy: {
-          mint_title: 'Đúc token MIPET',
+          mint_title: 'Phát hành (Mint) token MIPET',
           recipient: 'Địa chỉ người nhận',
           amount: 'Số lượng (MIPET)',
-          mint_btn: 'Đúc',
-          treasury_title: 'Quản lý Kho bạc',
-          new_treasury: 'Địa chỉ Kho bạc mới',
+          mint_btn: 'Phát hành',
+          treasury_title: 'Quản lý ví Quỹ (Treasury)',
+          new_treasury: 'Địa chỉ ví Quỹ mới',
           update_btn: 'Cập nhật',
-          treasury_note: 'Lưu ý: Địa chỉ này sẽ nhận tất cả các khoản phí từ việc mua hàng trong Cửa hàng và bán Ô đúc tùy chỉnh.'
+          treasury_note: 'Lưu ý: Địa chỉ này sẽ nhận tất cả các khoản phí từ việc mua hàng trong Cửa hàng và bán Slot đúc Pet tùy chỉnh.'
         },
         system: {
           title: 'Cấu hình Hệ thống',
-          fee_label: 'Phí Ô đúc tùy chỉnh cơ bản (MIPET)',
+          fee_label: 'Phí Slot đúc Pet tùy chỉnh cơ bản (MIPET)',
           save_btn: 'Lưu thay đổi',
-          limit_label: 'Tăng giới hạn đúc Pet Custom',
+          limit_label: 'Tăng giới hạn đúc Pet tự thiết kế',
           increase_btn: 'Tăng giới hạn',
-          limit_desc: 'Giới hạn kích hoạt hiện tại: {{current}} Pet Custom.',
+          limit_desc: 'Giới hạn kích hoạt hiện tại: {{current}} Pet Tự thiết kế.',
           warning: 'Cảnh báo',
-          warning_desc: 'Việc điều chỉnh các thông số này ảnh hưởng đến toàn bộ nền kinh tế. Các thay đổi có hiệu lực ngay lập tức trên blockchain.'
+          warning_desc: 'Việc điều chỉnh các thông số này ảnh hưởng đến hệ sinh thái kinh tế MIPET. Các thay đổi có hiệu lực ngay lập tức trên blockchain.'
         },
         alerts: {
           template_success: 'Đã tạo mẫu thành công!',
-          tokens_minted: 'Đã đúc token thành công!',
-          treasury_updated: 'Đã cập nhật kho bạc!',
+          tokens_minted: 'Đã phát hành token thành công!',
+          treasury_updated: 'Đã cập nhật địa chỉ ví Quỹ thành công!',
           config_updated: 'Đã cập nhật cấu hình!',
           upload_failed: 'Tải lên Walrus thất bại.',
-          limit_increased: 'Đã tăng giới hạn đúc Pet Custom thành công!'
+          limit_increased: 'Đã tăng giới hạn đúc Pet Tự thiết kế thành công!'
         },
         auth: {
           checking: 'Đang xác minh quyền admin...',
@@ -754,8 +811,8 @@ const resources = {
         hero_desc: "MiniPet không chỉ là một thú cưng màn hình thông thường. Nó là trợ lý AI thông minh, người bạn đồng hành tăng năng suất và một NFT phi tập trung Web3.",
         sections: {
           ai_chat: {
-            title: "Trợ Lý Chat AI",
-            desc: "Nhấp đúp vào pet của bạn để mở khung chat. Trò chuyện, đặt câu hỏi, viết code hoặc tán gẫu. Trợ lý AI luôn luôn bật và sẵn sàng hỗ trợ bạn bất cứ lúc nào ngay trên màn hình."
+            title: "Tác Nhân Giao Dịch AI (Chat-to-Transact)",
+            desc: "Vượt lên khỏi những dòng chat thông thường, MiniPet mang đến một Tác Nhân Giao Dịch AI (Transactional Agent) đích thực. Chỉ cần gửi một tin nhắn văn bản ngắn để chuyển khoản token, kiểm tra số dư ví, swap tài sản hay ký duyệt các giao dịch on-chain bảo mật một cách dễ dàng và mượt mà nhất. Thú cưng của bạn giờ đây vừa là người đồng hành đáng yêu, vừa là trợ thủ đắc lực hỗ trợ các thao tác Web3."
           },
           pomodoro: {
             title: "Đồng Hồ Pomodoro Tập Trung",
@@ -771,7 +828,7 @@ const resources = {
           },
           custom_creator: {
             title: "Tự Thiết Kế Pet (Sui + Walrus)",
-            desc: "Tự tạo thú cưng độc quyền của bạn. Mua Ô đúc (Mint Slot) bằng token MIPET, tải lên spritesheet hoạt ảnh và đúc NFT. Thú cưng sẽ được lưu trữ vĩnh viễn trên mạng lưới Walrus phi tập trung."
+            desc: "Tự tạo thú cưng độc quyền của bạn. Mua Slot đúc Pet (Mint Slot) bằng token MIPET, tải lên spritesheet hoạt ảnh và đúc NFT. Thú cưng sẽ được lưu trữ vĩnh viễn trên mạng lưới Walrus phi tập trung."
           },
           interactivity: {
             title: "Vật Lý & Tương Tác Chuột",
@@ -804,11 +861,12 @@ const resources = {
           }
         },
         how_to: {
-          title: "Hướng Dẫn Ra Lệnh Cho Pet",
-          step1: "Nhấp đúp chuột: Mở hoặc đóng bong bóng chat AI để trò chuyện trực tiếp.",
-          step2: "Nhấp và kéo: Nhấc pet lên và di chuyển đi bất cứ đâu. Thả ra để pet rơi tự do theo trọng lực.",
-          step3: "Kéo thả tệp: Di chuyển một file trên desktop đè lên pet để 'cho ăn' và xóa file đó vào Thùng rác.",
-          step4: "Nhấp chuột phải: Mở menu ngữ cảnh để cấu hình cài đặt, đổi skin thú cưng, bắt đầu Pomodoro hoặc thoát."
+          title: "Điều Khiển Tác Nhân AI Tự Trị",
+          step1: "Giao dịch qua Chat: Nhấp đúp chuột để gọi trợ lý pet. Gửi tin nhắn văn bản để thực hiện giao thức swap, kiểm tra ví hoặc chuyển khoản token.",
+          step2: "Tương tác Vật lý: Nhấp chuột và kéo thú cưng đi bất kỳ đâu trên màn hình, thả ra để pet rơi tự do theo trọng lực.",
+          step3: "Xử lý Quy trình: Kéo thả các file rác trực tiếp lên trợ lý AI để kích hoạt cơ chế tự động dọn dẹp màn hình.",
+          step4: "Cài đặt Trợ lý: Nhấp chuột phải để lựa chọn mô hình LLM, tinh chỉnh thông số AI, đổi skin hoặc bắt đầu Pomodoro.",
+          note: "Được trang bị các luồng xử lý hành động AI thông minh (Agentic Workflow), MiniPet tương tác chủ động với màn hình để hỗ trợ tối đa cho công việc của bạn."
         }
       }
     }
@@ -822,6 +880,7 @@ const resources = {
       },
       nav: {
         features: '功能',
+        roadmap: '路线图',
         docs: '自定义宠物',
         download: '免费下载',
         market: '商店',
@@ -844,7 +903,7 @@ const resources = {
         getFree: '免费获取 MiniPet',
         source: '源代码',
         noAds: '无广告',
-        noAccount: '无需账户',
+        noAccount: '链上资产',
         privacy: '100% 隐私保护'
       },
       features: {
@@ -867,8 +926,8 @@ const resources = {
           desc: '清理您的工作空间。将不需要的文件拖到宠物身上即可将其删除。'
         },
         custom: {
-          title: 'PetDex 和自定义宠物',
-          desc: '从 PetDex 库导入宠物或上传您自己的像素画。'
+          title: '自定义宠物',
+          desc: '上传您自己的像素画以创建自定义桌面宠物。'
         }
       },
       download: {
@@ -882,7 +941,7 @@ const resources = {
       docs: {
         back: '返回首页',
         title: '自定义宠物标准',
-        desc: '将您的自定义宠物上传到 MiniPet 系统的文件结构指南。',
+        desc: '将您的自定义宠物上传到 MiniPet系统的文件结构指南。',
         section1: '文件夹结构',
         section1_desc: '一个完整的宠物必须在单个文件夹中包含 2 个必需的文件：',
         section2: '精灵图（9 行）',
@@ -891,15 +950,42 @@ const resources = {
           row: '行',
           action: '动作',
           desc: '详细说明',
-          idle: '保持静止并等待。',
-          walkR: '向右走。',
-          walkL: '向左走。',
-          greet: '向用户打招呼。',
-          action_spec: '特殊动作（吃文件、跳跃...）。',
-          failed: '悲伤、失望或掉落。',
-          waiting: '等待太久、睡觉或被捡起。',
-          running: '快跑。',
-          review: '用于预览功能。'
+          idle: {
+            title: '待机 (Idle)',
+            desc: '保持静止、呼吸或眨眼。'
+          },
+          walkRun: {
+            title: '行走 / 奔跑',
+            desc: '行走和奔跑动画。向左移动时自动翻转。'
+          },
+          angry: {
+            title: '生气 (Angry)',
+            desc: '被提起或拖动时被逗弄或生气。'
+          },
+          notify: {
+            title: '问候 / 通知',
+            desc: '向用户打招呼或显示通知气泡。'
+          },
+          fall: {
+            title: '下落 (Fall)',
+            desc: '垂直坠落（重力物理效果）。'
+          },
+          stun: {
+            title: '眩晕 (Stun)',
+            desc: '被连续拖动时的眩晕或眩晕状态。'
+          },
+          happyEat: {
+            title: '高兴 / 吃垃圾 / 收集 SUI',
+            desc: '高兴反应、吃垃圾文件或收集 SUI 代币。'
+          },
+          think: {
+            title: '思考 / 专注',
+            desc: '番茄钟专注或深度思考状态。'
+          },
+          bonk: {
+            title: '撞击 (Bonk)',
+            desc: '撞头或砸锤子动作。'
+          }
         },
         section3: '默认方向',
         section3_desc: '默认情况下，系统假定所有图像都朝向右侧。当宠物向左移动时，系统将自动翻转图像。',
@@ -926,6 +1012,7 @@ const resources = {
       },
       nav: {
         features: 'Caratteristiche',
+        roadmap: 'Roadmap',
         docs: 'Pet Personalizzati',
         download: 'Scarica Gratis',
         market: 'Negozio',
@@ -948,7 +1035,7 @@ const resources = {
         getFree: 'Ottieni MiniPet Gratis',
         source: 'Codice Sorgente',
         noAds: 'Senza Annunci',
-        noAccount: 'Nessun Account',
+        noAccount: 'Asset On-Chain',
         privacy: 'Privacy 100%'
       },
       features: {
@@ -971,8 +1058,8 @@ const resources = {
           desc: 'Un modo divertente e interattivo per pulire il tuo spazio di lavoro. Trascina i file indesiderati sul tuo pet e guardali sparire.'
         },
         custom: {
-          title: 'PetDex e Pet Personalizzati',
-          desc: 'Importa dalla nostra vasta libreria PetDex o carica la tua pixel art per creare un compagno davvero unico.'
+          title: 'Pet Personalizzati',
+          desc: 'Carica la tua pixel art per creare un compagno personalizzato davvero unico.'
         }
       },
       download: {
@@ -995,15 +1082,42 @@ const resources = {
           row: 'Riga',
           action: 'Azione',
           desc: 'Descrizione Dettagliata',
-          idle: 'Resta fermo e aspetta.',
-          walkR: 'Cammina a destra.',
-          walkL: 'Cammina a sinistra.',
-          greet: 'Saluta l\'utente.',
-          action_spec: 'Azione speciale (Mangia file, salta...).',
-          failed: 'Triste, deluso o caduto.',
-          waiting: 'Aspettando troppo a lungo, dormendo o venendo preso.',
-          running: 'Corri veloce.',
-          review: 'Per le funzioni di anteprima.'
+          idle: {
+            title: 'Inattivo (Idle)',
+            desc: 'Resta fermo, respira o sbatti le palpebre.'
+          },
+          walkRun: {
+            title: 'Cammina / Corri',
+            desc: 'Animazioni di camminata e corsa. Capovolto automaticamente quando si va a sinistra.'
+          },
+          angry: {
+            title: 'Arrabbiato (Angry)',
+            desc: 'Infastidito o arrabbiato quando viene preso o trascinato.'
+          },
+          notify: {
+            title: 'Notifica / Saluto',
+            desc: 'Saluta l\'utente o mostra nuvolette di notifica.'
+          },
+          fall: {
+            title: 'Caduta (Fall)',
+            desc: 'Caduta verticale (fisica della gravità).'
+          },
+          stun: {
+            title: 'Stordito (Stun)',
+            desc: 'Stordito o frastornato quando viene trascinato ripetutamente.'
+          },
+          happyEat: {
+            title: 'Felice / Mangia / SUI',
+            desc: 'Felice, mangia file spazzatura o raccoglie token SUI.'
+          },
+          think: {
+            title: 'Pensa / Focus',
+            desc: 'Focus Pomodoro o stato di pensiero profondo.'
+          },
+          bonk: {
+            title: 'Bonk',
+            desc: 'Testata o azione di martellamento.'
+          }
         },
         section3: 'Direzione Predefinita',
         section3_desc: 'Per impostazione predefinita, il sistema assume che tutte le immagini siano rivolte a destra. Il sistema capovolgerà automaticamente l\'immagine quando il pet si muove a sinistra.',
@@ -1030,6 +1144,7 @@ const resources = {
       },
       nav: {
         features: 'Fonctionnalités',
+        roadmap: 'Roadmap',
         docs: 'Pets Personnalisés',
         download: 'Télécharger Gratuitement',
         market: 'Boutique',
@@ -1052,7 +1167,7 @@ const resources = {
         getFree: 'Obtenir MiniPet Gratuitement',
         source: 'Code Source',
         noAds: 'Sans Pub',
-        noAccount: 'Sans Compte',
+        noAccount: 'Actifs On-Chain',
         privacy: '100% Privé'
       },
       features: {
@@ -1075,8 +1190,8 @@ const resources = {
           desc: 'Une façon amusante et interactive de nettoyer votre espace de travail. Faites simplement glisser les fichiers indésirables sur votre pet et regardez-les disparaître.'
         },
         custom: {
-          title: 'PetDex & Pets Personnalisés',
-          desc: 'Importez à partir de notre immense bibliothèque PetDex ou téléchargez votre propre pixel art pour créer un compagnon vraiment unique.'
+          title: 'Pets Personnalisés',
+          desc: 'Téléchargez votre propre pixel art pour créer un compagnon personnalisé vraiment unique.'
         }
       },
       download: {
@@ -1099,15 +1214,42 @@ const resources = {
           row: 'Ligne',
           action: 'Action',
           desc: 'Description Détaillée',
-          idle: 'Reste immobile et attend.',
-          walkR: 'Marche vers la droite.',
-          walkL: 'Marche vers la gauche.',
-          greet: 'Salue l\'utilisateur.',
-          action_spec: 'Action spéciale (Mange un fichier, saute...).',
-          failed: 'Triste, déçu ou tombé.',
-          waiting: 'Attend trop longtemps, dort ou est ramassé.',
-          running: 'Court vite.',
-          review: 'Pour les fonctionnalités d\'aperçu.'
+          idle: {
+            title: 'Immobile (Idle)',
+            desc: 'Reste immobile, respire ou cligne des yeux.'
+          },
+          walkRun: {
+            title: 'Marche / Course',
+            desc: 'Animations de marche et course. Retourné automatiquement en allant à gauche.'
+          },
+          angry: {
+            title: 'En colère (Angry)',
+            desc: 'Taquiné ou en colère quand il est attrapé/traîné.'
+          },
+          notify: {
+            title: 'Notification / Salutation',
+            desc: 'Salue l\'utilisateur ou affiche des bulles de notification.'
+          },
+          fall: {
+            title: 'Chute (Fall)',
+            desc: 'Chute verticale (physique de gravité).'
+          },
+          stun: {
+            title: 'Étourdi (Stun)',
+            desc: 'Étourdi ou hébété lorsqu\'il est traîné à plusieurs reprises.'
+          },
+          happyEat: {
+            title: 'Joyeux / Mange / SUI',
+            desc: 'Joyeux, mange des fichiers poubelle ou collecte des jetons SUI.'
+          },
+          think: {
+            title: 'Pense / Focus',
+            desc: 'Focus Pomodoro ou état de réflexion profonde.'
+          },
+          bonk: {
+            title: 'Bonk',
+            desc: 'Coup de tête ou action de martèlement.'
+          }
         },
         section3: 'Direction par Défaut',
         section3_desc: 'Par défaut, le système suppose que toutes les images sont tournées vers la droite. Le système retournera automatiquement l\'image lorsque le pet se déplace vers la gauche.',
@@ -1134,6 +1276,7 @@ const resources = {
       },
       nav: {
         features: '기능',
+        roadmap: '로드맵',
         docs: '커스텀 펫',
         download: '무료 다운로드',
         market: '상점',
@@ -1156,7 +1299,7 @@ const resources = {
         getFree: 'MiniPet 무료 다운로드',
         source: '소스 코드',
         noAds: '광고 없음',
-        noAccount: '계정 필요 없음',
+        noAccount: '온체인 자산',
         privacy: '100% 개인정보 보호'
       },
       features: {
@@ -1179,8 +1322,8 @@ const resources = {
           desc: '작업 공간을 청소하는 재미있고 인터랙티브한 방법입니다. 원하지 않는 파일을 펫에게 드래그하여 사라지는 것을 지켜보세요.'
         },
         custom: {
-          title: 'PetDex 및 커스텀 펫',
-          desc: '방대한 PetDex 라이브러리에서 가져오거나 나만의 픽셀 아트를 업로드하여 진정으로 독특한 동반자를 만드세요.'
+          title: '커스텀 펫',
+          desc: '나만의 픽셀 아트를 업로드하여 커스텀 펫을 만드세요.'
         }
       },
       download: {
@@ -1203,15 +1346,42 @@ const resources = {
           row: '행',
           action: '동작',
           desc: '상세 설명',
-          idle: '가만히 서서 기다립니다.',
-          walkR: '오른쪽으로 걷습니다.',
-          walkL: '왼쪽으로 걷습니다.',
-          greet: '사용자에게 인사합니다.',
-          action_spec: '특수 동작 (파일 먹기, 점프 등).',
-          failed: '슬픔, 실망 또는 쓰러짐.',
-          waiting: '너무 오래 대기하거나, 자거나, 들어 올려짐.',
-          running: '빨리 달립니다.',
-          review: '미리보기 기능용.'
+          idle: {
+            title: '대기 (Idle)',
+            desc: '가만히 서서 숨을 쉬거나 눈을 깜빡입니다.'
+          },
+          walkRun: {
+            title: '걷기 / 달리기',
+            desc: '걷기 및 달리기 애니메이션. 왼쪽 이동 시 자동 반전.'
+          },
+          angry: {
+            title: '분노 (Angry)',
+            desc: '마우스로 집어 들거나 끌 때 화를 내거나 토라진 상태.'
+          },
+          notify: {
+            title: '알림 / 인사',
+            desc: '인사하거나 대화창/알림창을 표시합니다.'
+          },
+          fall: {
+            title: '낙하 (Fall)',
+            desc: '위에서 아래로 자유 낙하합니다 (중력 물리).'
+          },
+          stun: {
+            title: '기절 (Stun)',
+            desc: '마우스로 연속해서 드래그 시 기절하거나 어지러운 상태.'
+          },
+          happyEat: {
+            title: '기쁨 / 청소 / SUI',
+            desc: '기쁨, 휴지통 파일 청소(먹기), SUI 토큰 획득 상태.'
+          },
+          think: {
+            title: '생각 / 집중',
+            desc: '뽀모도로 집중 또는 깊은 생각에 잠긴 상태.'
+          },
+          bonk: {
+            title: '쾅 (Bonk)',
+            desc: '머리 받기 또는 망치질 동작.'
+          }
         },
         section3: '기본 방향',
         section3_desc: '기본적으로 시스템은 모든 이미지가 오른쪽을 향하고 있다고 가정합니다. 펫이 왼쪽으로 이동할 때 시스템이 자동으로 이미지를 반전시킵니다.',

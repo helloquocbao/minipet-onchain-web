@@ -125,6 +125,16 @@ export const Navbar = ({ isDark, toggleTheme }: NavbarProps) => {
             >
               {t('nav.market')}
             </Link>
+            <Link
+              href="/roadmap"
+              className={`text-[13px] font-bold transition-colors no-underline ${
+                pathname === '/roadmap'
+                  ? 'text-indigo-600 dark:text-indigo-400 font-extrabold'
+                  : 'text-gray-600 dark:text-gray-300 hover:text-[#111827] dark:hover:text-white'
+              }`}
+            >
+              {t('nav.roadmap')}
+            </Link>
           </nav>
 
           <div className="flex items-center gap-1.5 sm:gap-3">
@@ -296,6 +306,17 @@ export const Navbar = ({ isDark, toggleTheme }: NavbarProps) => {
                 }`}
               >
                 {t('nav.market')}
+              </Link>
+              <Link
+                href="/roadmap"
+                onClick={() => setMenuOpen(false)}
+                className={`w-full text-left px-5 py-4 rounded-2xl text-[14px] font-bold transition-all no-underline block ${
+                  pathname === '/roadmap'
+                    ? 'bg-indigo-50 dark:bg-indigo-900/20 text-indigo-600 dark:text-indigo-400'
+                    : 'text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-[#111827] dark:hover:text-white'
+                }`}
+              >
+                {t('nav.roadmap')}
               </Link>
               <div className="h-px bg-gray-100 dark:bg-gray-800 my-2 mx-5" />
               <a

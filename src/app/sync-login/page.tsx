@@ -4,8 +4,9 @@ import React, { useEffect, useState } from 'react';
 import { useCurrentAccount, ConnectButton } from '@mysten/dapp-kit';
 import { ShieldCheck, HelpCircle, Laptop } from 'lucide-react';
 import { FcGoogle } from 'react-icons/fc';
-import { generateNonce, generateRandomness } from '@mysten/sui/zklogin';
+import { generateNonce, generateRandomness, jwtToAddress } from '@mysten/sui/zklogin';
 import { Ed25519Keypair } from '@mysten/sui/keypairs/ed25519';
+import { suiClient } from '../../services/blockchain/sui';
 
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useTranslation } from 'react-i18next';
@@ -42,17 +43,9 @@ export default function SyncLoginPage() {
       if (idToken) {
         (async () => {
           try {
-            const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:3001';
-            const res = await fetch(`${backendUrl}/derive-address`, {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ jwt: idToken }),
-            });
-            if (!res.ok) {
-              const errData = await res.json().catch(() => ({ error: res.statusText }));
-              throw new Error(errData.error || 'Failed to derive address from backend');
-            }
-            const { address } = await res.json();
+            // Derive zkLogin address client-side — no backend needed
+            const salt = sessionStorage.getItem('zklogin_salt') || '0';
+            const address = jwtToAddress(idToken, BigInt(salt), false);
             setZkLoginAddress(address);
             sessionStorage.setItem('zklogin_address', address);
             sessionStorage.setItem('zklogin_jwt', idToken);
@@ -94,7 +87,7 @@ export default function SyncLoginPage() {
     }
   };
 
-  const handleGoogleLogin = () => {
+  const handleGoogleLogin = async () => {
     const clientId = googleClientId.trim();
     if (!clientId) {
       alert(t('sync.alert_enter_client_id'));
@@ -109,23 +102,28 @@ export default function SyncLoginPage() {
     try {
       const redirectUri = window.location.origin + '/sync-login';
       
-      // 1. Generate Ephemeral Keypair
+      // 1. Fetch current epoch from SUI to compute valid maxEpoch
+      const { epoch } = await suiClient.getLatestSuiSystemState();
+      const maxEpoch = Number(epoch) + 2; // valid for ~2 epochs
+
+      // 2. Generate fixed salt and save it consistently
+      const salt = '0'; // Using 0 as fixed salt (can be user-specific later)
+      sessionStorage.setItem('zklogin_salt', salt);
+
+      // 3. Generate Ephemeral Keypair
       const ephemeralKeypair = new Ed25519Keypair();
       sessionStorage.setItem('zklogin_ephemeral_private_key', ephemeralKeypair.getSecretKey());
-      
       const ephemeralPublicKey = ephemeralKeypair.getPublicKey();
       
-      // 2. Generate Randomness and Max Epoch
+      // 4. Generate Randomness and Max Epoch
       const randomness = generateRandomness();
       sessionStorage.setItem('zklogin_randomness', randomness);
-      
-      const maxEpoch = 999999999; // Simple high epoch for dev testing
       sessionStorage.setItem('zklogin_max_epoch', maxEpoch.toString());
       
-      // 3. Generate Nonce
+      // 5. Generate Nonce using actual maxEpoch
       const nonce = generateNonce(ephemeralPublicKey, maxEpoch, randomness);
       
-      // 4. Redirect to Google
+      // 6. Redirect to Google
       const params = new URLSearchParams({
         client_id: clientId,
         redirect_uri: redirectUri,

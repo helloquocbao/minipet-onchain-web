@@ -39,6 +39,7 @@ export function useTransactionExecutor() {
         // 1. Fetch ZK Proof from public prover
         console.log('[TransactionExecutor] Fetching ZK Proof from prover...');
         const proverUrl = 'https://prover-dev.mystenlabs.com/v1';
+        const salt = sessionStorage.getItem('zklogin_salt') || '0';
         const proverResponse = await fetch(proverUrl, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -47,7 +48,7 @@ export function useTransactionExecutor() {
             extendedEphemeralPublicKey: getExtendedEphemeralPublicKey(ephemeralKeypair.getPublicKey()),
             maxEpoch: parseInt(maxEpoch),
             jwtRandomness: randomness,
-            salt: '11223344556677889900112233445566',
+            salt: salt,
             keyClaimName: 'sub'
           })
         });

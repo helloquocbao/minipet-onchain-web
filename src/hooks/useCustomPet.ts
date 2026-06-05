@@ -70,6 +70,10 @@ export const useCustomPet = () => {
   const [isGenerating, setIsGenerating] = useState(false);
   const [generationStep, setGenerationStep] = useState<'upload' | 'review'>('upload');
 
+  // Manual Creation Local File States
+  const [avatarFile, setAvatarFile] = useState<File | null>(null);
+  const [spritesheetFile, setSpritesheetFile] = useState<File | null>(null);
+
   // Check if user has a Mint Slot
   useEffect(() => {
     if (activeAddress) {
@@ -103,6 +107,17 @@ export const useCustomPet = () => {
     const messageBytes = new TextEncoder().encode(message);
     const response = await signPersonalMessage({ message: messageBytes });
     return response.signature;
+  };
+
+  const handleFileSelect = (file: File, type: 'image' | 'sprite') => {
+    const localUrl = URL.createObjectURL(file);
+    if (type === 'image') {
+      setAvatarFile(file);
+      setPetData(prev => ({ ...prev, imageBlob: localUrl }));
+    } else {
+      setSpritesheetFile(file);
+      setPetData(prev => ({ ...prev, spriteBlob: localUrl }));
+    }
   };
 
   const handleFileUpload = async (file: File, type: 'image' | 'sprite') => {
@@ -180,6 +195,37 @@ export const useCustomPet = () => {
     if (objects.data.length === 0) return;
     const slotId = objects.data[0].data?.objectId;
 
+    let imageBlobId = petData.imageBlob;
+    let imageObjId = petData.imageObjId;
+    let spriteBlobId = petData.spriteBlob;
+    let spriteObjId = petData.spriteObjId;
+
+    // Upload staged files to Walrus on mint click
+    if (avatarFile || spritesheetFile) {
+      try {
+        setUploading({ image: avatarFile !== null, sprite: spritesheetFile !== null });
+        const signature = await getUploadSignature();
+
+        if (avatarFile) {
+          const { blobId, blobObjectId } = await WalrusService.uploadFile(avatarFile, activeAddress, true, signature);
+          imageBlobId = blobId;
+          imageObjId = blobObjectId;
+        }
+
+        if (spritesheetFile) {
+          const { blobId, blobObjectId } = await WalrusService.uploadFile(spritesheetFile, activeAddress, true, signature);
+          spriteBlobId = blobId;
+          spriteObjId = blobObjectId;
+        }
+      } catch (error: any) {
+        console.error('File upload failed during mint:', error);
+        alert(error.message || t('custom.alerts.upload_failed') || 'Upload failed');
+        return;
+      } finally {
+        setUploading({ image: false, sprite: false });
+      }
+    }
+
     let tx = new Transaction();
     
     tx.moveCall({
@@ -188,10 +234,10 @@ export const useCustomPet = () => {
         tx.object(GLOBAL_CONFIG_ID),
         tx.object(slotId!),
         tx.pure.string(petData.name),
-        tx.pure.string(WalrusService.getBlobUrl(petData.imageBlob)),
-        tx.pure.id(petData.imageObjId),
-        tx.pure.string(WalrusService.getBlobUrl(petData.spriteBlob)),
-        tx.pure.id(petData.spriteObjId),
+        tx.pure.string(WalrusService.getBlobUrl(imageBlobId)),
+        tx.pure.id(imageObjId),
+        tx.pure.string(WalrusService.getBlobUrl(spriteBlobId)),
+        tx.pure.id(spriteObjId),
         tx.pure.string(petData.name.toLowerCase().replace(/\s+/g, '-')),
         tx.object('0x6'), // clock
         tx.object('0x8'), // random
@@ -239,6 +285,7 @@ export const useCustomPet = () => {
     hasSlot,
     loadingSlot,
     handleFileUpload,
+    handleFileSelect,
     handleMint,
     handleGeneratePet,
     baseImage,
