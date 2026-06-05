@@ -2,10 +2,9 @@
 
 import { useTranslation } from 'react-i18next';
 import { 
-  Clock, Cpu, Shield, Coins, Terminal, FileText, Database, 
-  LogIn, Laptop, Send, ShieldCheck
+  Clock, Cpu, Shield, Terminal, Database, 
+  Laptop, ShieldCheck
 } from 'lucide-react';
-import { FaGoogle } from 'react-icons/fa';
 import React from 'react';
 
 const Container = ({ children, className = '' }: { children: React.ReactNode; className?: string }) => (
@@ -13,296 +12,200 @@ const Container = ({ children, className = '' }: { children: React.ReactNode; cl
 );
 
 export const Features = () => {
-  const { t, i18n } = useTranslation();
+  const { i18n } = useTranslation();
   const lang = i18n.language?.startsWith('vi') ? 'vi' : 'en';
 
   return (
-    <section id="features" className="pb-20 md:pb-24 bg-transparent relative">
-      {/* Visual background separation lines */}
-      <div className="section-divider" />
+    <section id="features" className="pb-10 md:pb-20 bg-transparent relative">
+      <div className="section-divider bg-slate-100" />
 
-      <Container className="pt-20 md:pt-24">
+      <Container className="pt-10 md:pt-20">
         {/* Section Header */}
         <div className="text-center mb-16">
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-100 dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700/60 text-[9.5px] font-bold uppercase tracking-wider text-slate-600 dark:text-zinc-300 mb-4">
-            <Laptop size={11} className="text-slate-500 dark:text-zinc-400" />
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-50 border border-slate-200 text-[10px] font-bold uppercase tracking-wider text-slate-600 mb-4">
+            <Laptop size={12} className="text-slate-500" />
             <span>Tauri Desktop Companion & On-Chain Integration</span>
           </div>
-          <h2 className="text-[28px] sm:text-[38px] font-black text-gray-900 dark:text-white tracking-tight leading-tight mb-4">
+          <h2 className="text-[28px] sm:text-[36px] font-black text-slate-900 tracking-tight leading-tight mb-4">
             {lang === 'vi' ? 'Tổng Quan Chức Năng Trên Desktop & On-Chain' : 'Desktop Interface & On-Chain Overview'}
           </h2>
-          <p className="text-gray-500 dark:text-zinc-400 text-sm sm:text-base max-w-2xl mx-auto leading-relaxed">
+          <p className="text-slate-500 text-sm sm:text-base max-w-2xl mx-auto leading-relaxed">
             {lang === 'vi' 
               ? 'Trải nghiệm sự kết hợp mượt mà giữa hoạt ảnh thú cưng trực quan ngay trên màn hình máy tính của bạn và các giao thức giao dịch, bảo mật ví on-chain trên mạng lưới SUI.'
               : 'Experience a seamless fusion between interactive desktop animations and robust on-chain transaction protocols powered by the SUI blockchain.'}
           </p>
         </div>
 
-        {/* Dynamic Command Center Console */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch max-w-6xl mx-auto mb-28">
+        {/* Premium Bento Grid Interface */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 max-w-7xl mx-auto mb-16">
           
-          {/* Left Column: On-Chain Capabilities Overview */}
-          <div className="lg:col-span-5 flex flex-col gap-4 justify-center">
+          {/* Bento Item 1: Large Main Feature (Spans 2 columns) */}
+          <div className="lg:col-span-2 relative group rounded-3xl overflow-hidden bg-white border border-slate-100 shadow-[0_2px_20px_-5px_rgba(0,0,0,0.05)] p-4 sm:p-5 md:p-6 transition-all duration-500 hover:shadow-[0_8px_40px_-5px_rgba(0,0,0,0.08)] hover:-translate-y-1">
+            <div className="absolute inset-0 bg-gradient-to-br from-indigo-50/50 via-white to-purple-50/50 pointer-events-none" />
             
-            {/* Card 1: AI Agent */}
-            <div className="p-5 rounded-xl bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800/80 shadow-sm relative group hover:border-slate-350 dark:hover:border-zinc-700 transition-all duration-200">
-              <div className="flex gap-4">
-                <div className="w-9 h-9 rounded-lg flex items-center justify-center shrink-0 bg-slate-50 dark:bg-zinc-800 border border-slate-100 dark:border-zinc-700 text-slate-600 dark:text-zinc-350">
-                  <Cpu size={16} />
+            <div className="relative z-10 w-full h-full flex flex-col md:flex-row gap-6 md:gap-8 items-center">
+              <div className="flex-1 space-y-4">
+                <div className="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-indigo-600 text-white shadow-lg shadow-indigo-500/20">
+                  <Cpu size={20} />
                 </div>
-                <div>
-                  <h3 className="text-[14px] font-bold text-gray-900 dark:text-white transition-colors">
-                    {t('features.companion.title')}
-                  </h3>
-                  <p className="text-[11.5px] text-gray-500 dark:text-zinc-400 leading-relaxed mt-1">
-                    {lang === 'vi' ? 'Trợ lý AI tự ký duyệt giao dịch, hoán đổi tài sản trực tiếp từ ô chat.' : 'Query balances, swap assets, and sign transactions instantly from chat.'}
-                  </p>
-                  <span className="inline-block mt-3 text-[8px] font-mono font-bold text-slate-500 dark:text-zinc-400 bg-slate-50 dark:bg-zinc-800/60 border border-slate-200/50 dark:border-zinc-800 px-2 py-0.5 rounded">
-                    SUI MOVE PTB / DESKTOP CHAT
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            {/* Card 2: zkLogin Wallet */}
-            <div className="p-5 rounded-xl bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800/80 shadow-sm relative group hover:border-slate-350 dark:hover:border-zinc-700 transition-all duration-200">
-              <div className="flex gap-4">
-                <div className="w-9 h-9 rounded-lg flex items-center justify-center shrink-0 bg-slate-50 dark:bg-zinc-800 border border-slate-100 dark:border-zinc-700 text-slate-600 dark:text-zinc-350">
-                  <LogIn size={16} />
-                </div>
-                <div>
-                  <h3 className="text-[14px] font-bold text-gray-900 dark:text-white transition-colors">
-                    {lang === 'vi' ? 'Đồng Bộ Ví zkLogin Tiện Lợi' : 'zkLogin Wallet Authentication'}
-                  </h3>
-                  <p className="text-[11.5px] text-gray-500 dark:text-zinc-400 leading-relaxed mt-1">
-                    {lang === 'vi' 
-                      ? 'Kết nối ví an toàn bằng tài khoản Google. Ký giao dịch ngoại tuyến trực tiếp qua Google OAuth.'
-                      : 'Securely sync your wallet using Google zkLogin. Authenticate and execute transactions without writing down seed phrases.'}
-                  </p>
-                  <span className="inline-block mt-3 text-[8px] font-mono font-bold text-slate-500 dark:text-zinc-400 bg-slate-50 dark:bg-zinc-800/60 border border-slate-200/50 dark:border-zinc-800 px-2 py-0.5 rounded">
-                    GOOGLE OAUTH / zkLOGIN
-                  </span>
+                <h3 className="text-lg sm:text-xl lg:text-2xl font-black text-slate-900 tracking-tight leading-tight">
+                  {lang === 'vi' ? 'Trợ Lý AI & Tự Động Hóa' : 'AI Agent & On-Chain Automation'}
+                </h3>
+                <p className="text-slate-500 leading-relaxed text-[12px] sm:text-[13px] lg:text-[14px]">
+                  {lang === 'vi' 
+                    ? 'Hoán đổi token, kiểm tra số dư và ký duyệt giao dịch an toàn ngay trong khung chat của pet. Mọi thứ được xử lý tự động với SUI Move PTB.' 
+                    : 'Instantly swap assets, query wallet balances, and sign secure transactions directly from your pet chat. Powered by SUI Move PTBs.'}
+                </p>
+                <div className="pt-2 flex flex-wrap gap-3">
+                  <span className="px-4 py-1.5 text-[11px] font-bold font-mono text-indigo-600 bg-indigo-50 border border-indigo-100 rounded-full">SUI MOVE PTB</span>
+                  <span className="px-4 py-1.5 text-[11px] font-bold font-mono text-purple-600 bg-purple-50 border border-purple-100 rounded-full">LLM CHAT</span>
                 </div>
               </div>
-            </div>
-
-            {/* Card 3: Custom Minting & Walrus */}
-            <div className="p-5 rounded-xl bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800/80 shadow-sm relative group hover:border-slate-350 dark:hover:border-zinc-700 transition-all duration-200">
-              <div className="flex gap-4">
-                <div className="w-9 h-9 rounded-lg flex items-center justify-center shrink-0 bg-slate-50 dark:bg-zinc-800 border border-slate-100 dark:border-zinc-700 text-slate-600 dark:text-zinc-350">
-                  <Coins size={16} />
-                </div>
-                <div>
-                  <h3 className="text-[14px] font-bold text-gray-900 dark:text-white transition-colors">
-                    {t('features.custom.title')}
-                  </h3>
-                  <p className="text-[11.5px] text-gray-500 dark:text-zinc-400 leading-relaxed mt-1">
-                    {lang === 'vi' ? 'Tự thiết kế pet cục bộ, tải dữ liệu lên Walrus và đúc thành Sui NFT.' : 'Design custom pet locally, load metadata to Walrus and mint as a Sui NFT.'}
-                  </p>
-                  <span className="inline-block mt-3 text-[8px] font-mono font-bold text-slate-500 dark:text-zinc-400 bg-slate-50 dark:bg-zinc-800/60 border border-slate-200/50 dark:border-zinc-800 px-2 py-0.5 rounded">
-                    WALRUS PROTOCOL / SUI NFT
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            {/* Card 4: Focus-to-Earn */}
-            <div className="p-5 rounded-xl bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800/80 shadow-sm relative group hover:border-slate-350 dark:hover:border-zinc-700 transition-all duration-200">
-              <div className="flex gap-4">
-                <div className="w-9 h-9 rounded-lg flex items-center justify-center shrink-0 bg-slate-50 dark:bg-zinc-800 border border-slate-100 dark:border-zinc-700 text-slate-600 dark:text-zinc-350">
-                  <Clock size={16} />
-                </div>
-                <div>
-                  <h3 className="text-[14px] font-bold text-gray-900 dark:text-white transition-colors">
-                    {t('features.pomodoro.title')}
-                  </h3>
-                  <p className="text-[11.5px] text-gray-500 dark:text-zinc-400 leading-relaxed mt-1">
-                    {lang === 'vi' ? 'Làm việc tập trung cùng thú cưng để khai thác token tiện ích MIPET on-chain.' : 'Execute focus cycles beside your pet and earn MIPET token yield directly on SUI.'}
-                  </p>
-                  <span className="inline-block mt-3 text-[8px] font-mono font-bold text-slate-500 dark:text-zinc-400 bg-slate-50 dark:bg-zinc-800/60 border border-slate-200/50 dark:border-zinc-800 px-2 py-0.5 rounded">
-                    POMODORO YIELD / MIPET MINE
-                  </span>
-                </div>
-              </div>
-            </div>
-
-          </div>
-
-          {/* Right Column: Unified macOS App Simulator */}
-          <div className="lg:col-span-7 flex items-center justify-center relative">
-            <div className="absolute w-[95%] h-[95%] bg-indigo-500/[0.02] blur-[100px] rounded-full -z-10" />
-            
-            {/* macOS Window Shell */}
-            <div className="w-full bg-white dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 shadow-xl rounded-2xl overflow-hidden flex flex-col transition-all duration-300 min-h-[480px]">
-              
-              {/* Window Header Title Bar */}
-              <div className="bg-slate-50 dark:bg-zinc-900 border-b border-slate-200 dark:border-zinc-800 px-4 py-3 flex items-center gap-4 text-xs font-medium">
-                <div className="flex gap-1.5">
-                  <div className="w-2.5 h-2.5 rounded-full bg-red-400" />
-                  <div className="w-2.5 h-2.5 rounded-full bg-amber-400" />
-                  <div className="w-2.5 h-2.5 rounded-full bg-green-400" />
-                </div>
-                <span className="text-gray-400 font-mono text-[9.5px] tracking-widest font-bold">minipet.app</span>
-                <span className="ml-auto flex items-center gap-1 px-2 py-0.5 rounded-full bg-indigo-500/10 text-indigo-500 text-[8.5px] font-bold uppercase font-mono tracking-wider">
-                  Client Connected
-                </span>
-              </div>
-
-              {/* Window Workspace Content Area */}
-              <div className="flex flex-1 items-stretch divide-x divide-slate-200 dark:divide-zinc-800">
-                
-                {/* 1. Left App Sidebar */}
-                <div className="w-[190px] sm:w-[220px] bg-slate-50/50 dark:bg-zinc-900/20 p-4 flex flex-col gap-5 select-none shrink-0">
-                  
-                  {/* zkLogin Wallet section */}
-                  <div className="space-y-2">
-                    <span className="text-[8.5px] font-bold text-gray-400 uppercase tracking-widest block">Wallet (zkLogin)</span>
-                    <div className="bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800/80 rounded-lg p-2.5 shadow-sm space-y-1.5 font-mono text-[9px]">
-                      <div className="flex items-center gap-1 text-slate-700 dark:text-zinc-300">
-                        <FaGoogle className="text-amber-500 shrink-0" size={10} />
-                        <span className="font-bold truncate">Google Login</span>
-                      </div>
-                      <div className="text-gray-400 truncate">0x9a2c...8f2b</div>
-                      <div className="font-bold text-slate-900 dark:text-white border-t border-slate-100 dark:border-zinc-800 pt-1.5 mt-1.5 flex justify-between">
-                        <span>Balance:</span>
-                        <span className="text-emerald-500">24.5 SUI</span>
-                      </div>
-                    </div>
+              <div className="flex-1 w-full max-w-sm mx-auto md:max-w-none">
+                <div className="bg-slate-900 border border-slate-800 rounded-2xl shadow-2xl overflow-hidden group-hover:scale-[1.03] transition-transform duration-700">
+                  <div className="p-3.5 border-b border-slate-800 bg-slate-900 flex items-center gap-2">
+                     <div className="flex gap-2"><div className="w-3 h-3 rounded-full bg-[#ff5f56]"/><div className="w-3 h-3 rounded-full bg-[#ffbd2e]"/><div className="w-3 h-3 rounded-full bg-[#27c93f]"/></div>
+                     <span className="text-xs font-mono text-slate-400 font-bold ml-3 tracking-wider">minipet-agent</span>
                   </div>
-
-                  {/* Pomodoro Yield status */}
-                  <div className="space-y-2">
-                    <span className="text-[8.5px] font-bold text-gray-400 uppercase tracking-widest block">Pomodoro Miner</span>
-                    <div className="bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800/80 rounded-lg p-2.5 shadow-sm flex items-center gap-2.5">
-                      <div className="w-7 h-7 rounded-full border-2 border-rose-500/20 flex items-center justify-center shrink-0">
-                        <Clock size={11} className="text-rose-500" />
-                      </div>
-                      <div className="font-mono text-[9px]">
-                        <span className="font-bold text-rose-500 block leading-none">24:15</span>
-                        <span className="text-[7.5px] text-emerald-500 font-extrabold mt-0.5 block leading-none">+12.4 MIPET</span>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Desktop Cleaner */}
-                  <div className="space-y-2">
-                    <span className="text-[8.5px] font-bold text-gray-400 uppercase tracking-widest block">Trash devourer</span>
-                    <div className="bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800/80 rounded-lg p-2.5 shadow-sm space-y-2">
-                      <div className="flex items-center gap-1.5 text-[9px] text-amber-600 dark:text-amber-400 font-bold font-mono truncate">
-                        <FileText size={10} />
-                        <span>cache.tmp (1.2GB)</span>
-                      </div>
-                      <button className="w-full py-1 text-center bg-amber-500/10 border border-amber-500/20 text-amber-700 dark:text-amber-400 font-mono font-black text-[8px] rounded hover:bg-amber-500/15 transition-colors cursor-default">
-                        DEVOUR
-                      </button>
-                    </div>
-                  </div>
-
-                </div>
-
-                {/* 2. Main Canvas & Chat Area */}
-                <div className="flex-1 p-4 bg-white dark:bg-zinc-950 flex flex-col justify-between relative overflow-hidden">
-                  
-                  {/* Subtle retro canvas grid */}
-                  <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808003_1px,transparent_1px),linear-gradient(to_bottom,#80808003_1px,transparent_1px)] bg-[size:16px_16px] pointer-events-none" />
-
-                  {/* On-Chain Verification Stats (Floating top right) */}
-                  <div className="absolute top-4 right-4 z-20 flex flex-col gap-1.5 items-end">
-                    <div className="bg-white/95 dark:bg-zinc-900/95 border border-slate-200 dark:border-zinc-800/80 rounded-lg p-2 shadow-sm font-mono text-[8px] text-gray-400 min-w-[100px] select-none">
-                      <div className="font-bold text-slate-800 dark:text-zinc-200 mb-0.5 truncate">SuiPet NFT #942</div>
-                      <div className="flex justify-between">
-                        <span>Level:</span>
-                        <span className="text-indigo-500 font-bold">15</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span>Perfection:</span>
-                        <span className="text-emerald-500 font-bold">98,240</span>
-                      </div>
-                      <div className="border-t border-slate-100 dark:border-zinc-800/60 pt-1 mt-1 flex items-center gap-1 text-[7px] text-emerald-600 dark:text-emerald-400 font-bold uppercase">
-                        <ShieldCheck size={8} />Walrus Verified
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Chat bubbles container */}
-                  <div className="space-y-3 z-10 max-w-[70%] mt-2 flex flex-col">
-                    
-                    {/* User Command bubble */}
-                    <div className="self-start bg-slate-100 dark:bg-zinc-900 border border-slate-250 dark:border-zinc-800 p-2.5 rounded-xl rounded-tl-none font-mono text-[9px] text-slate-800 dark:text-zinc-200">
-                      <span className="text-[8px] text-gray-500 dark:text-zinc-400 font-bold block mb-0.5">User Prompt</span>
+                  <div className="p-4 sm:p-6 space-y-4 bg-[url('https://transparenttextures.com/patterns/cubes.png')] bg-slate-900 min-h-[160px] sm:min-h-[220px] flex flex-col justify-end relative">
+                    <div className="absolute inset-0 bg-gradient-to-b from-transparent to-slate-900/90 pointer-events-none" />
+                    <div className="relative z-10 flex gap-3 text-[11px] sm:text-[13px] font-mono text-slate-300 bg-slate-800 p-3 sm:p-3.5 rounded-xl sm:rounded-2xl border border-slate-700/50 w-[95%] sm:w-[90%] shadow-lg transform -translate-y-1 sm:-translate-y-2 opacity-90">
+                      <span className="text-emerald-400">❯</span>
                       <span>swap 10 SUI to USDC</span>
                     </div>
-
-                    {/* Companion response bubble */}
-                    <div className="self-start bg-indigo-650 text-white p-3 rounded-xl rounded-tl-none font-mono text-[9px] shadow-sm border border-indigo-600/30">
-                      <span className="text-[8px] text-indigo-100 font-bold block mb-0.5">MiniPet Agent</span>
-                      <p>✓ Splitting SUI gas coin...</p>
-                      <p className="text-emerald-300 font-bold">✓ Executed successfully!</p>
-                      <p className="text-[8px] text-indigo-200">Tx: 0x9a2c...8f2b</p>
+                    <div className="relative z-10 flex gap-2 text-[11px] sm:text-[13px] font-mono text-white bg-indigo-600 p-3 sm:p-4 rounded-xl sm:rounded-2xl border border-indigo-500/50 w-[98%] sm:w-[95%] ml-auto shadow-xl shadow-indigo-500/20">
+                      <div className="space-y-2">
+                        <p className="flex items-center gap-2 opacity-90"><span className="animate-pulse block w-2 h-2 bg-white rounded-full"/> Splitting SUI gas coin...</p>
+                        <p className="text-emerald-300 font-bold flex items-center gap-2"><span>✓</span> Executed successfully!</p>
+                        <p className="text-[10px] text-indigo-200 mt-1 opacity-80">Tx: 0x9a2c...8f2b</p>
+                      </div>
                     </div>
-
                   </div>
-
-                  {/* Pixel Pet companion sitting on the workspace canvas */}
-                  <div className="flex justify-center items-center mt-3 z-10">
-                    <div className="cat-sprite-frame z-20 scale-105" role="img" aria-label="Pixel Companion" />
-                  </div>
-
-                  {/* App Text Input Bar simulation */}
-                  <div className="border border-slate-350 dark:border-zinc-700 bg-white dark:bg-zinc-950 px-3 py-2 rounded-lg flex items-center justify-between text-[10px] text-gray-500 dark:text-zinc-300 select-none z-10 mt-3 shrink-0">
-                    <span>Chat with MiniPet...</span>
-                    <Send size={11} className="text-indigo-500 hover:text-indigo-600 transition-colors shrink-0" />
-                  </div>
-
                 </div>
-
               </div>
-
             </div>
           </div>
 
+          {/* Bento Item 2: Tauri Desktop Engine */}
+          <div className="relative group rounded-3xl overflow-hidden bg-white border border-slate-100 shadow-[0_2px_20px_-5px_rgba(0,0,0,0.05)] p-4 sm:p-5 md:p-6 transition-all duration-500 hover:shadow-[0_8px_40px_-5px_rgba(0,0,0,0.08)] hover:-translate-y-1 flex flex-col">
+            <div className="absolute inset-0 bg-gradient-to-b from-orange-50/30 to-white pointer-events-none" />
+            
+            <div className="relative z-10 flex-1 flex flex-col">
+              <div className="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-orange-500 text-white shadow-lg shadow-orange-500/20 mb-5">
+                <Laptop size={20} />
+              </div>
+              <h3 className="text-base sm:text-lg font-black text-slate-900 mb-3 tracking-tight">
+                {lang === 'vi' ? 'Desktop Engine Siêu Nhẹ' : 'Tauri Desktop Companion'}
+              </h3>
+              <p className="text-slate-500 text-[12px] sm:text-[13px] leading-relaxed flex-1">
+                {lang === 'vi' 
+                  ? 'Chạy mượt mà trên khay hệ thống với backend Rust siêu tối ưu. Tiêu tốn cực kỳ ít dung lượng RAM.' 
+                  : 'Runs natively in your system tray using Rust sidecar. Uses minimal RAM and CPU for uninterrupted focus.'}
+              </p>
+              
+              <div className="mt-8 flex justify-center items-center p-6 bg-slate-50 rounded-[1.5rem] border border-slate-100 relative overflow-hidden transition-colors duration-500">
+                <div className="absolute inset-0 bg-[radial-gradient(#80808010_1px,transparent_1px)] bg-[size:12px_12px]" />
+                <div className="flex items-center gap-4 relative z-10">
+                  <div className="w-14 h-14 rounded-full bg-white border border-orange-200 shadow-sm flex items-center justify-center group-hover:scale-110 transition-transform duration-500 group-hover:border-orange-400">
+                    <span className="text-[11px] font-black text-orange-600 tracking-wider">RUST</span>
+                  </div>
+                  <div className="relative w-16 h-1 bg-slate-200 rounded-full overflow-hidden">
+                    <div className="absolute inset-0 bg-gradient-to-r from-orange-400 to-rose-400 w-full h-full transform origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-1000 ease-out" />
+                  </div>
+                  <div className="w-14 h-14 rounded-full bg-white border border-rose-200 shadow-sm flex items-center justify-center group-hover:scale-110 transition-transform duration-500 group-hover:border-rose-400">
+                    <span className="text-[11px] font-black text-rose-600 tracking-wider">WEB</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Bento Item 3: Intelligent Alerts */}
+          <div className="relative group rounded-3xl overflow-hidden bg-white border border-slate-100 shadow-[0_2px_20px_-5px_rgba(0,0,0,0.05)] p-4 sm:p-5 md:p-6 transition-all duration-500 hover:shadow-[0_8px_40px_-5px_rgba(0,0,0,0.08)] hover:-translate-y-1 flex flex-col">
+            <div className="absolute inset-0 bg-gradient-to-b from-emerald-50/30 to-white pointer-events-none" />
+            
+            <div className="relative z-10 flex-1 flex flex-col">
+              <div className="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-emerald-500 text-white shadow-lg shadow-emerald-500/20 mb-5">
+                <ShieldCheck size={20} />
+              </div>
+              <h3 className="text-base sm:text-lg font-black text-slate-900 mb-3 tracking-tight">
+                {lang === 'vi' ? 'Thông Báo Thông Minh' : 'Intelligent Alerts'}
+              </h3>
+              <p className="text-slate-500 text-[12px] sm:text-[13px] leading-relaxed flex-1">
+                {lang === 'vi' 
+                  ? 'Nhận popup thông báo về sự kiện on-chain, trạng thái giao dịch hoặc các khung giờ tập trung trực tiếp trên màn hình.' 
+                  : 'Get instant notifications for block events, transaction completions, and focus timers via system toasts.'}
+              </p>
+              
+              <div className="mt-8 space-y-4 relative">
+                <div className="absolute left-8 top-8 bottom-4 w-px bg-slate-100 -z-10" />
+                
+                <div className="bg-white p-3 sm:p-4 rounded-2xl border border-slate-100 flex items-center gap-3 sm:gap-4 transform transition-all duration-500 shadow-sm group-hover:shadow-md group-hover:translate-x-2">
+                  <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-emerald-50 flex items-center justify-center shrink-0 border border-emerald-100 text-emerald-500">
+                    <ShieldCheck size={16} className="sm:w-[18px] sm:h-[18px]" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-[12px] sm:text-[13px] font-bold text-slate-900 truncate">Tx Verified</p>
+                    <p className="text-[10px] sm:text-[11px] font-medium text-slate-500 truncate mt-0.5">10 SUI swapped to USDC</p>
+                  </div>
+                  <div className="text-[9px] sm:text-[10px] font-bold text-slate-400">now</div>
+                </div>
+                
+                <div className="bg-white p-3 sm:p-4 rounded-2xl border border-slate-100 flex items-center gap-3 sm:gap-4 transform transition-all duration-500 shadow-sm group-hover:shadow-md group-hover:translate-x-4 delay-75">
+                  <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-amber-50 flex items-center justify-center shrink-0 border border-amber-100 text-amber-500">
+                    <Clock size={16} className="sm:w-[18px] sm:h-[18px]" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-[12px] sm:text-[13px] font-bold text-slate-900 truncate">Focus Complete</p>
+                    <p className="text-[10px] sm:text-[11px] font-medium text-slate-500 truncate mt-0.5 font-mono text-emerald-600">+12.4 MIPET</p>
+                  </div>
+                  <div className="text-[9px] sm:text-[10px] font-bold text-slate-400">2m</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
         </div>
 
         {/* Zone 2: How It Works */}
-        <div className="mb-24 relative">
+        <div className="mb-16 relative">
           <div className="text-center mb-16">
-            <h3 className="text-[24px] sm:text-[32px] font-black text-gray-900 dark:text-white tracking-tight leading-tight">
+            <h3 className="text-[24px] sm:text-[30px] font-black text-slate-900 tracking-tight leading-tight">
               {lang === 'vi' ? 'Quy Trình Hoạt Động' : 'How It Works'}
             </h3>
-            <p className="text-slate-500 dark:text-zinc-400 text-xs sm:text-sm max-w-md mx-auto mt-3 font-medium">
+            <p className="text-slate-500 text-sm max-w-md mx-auto mt-3 font-medium">
               {lang === 'vi' ? 'Chỉ với 3 bước đơn giản để có một trợ lý AI đồng hành' : 'Get your custom AI companion running in 3 simple steps'}
             </p>
           </div>
 
-          <div className="relative max-w-5xl mx-auto">
-            {/* Timeline connector track line */}
-            <div className="hidden md:block absolute top-[52px] left-[15%] right-[15%] h-[1.5px] bg-gradient-to-r from-orange-400/20 via-amber-400/25 to-emerald-400/20 -z-10" />
+          <div className="relative max-w-7xl mx-auto">
+            <div className="hidden md:block absolute top-[52px] left-[15%] right-[15%] h-px bg-slate-200 -z-10" />
             
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 relative z-10">
               
               {/* Step 1 */}
-              <div className="bg-white/60 dark:bg-[#1c1c1e]/60 backdrop-blur-md border border-slate-200 dark:border-zinc-800/80 shadow-sm p-8 rounded-2xl group hover:-translate-y-1.5 hover:border-orange-300 dark:hover:border-orange-900/50 hover:shadow-[0_12px_30px_-10px_rgba(249,115,22,0.06)] dark:hover:shadow-[0_12px_30px_-10px_rgba(249,115,22,0.15)] transition-all duration-300">
-                <div className="w-10 h-10 rounded-full bg-orange-500 text-white flex items-center justify-center font-black text-[13px] mb-6 shadow-sm border border-orange-400/20 group-hover:scale-110 transition-transform duration-300">1</div>
-                <h4 className="text-[15px] font-bold text-gray-900 dark:text-white mb-2.5">{lang === 'vi' ? 'Tải app & Tải Mô hình' : 'Download Client'}</h4>
-                <p className="text-slate-550 dark:text-zinc-400 text-[12px] leading-relaxed font-medium">
+              <div className="bg-white border border-slate-100 shadow-sm p-4 sm:p-5 rounded-2xl group hover:-translate-y-1.5 hover:shadow-md transition-all duration-300">
+                <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-indigo-50 text-indigo-600 flex items-center justify-center font-black text-[11px] sm:text-[12px] mb-3 sm:mb-4 border border-indigo-100 group-hover:scale-110 group-hover:bg-indigo-600 group-hover:text-white transition-all duration-300">1</div>
+                <h4 className="text-[14px] sm:text-[15px] font-bold text-slate-900 mb-1.5 sm:mb-2">{lang === 'vi' ? 'Tải app & Tải Mô hình' : 'Download Client'}</h4>
+                <p className="text-slate-500 text-[12px] sm:text-[13px] leading-relaxed font-medium">
                   {lang === 'vi' ? 'Tải ứng dụng MiniPet cho máy tính của bạn. Mô hình AI Qwen (được huấn luyện tối ưu dữ liệu SUI blockchain) sẽ tự động chạy offline.' : 'Download the client for your platform. The Qwen AI model (fine-tuned on SUI blockchain data) runs fully offline.'}
                 </p>
               </div>
 
               {/* Step 2 */}
-              <div className="bg-white/60 dark:bg-[#1c1c1e]/60 backdrop-blur-md border border-slate-200 dark:border-zinc-800/80 shadow-sm p-8 rounded-2xl group hover:-translate-y-1.5 hover:border-amber-300 dark:hover:border-amber-900/50 hover:shadow-[0_12px_30px_-10px_rgba(245,158,11,0.06)] dark:hover:shadow-[0_12px_30px_-10px_rgba(245,158,11,0.15)] transition-all duration-300">
-                <div className="w-10 h-10 rounded-full bg-amber-500 text-white flex items-center justify-center font-black text-[13px] mb-6 shadow-sm border border-amber-400/20 group-hover:scale-110 transition-transform duration-300">2</div>
-                <h4 className="text-[15px] font-bold text-gray-900 dark:text-white mb-2.5">{lang === 'vi' ? 'Đồng bộ Ví & zkLogin' : 'Connect Wallet'}</h4>
-                <p className="text-slate-550 dark:text-zinc-400 text-[12px] leading-relaxed font-medium">
+              <div className="bg-white border border-slate-100 shadow-sm p-4 sm:p-5 rounded-2xl group hover:-translate-y-1.5 hover:shadow-md transition-all duration-300">
+                <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-indigo-50 text-indigo-600 flex items-center justify-center font-black text-[11px] sm:text-[12px] mb-3 sm:mb-4 border border-indigo-100 group-hover:scale-110 group-hover:bg-indigo-600 group-hover:text-white transition-all duration-300">2</div>
+                <h4 className="text-[14px] sm:text-[15px] font-bold text-slate-900 mb-1.5 sm:mb-2">{lang === 'vi' ? 'Đồng bộ Ví & zkLogin' : 'Connect Wallet'}</h4>
+                <p className="text-slate-500 text-[12px] sm:text-[13px] leading-relaxed font-medium">
                   {lang === 'vi' ? 'Sử dụng zkLogin kết nối ví an toàn qua tài khoản Google của bạn để quản lý các tài sản NFT pet trực tiếp.' : 'Use Google zkLogin to securely sync your wallet address and authenticate on-chain assets.'}
                 </p>
               </div>
 
               {/* Step 3 */}
-              <div className="bg-white/60 dark:bg-[#1c1c1e]/60 backdrop-blur-md border border-slate-200 dark:border-zinc-800/80 shadow-sm p-8 rounded-2xl group hover:-translate-y-1.5 hover:border-emerald-300 dark:hover:border-emerald-900/50 hover:shadow-[0_12px_30px_-10px_rgba(16,185,129,0.06)] dark:hover:shadow-[0_12px_30px_-10px_rgba(16,185,129,0.15)] transition-all duration-300">
-                <div className="w-10 h-10 rounded-full bg-emerald-500 text-white flex items-center justify-center font-black text-[13px] mb-6 shadow-sm border border-emerald-400/20 group-hover:scale-110 transition-transform duration-300">3</div>
-                <h4 className="text-[15px] font-bold text-gray-900 dark:text-white mb-2.5">{lang === 'vi' ? 'Đồng hành & Giao dịch' : 'Interact & Transact'}</h4>
-                <p className="text-slate-550 dark:text-zinc-400 text-[12px] leading-relaxed font-medium">
+              <div className="bg-white border border-slate-100 shadow-sm p-4 sm:p-5 rounded-2xl group hover:-translate-y-1.5 hover:shadow-md transition-all duration-300">
+                <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-indigo-50 text-indigo-600 flex items-center justify-center font-black text-[11px] sm:text-[12px] mb-3 sm:mb-4 border border-indigo-100 group-hover:scale-110 group-hover:bg-indigo-600 group-hover:text-white transition-all duration-300">3</div>
+                <h4 className="text-[14px] sm:text-[15px] font-bold text-slate-900 mb-1.5 sm:mb-2">{lang === 'vi' ? 'Giao dịch Tự Động' : 'Go Autonomous'}</h4>
+                <p className="text-slate-500 text-[12px] sm:text-[13px] leading-relaxed font-medium">
                   {lang === 'vi' ? 'Nhập tin nhắn để nói chuyện với Pet của bạn, kích hoạt Pomodoro hoặc ra lệnh thực hiện giao dịch ví an toàn.' : 'Chat with your pet companion, activate focus sessions, or trigger offline token transfers.'}
                 </p>
               </div>
@@ -314,68 +217,65 @@ export const Features = () => {
         {/* Zone 3: Bento Tech Stack Cards */}
         <div className="relative">
           <div className="text-center mb-16">
-            <h3 className="text-[24px] sm:text-[32px] font-black text-gray-900 dark:text-white tracking-tight leading-tight">
+            <h3 className="text-[24px] sm:text-[30px] font-black text-slate-900 tracking-tight leading-tight">
               {lang === 'vi' ? 'Cấu trúc Công nghệ Core' : 'Robust Web3 Tech Stack'}
             </h3>
-            <p className="text-slate-500 dark:text-zinc-400 text-xs sm:text-sm max-w-sm mx-auto mt-3 font-medium">
+            <p className="text-slate-500 text-sm max-w-sm mx-auto mt-3 font-medium">
               {lang === 'vi' ? 'Công nghệ hiện đại đem lại hiệu suất tối ưu và bảo mật tối đa' : 'Empowering virtual pet economy with state-of-the-art tools'}
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-7xl mx-auto">
             
             {/* Tauri Card */}
-            <div className="bg-gradient-to-b from-white to-slate-50/50 dark:from-[#1c1c1e] dark:to-[#121214] border border-slate-200/80 dark:border-zinc-800/80 shadow-sm p-8 rounded-2xl group relative overflow-hidden flex flex-col justify-between min-h-[260px] hover:-translate-y-1.5 hover:border-orange-300 dark:hover:border-orange-900/50 hover:shadow-[0_12px_30px_-10px_rgba(249,115,22,0.06)] dark:hover:shadow-[0_12px_30px_-10px_rgba(249,115,22,0.15)] transition-all duration-300">
-              <div className="pointer-events-none absolute -right-12 -top-12 w-28 h-28 bg-orange-500/10 dark:bg-orange-500/5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-2xl" />
+            <div className="bg-white border border-slate-100 shadow-sm p-5 rounded-2xl group relative overflow-hidden flex flex-col justify-between min-h-[200px] hover:-translate-y-1.5 hover:shadow-md transition-all duration-300">
               <div>
-                <div className="w-10 h-10 rounded-xl bg-orange-500/10 text-orange-600 dark:bg-orange-550/15 dark:text-orange-400 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
-                  <Terminal size={17} />
+                <div className="w-10 h-10 rounded-xl bg-orange-50 text-orange-600 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300 border border-orange-100">
+                  <Terminal size={18} />
                 </div>
-                <h4 className="text-[16px] font-bold text-gray-900 dark:text-white mb-2.5">Tauri Native Engine</h4>
-                <p className="text-slate-550 dark:text-zinc-400 text-[12px] leading-relaxed font-medium">
+                <h4 className="text-[15px] font-bold text-slate-900 mb-2">Tauri Native Engine</h4>
+                <p className="text-slate-500 text-[13px] leading-relaxed font-medium">
                   {lang === 'vi' ? 'Giao diện ứng dụng máy tính siêu nhẹ, tối ưu hóa tài nguyên phần cứng và chạy siêu tốc với Rust backend.' : 'Native desktop shell keeping CPU and memory footprint extremely low via Rust sidecar.'}
                 </p>
               </div>
               <div className="mt-6 flex">
-                <span className="inline-flex items-center px-2.5 py-1 rounded-full text-[9px] font-mono font-bold tracking-wider bg-orange-50/80 dark:bg-orange-950/20 border border-orange-100/50 dark:border-orange-900/50 text-orange-600 dark:text-orange-400 uppercase">
+                <span className="inline-flex items-center px-3 py-1.5 rounded-full text-[10px] font-bold tracking-wider bg-orange-50 border border-orange-100 text-orange-600 uppercase">
                   RUST / WRAPPER
                 </span>
               </div>
             </div>
 
             {/* Sui Card */}
-            <div className="bg-gradient-to-b from-white to-slate-50/50 dark:from-[#1c1c1e] dark:to-[#121214] border border-slate-200/80 dark:border-zinc-800/80 shadow-sm p-8 rounded-2xl group relative overflow-hidden flex flex-col justify-between min-h-[260px] hover:-translate-y-1.5 hover:border-cyan-300 dark:hover:border-cyan-900/50 hover:shadow-[0_12px_30px_-10px_rgba(6,182,212,0.06)] dark:hover:shadow-[0_12px_30px_-10px_rgba(6,182,212,0.15)] transition-all duration-300">
-              <div className="pointer-events-none absolute -right-12 -top-12 w-28 h-28 bg-cyan-500/10 dark:bg-cyan-500/5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-2xl" />
+            <div className="bg-white border border-slate-100 shadow-sm p-5 rounded-2xl group relative overflow-hidden flex flex-col justify-between min-h-[200px] hover:-translate-y-1.5 hover:shadow-md transition-all duration-300">
               <div>
-                <div className="w-10 h-10 rounded-xl bg-cyan-500/10 text-cyan-600 dark:bg-cyan-550/15 dark:text-cyan-400 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
-                  <Shield size={17} />
+                <div className="w-10 h-10 rounded-xl bg-cyan-50 text-cyan-600 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300 border border-cyan-100">
+                  <Shield size={18} />
                 </div>
-                <h4 className="text-[16px] font-bold text-gray-900 dark:text-white mb-2.5">Sui Blockchain</h4>
-                <p className="text-slate-550 dark:text-zinc-400 text-[12px] leading-relaxed font-medium">
+                <h4 className="text-[15px] font-bold text-slate-900 mb-2">Sui Blockchain</h4>
+                <p className="text-slate-500 text-[13px] leading-relaxed font-medium">
                   {lang === 'vi' ? 'Lưu trữ thực quyền NFT, tích hợp hàm ngẫu nhiên xác định chỉ số hiếm và giao dịch zkLogin an toàn qua Google.' : 'True on-chain ownership secured by smart contracts, leveraging zkLogin authentication and VRF random module.'}
                 </p>
               </div>
               <div className="mt-6 flex">
-                <span className="inline-flex items-center px-2.5 py-1 rounded-full text-[9px] font-mono font-bold tracking-wider bg-cyan-50/80 dark:bg-cyan-950/20 border border-cyan-100/50 dark:border-cyan-900/50 text-cyan-600 dark:text-cyan-400 uppercase">
+                <span className="inline-flex items-center px-3 py-1.5 rounded-full text-[10px] font-bold tracking-wider bg-cyan-50 border border-cyan-100 text-cyan-600 uppercase">
                   MOVE / ACCOUNT
                 </span>
               </div>
             </div>
 
             {/* Walrus Card */}
-            <div className="bg-gradient-to-b from-white to-slate-50/50 dark:from-[#1c1c1e] dark:to-[#121214] border border-slate-200/80 dark:border-zinc-800/80 shadow-sm p-8 rounded-2xl group relative overflow-hidden flex flex-col justify-between min-h-[260px] hover:-translate-y-1.5 hover:border-rose-300 dark:hover:border-rose-900/50 hover:shadow-[0_12px_30px_-10px_rgba(244,63,94,0.06)] dark:hover:shadow-[0_12px_30px_-10px_rgba(244,63,94,0.15)] transition-all duration-300">
-              <div className="pointer-events-none absolute -right-12 -top-12 w-28 h-28 bg-rose-500/10 dark:bg-rose-500/5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-2xl" />
+            <div className="bg-white border border-slate-100 shadow-sm p-5 rounded-2xl group relative overflow-hidden flex flex-col justify-between min-h-[200px] hover:-translate-y-1.5 hover:shadow-md transition-all duration-300">
               <div>
-                <div className="w-10 h-10 rounded-xl bg-rose-500/10 text-rose-600 dark:bg-rose-550/15 dark:text-rose-450 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
-                  <Database size={17} />
+                <div className="w-10 h-10 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300 border border-rose-100">
+                  <Database size={18} />
                 </div>
-                <h4 className="text-[16px] font-bold text-gray-900 dark:text-white mb-2.5">Walrus Protocol</h4>
-                <p className="text-slate-550 dark:text-zinc-400 text-[12px] leading-relaxed font-medium">
+                <h4 className="text-[15px] font-bold text-slate-900 mb-2">Walrus Protocol</h4>
+                <p className="text-slate-500 text-[13px] leading-relaxed font-medium">
                   {lang === 'vi' ? 'Giao thức lưu trữ phi tập trung của Mysten Labs dùng để lưu trữ file hình ảnh pet và siêu dữ liệu an toàn.' : 'Decentralized storage protocol by Mysten Labs holding asset spritesheets and rich metadata blobs securely.'}
                 </p>
               </div>
               <div className="mt-6 flex">
-                <span className="inline-flex items-center px-2.5 py-1 rounded-full text-[9px] font-mono font-bold tracking-wider bg-rose-50/80 dark:bg-rose-950/20 border border-rose-100/50 dark:border-rose-900/50 text-rose-600 dark:text-rose-450 uppercase">
+                <span className="inline-flex items-center px-3 py-1.5 rounded-full text-[10px] font-bold tracking-wider bg-rose-50 border border-rose-100 text-rose-600 uppercase">
                   WALRUS / STORAGE
                 </span>
               </div>

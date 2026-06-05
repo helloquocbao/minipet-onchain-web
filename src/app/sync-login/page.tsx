@@ -79,7 +79,23 @@ export default function SyncLoginPage() {
         }
       }
 
-      const syncUrl = `minipet://sync?address=${addressToSync}`;
+      let syncUrl = `minipet://sync?address=${addressToSync}`;
+
+      // Check if we have a zkLogin session
+      const jwt = sessionStorage.getItem('zklogin_jwt');
+      if (jwt) {
+        const epk = sessionStorage.getItem('zklogin_ephemeral_private_key') || localStorage.getItem('zklogin_ephemeral_private_key');
+        const rand = sessionStorage.getItem('zklogin_randomness') || localStorage.getItem('zklogin_randomness');
+        const epoch = sessionStorage.getItem('zklogin_max_epoch') || localStorage.getItem('zklogin_max_epoch');
+        const salt = sessionStorage.getItem('zklogin_salt') || localStorage.getItem('zklogin_salt') || '0';
+        
+        if (epk && rand && epoch) {
+          const payloadObj = { jwt, ephemeralPrivateKey: epk, randomness: rand, maxEpoch: epoch, salt };
+          const base64Payload = Buffer.from(JSON.stringify(payloadObj)).toString('base64');
+          syncUrl += `&zkloginPayload=${base64Payload}`;
+        }
+      }
+
       console.log('Syncing to app with URL:', syncUrl);
       window.location.href = syncUrl;
     } catch (err) {
