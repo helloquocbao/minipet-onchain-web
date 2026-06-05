@@ -122,9 +122,9 @@ export default function MintSlotDetailPage() {
       bg: 'bg-amber-50 dark:bg-amber-950/30',
       border: 'border-amber-100 dark:border-amber-900/40',
       title: isVi ? 'Nhẹ, nhanh, tiết kiệm' : 'Lightweight & Fast',
-      desc: isVi
-        ? 'App MiniPet chỉ tiêu tốn dưới 15MB RAM và 0.1% CPU, hoàn toàn không ảnh hưởng đến hiệu suất máy.'
-        : 'MiniPet uses under 15MB RAM and 0.1% CPU — your system performance is completely unaffected.',
+      desc: isVi 
+        ? 'App MiniPet chỉ tiêu tốn lượng tài nguyên siêu nhỏ (RAM & CPU), hoàn toàn không ảnh hưởng đến hiệu suất máy.'
+        : 'MiniPet uses minimal system resources (RAM & CPU) — your system performance is completely unaffected.',
     },
     {
       icon: <Globe size={20} className="text-blue-500" />,
