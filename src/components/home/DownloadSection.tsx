@@ -86,7 +86,7 @@ export const DownloadSection = () => {
                   aria-label={d.disabled ? `Coming Soon: MiniPet for ${d.platform} (${d.ext})` : `Download MiniPet for ${d.platform} (${d.ext})`}
                   className={`group/btn relative inline-flex items-center justify-center gap-2 w-full py-3 rounded-full text-[12px] font-extrabold no-underline transition-all duration-300 active:scale-[0.98] ${
                     d.disabled
-                      ? 'bg-slate-200 dark:bg-slate-800 text-gray-500 cursor-not-allowed pointer-events-none'
+                      ? 'bg-slate-250 dark:bg-zinc-800 text-slate-600 dark:text-zinc-350 cursor-not-allowed pointer-events-none'
                       : 'bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 text-white shadow-[0_0_20px_rgba(139,92,246,0.2)] hover:shadow-[0_0_35px_rgba(139,92,246,0.4)]'
                   }`}
                   onClick={(e) => { if (d.disabled) e.preventDefault(); }}
