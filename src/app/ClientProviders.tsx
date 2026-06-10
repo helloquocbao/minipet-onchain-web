@@ -12,6 +12,16 @@ export function ClientProviders({ children }: { children: React.ReactNode }) {
     document.documentElement.classList.remove('dark');
   }, []);
 
+  // Pre-warm / awaken the Render free backend service silently on startup
+  React.useEffect(() => {
+    const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:10000';
+    console.log('[Pre-warm] Waking up backend service at:', backendUrl);
+    fetch(`${backendUrl}/health`)
+      .then(res => res.json())
+      .then(data => console.log('[Pre-warm] Backend is awake:', data.status))
+      .catch(err => console.warn('[Pre-warm] Backend ping sent (waking up in progress...):', err.message));
+  }, []);
+
   return (
     <WalletWrapper>
       <PageLayout>
