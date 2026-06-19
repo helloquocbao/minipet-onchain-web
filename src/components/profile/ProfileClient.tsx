@@ -4,8 +4,8 @@ import { useEffect, useState } from 'react';
 import { useActiveAddress } from '../../hooks/useActiveAddress';
 import { useTransactionExecutor } from '../../hooks/useTransactionExecutor';
 import { Transaction } from '@mysten/sui/transactions';
-import { PACKAGE_ID, MODULES, suiClient } from '../../services/blockchain/sui';
-import { Heart, Activity, ArrowRight, Loader2, Frown, Meh, Smile, SmilePlus, Laugh } from 'lucide-react';
+import { PACKAGE_ID, MODULES, suiClient, PET_TOKEN_TYPE } from '../../services/blockchain/sui';
+import { Heart, Activity, ArrowRight, Loader2, Frown, Meh, Smile, SmilePlus, Laugh, Wallet, Coins } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
 interface Pet {
@@ -34,6 +34,22 @@ export const ProfileClient = () => {
   const [selectedPet, setSelectedPet] = useState<string | null>(null);
   const [selectedMood, setSelectedMood] = useState<number | null>(null);
   const [isUpdating, setIsUpdating] = useState(false);
+  const [suiBalance, setSuiBalance] = useState('0');
+  const [mipetBalance, setMipetBalance] = useState('0');
+
+  const fetchBalances = async () => {
+    if (!activeAddress) return;
+    try {
+      const [sui, mipet] = await Promise.all([
+        suiClient.getBalance({ owner: activeAddress, coinType: '0x2::sui::SUI' }),
+        suiClient.getBalance({ owner: activeAddress, coinType: PET_TOKEN_TYPE }),
+      ]);
+      setSuiBalance((Number(sui.totalBalance) / 1e9).toFixed(3));
+      setMipetBalance((Number(mipet.totalBalance) / 1e9).toFixed(0));
+    } catch (e) {
+      console.error('Failed to fetch balances:', e);
+    }
+  };
 
   const fetchOwnedPets = async () => {
     if (!activeAddress) {
@@ -74,6 +90,7 @@ export const ProfileClient = () => {
 
   useEffect(() => {
     fetchOwnedPets();
+    fetchBalances();
   }, [activeAddress]);
 
   const handleUpdateMood = async () => {
@@ -133,6 +150,38 @@ export const ProfileClient = () => {
         <div className="mb-8">
           <h1 className="text-3xl font-extrabold text-gray-900 dark:text-white">{t('profile.title')}</h1>
           <p className="mt-2 text-gray-600 dark:text-gray-400">{t('profile.subtitle')}</p>
+
+          {/* Balance & Status Cards */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-6">
+            <div className="p-4 bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700">
+              <div className="flex items-center gap-2 mb-1">
+                <Wallet size={14} className="text-blue-500" />
+                <span className="text-[11px] text-gray-500 font-bold uppercase">SUI</span>
+              </div>
+              <span className="text-lg font-black text-gray-900 dark:text-white">{suiBalance}</span>
+            </div>
+            <div className="p-4 bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700">
+              <div className="flex items-center gap-2 mb-1">
+                <Coins size={14} className="text-indigo-500" />
+                <span className="text-[11px] text-gray-500 font-bold uppercase">MIPET</span>
+              </div>
+              <span className="text-lg font-black text-gray-900 dark:text-white">{mipetBalance}</span>
+            </div>
+            <div className="p-4 bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700">
+              <div className="flex items-center gap-2 mb-1">
+                <Heart size={14} className="text-pink-500" />
+                <span className="text-[11px] text-gray-500 font-bold uppercase">{t('profile.pets_owned') || 'Pets'}</span>
+              </div>
+              <span className="text-lg font-black text-gray-900 dark:text-white">{pets.length}</span>
+            </div>
+            <div className="p-4 bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700">
+              <div className="flex items-center gap-2 mb-1">
+                <Activity size={14} className="text-emerald-500" />
+                <span className="text-[11px] text-gray-500 font-bold uppercase">{t('profile.status') || 'Status'}</span>
+              </div>
+              <span className="text-lg font-black text-emerald-500">Active</span>
+            </div>
+          </div>
         </div>
 
         {loading ? (

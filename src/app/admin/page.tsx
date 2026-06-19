@@ -32,6 +32,8 @@ export default function AdminPage() {
 
   const [template, setTemplate] = useState({
     name: '',
+    pet_type: 'balanced',
+    description: '',
     image_url: '',
     image_blob_id: '',
     sprite_url_normal: '',
@@ -250,6 +252,8 @@ export default function AdminPage() {
           tx.object(ADMIN_CAP_ID),
           tx.object(GLOBAL_CONFIG_ID),
           tx.pure.string(updatedTemplate.name),
+          tx.pure.string(updatedTemplate.pet_type || 'balanced'),
+          tx.pure.string(updatedTemplate.description || ''),
           tx.pure.string(updatedTemplate.image_url),
           tx.pure.id(updatedTemplate.image_blob_id),
           tx.pure.string(updatedTemplate.sprite_url_normal),
@@ -275,6 +279,8 @@ export default function AdminPage() {
               alert(t('admin.alerts.template_created') || 'Template created successfully!');
               setTemplate({
                 name: '',
+                pet_type: 'balanced',
+                description: '',
                 image_url: '',
                 image_blob_id: '',
                 sprite_url_normal: '',
