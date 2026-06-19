@@ -19,7 +19,7 @@ export default function SyncLoginPage() {
   const isConnectOnly = searchParams.get('action') === 'connect' || (typeof window !== 'undefined' && window.location.hash.includes('state=connect'));
   const [zkLoginAddress, setZkLoginAddress] = useState<string | null>(() => {
     if (typeof window !== 'undefined') {
-      return localStorage.getItem('zklogin_address') || null;
+      return sessionStorage.getItem('zklogin_address') || null;
     }
     return null;
   });
@@ -49,7 +49,7 @@ export default function SyncLoginPage() {
         (async () => {
           try {
             // Derive zkLogin address client-side — no backend needed
-            const salt = sessionStorage.getItem('zklogin_salt') || localStorage.getItem('zklogin_salt') || '0';
+            const salt = sessionStorage.getItem('zklogin_salt') || localStorage.getItem('zklogin_salt') || '30041975020919453004197502091945';
             const address = jwtToAddress(idToken, BigInt(salt), false);
             setZkLoginAddress(address);
             sessionStorage.setItem('zklogin_address', address);
@@ -92,7 +92,7 @@ export default function SyncLoginPage() {
         const epk = sessionStorage.getItem('zklogin_ephemeral_private_key') || localStorage.getItem('zklogin_ephemeral_private_key');
         const rand = sessionStorage.getItem('zklogin_randomness') || localStorage.getItem('zklogin_randomness');
         const epoch = sessionStorage.getItem('zklogin_max_epoch') || localStorage.getItem('zklogin_max_epoch');
-        const salt = sessionStorage.getItem('zklogin_salt') || localStorage.getItem('zklogin_salt') || '0';
+        const salt = sessionStorage.getItem('zklogin_salt') || localStorage.getItem('zklogin_salt') || '30041975020919453004197502091945';
         
         if (epk && rand && epoch) {
           const payloadObj = { jwt, ephemeralPrivateKey: epk, randomness: rand, maxEpoch: epoch, salt };
@@ -133,7 +133,7 @@ export default function SyncLoginPage() {
       const maxEpoch = Number(epoch) + 2; // valid for ~2 epochs
 
       // 2. Generate fixed salt and save it consistently
-      const salt = '0';
+      const salt = '30041975020919453004197502091945';
       sessionStorage.setItem('zklogin_salt', salt);
       localStorage.setItem('zklogin_salt', salt);
 
@@ -171,10 +171,10 @@ export default function SyncLoginPage() {
     }
   };
 
-  const activeAddress = zkLoginAddress || account?.address;
+  const activeAddress = account?.address || zkLoginAddress;
   
-  // For sync: ALWAYS prefer zkLogin if available (has signing session)
-  const syncAddress = zkLoginAddress || account?.address;
+  // For sync: use the currently active address on the web (same logic as useActiveAddress)
+  const syncAddress = account?.address || zkLoginAddress;
 
   // Nếu người dùng chỉ muốn Đăng nhập (Connect) từ Web App, ta không hiện giao diện Sync
   if (isConnectOnly && !error) {
