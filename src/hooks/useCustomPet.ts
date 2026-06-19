@@ -278,7 +278,7 @@ export const useCustomPet = () => {
 
         // Fetch ZK Proof
         const proverUrl = 'https://prover-dev.mystenlabs.com/v1';
-        const salt = sessionStorage.getItem('zklogin_salt') || localStorage.getItem('zklogin_salt') || '0';
+        const salt = sessionStorage.getItem('zklogin_salt') || localStorage.getItem('zklogin_salt') || '30041975020919453004197502091945';
         const proverResponse = await fetch(proverUrl, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
