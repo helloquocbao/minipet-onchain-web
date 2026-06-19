@@ -8,7 +8,7 @@ export function useActiveAddress() {
   useEffect(() => {
     // Read from sessionStorage on mount
     const checkZkLogin = () => {
-      setZkLoginAddress(sessionStorage.getItem('zklogin_address'));
+      setZkLoginAddress(sessionStorage.getItem('zklogin_address') || localStorage.getItem('zklogin_address'));
     };
     
     checkZkLogin();

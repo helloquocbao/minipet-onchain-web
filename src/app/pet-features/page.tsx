@@ -4,6 +4,7 @@ import { AgentHero } from '../../components/pet-features/AgentHero';
 import { SecurityFeatures } from '../../components/pet-features/SecurityFeatures';
 import { AutonomousTransactions } from '../../components/pet-features/AutonomousTransactions';
 import { AnimatorPlayground } from '../../components/pet-features/AnimatorPlayground';
+import { AppFeatures } from '../../components/pet-features/AppFeatures';
 
 export const metadata: Metadata = {
   title: 'MiniPet AI Agent Features - Web3 Guardian & Autonomous Trading',
@@ -40,6 +41,11 @@ export default function PetFeaturesPage() {
       <div className="section-divider bg-slate-100" />
       <div className="pt-10 md:pt-20">
         <AutonomousTransactions />
+      </div>
+      
+      <div className="section-divider bg-slate-100" />
+      <div className="pt-10 md:pt-20">
+        <AppFeatures />
       </div>
     </div>
   );

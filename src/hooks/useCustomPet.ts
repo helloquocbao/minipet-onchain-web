@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useTranslation } from 'react-i18next';
-import { useTransactionExecutor } from './useTransactionExecutor';
 import { useActiveAddress } from './useActiveAddress';
-import { useSignPersonalMessage } from '@mysten/dapp-kit';
+import { useSignPersonalMessage, useSignTransaction, useCurrentAccount } from '@mysten/dapp-kit';
 import { Transaction } from '@mysten/sui/transactions';
+import { toBase64 } from '@mysten/sui/utils';
+import { Ed25519Keypair } from '@mysten/sui/keypairs/ed25519';
+import { getExtendedEphemeralPublicKey, getZkLoginSignature } from '@mysten/sui/zklogin';
 import { 
   PACKAGE_ID, 
   MODULES, 
@@ -37,8 +39,9 @@ export const useCustomPet = () => {
   const searchParams = useSearchParams();
   const activeAddress = useActiveAddress();
   const { t } = useTranslation();
-  const { execute: signAndExecuteTransaction } = useTransactionExecutor();
   const { mutateAsync: signPersonalMessage } = useSignPersonalMessage();
+  const { mutateAsync: signTransaction } = useSignTransaction();
+  const account = useCurrentAccount();
 
   const navigate = (path: string | number) => {
     if (typeof path === 'number') {
@@ -64,6 +67,8 @@ export const useCustomPet = () => {
   const [uploading, setUploading] = useState({ image: false, sprite: false });
   const [hasSlot, setHasSlot] = useState(false);
   const [loadingSlot, setLoadingSlot] = useState(false);
+
+  const [minting, setMinting] = useState(false);
 
   // AI Generation states
   const [baseImage, setBaseImage] = useState<File | null>(null);
@@ -100,8 +105,8 @@ export const useCustomPet = () => {
   };
 
   const getUploadSignature = async (): Promise<string | undefined> => {
-    const jwt = sessionStorage.getItem('zklogin_jwt');
-    if (jwt) return undefined; // zkLogin utilizes JWT bearer token instead
+    const isZkLogin = !!activeAddress && sessionStorage.getItem('zklogin_address') === activeAddress && !account;
+    if (isZkLogin) return undefined; // zkLogin utilizes JWT bearer token instead
 
     const message = `MiniPet Upload: ${activeAddress}`;
     const messageBytes = new TextEncoder().encode(message);
@@ -186,95 +191,182 @@ export const useCustomPet = () => {
   const handleMint = async () => {
     if (!activeAddress || !hasSlot) return;
 
-    // Find the slot object
-    const objects = await suiClient.getOwnedObjects({
-      owner: activeAddress,
-      filter: { StructType: `${PACKAGE_ID}::${MODULES.PET_NFT}::MintSlot` }
-    });
-    
-    if (objects.data.length === 0) return;
-    const slotId = objects.data[0].data?.objectId;
-
-    let imageBlobId = petData.imageBlob;
-    let imageObjId = petData.imageObjId;
-    let spriteBlobId = petData.spriteBlob;
-    let spriteObjId = petData.spriteObjId;
-
-    // Upload staged files to Walrus on mint click
-    if (avatarFile || spritesheetFile) {
-      try {
-        setUploading({ image: avatarFile !== null, sprite: spritesheetFile !== null });
-        const signature = await getUploadSignature();
-
-        if (avatarFile) {
-          const { blobId, blobObjectId } = await WalrusService.uploadFile(avatarFile, activeAddress, true, signature);
-          imageBlobId = blobId;
-          imageObjId = blobObjectId;
-        }
-
-        if (spritesheetFile) {
-          const { blobId, blobObjectId } = await WalrusService.uploadFile(spritesheetFile, activeAddress, true, signature);
-          spriteBlobId = blobId;
-          spriteObjId = blobObjectId;
-        }
-      } catch (error: any) {
-        console.error('File upload failed during mint:', error);
-        alert(error.message || t('custom.alerts.upload_failed') || 'Upload failed');
-        return;
-      } finally {
-        setUploading({ image: false, sprite: false });
-      }
-    }
-
-    let tx = new Transaction();
-    
-    tx.moveCall({
-      target: `${PACKAGE_ID}::${MODULES.PET_NFT}::${FUNCTIONS.MINT_CUSTOM}`,
-      arguments: [
-        tx.object(GLOBAL_CONFIG_ID),
-        tx.object(slotId!),
-        tx.pure.string(petData.name),
-        tx.pure.string(WalrusService.getBlobUrl(imageBlobId)),
-        tx.pure.id(imageObjId),
-        tx.pure.string(WalrusService.getBlobUrl(spriteBlobId)),
-        tx.pure.id(spriteObjId),
-        tx.pure.string(petData.name.toLowerCase().replace(/\s+/g, '-')),
-        tx.object('0x6'), // clock
-        tx.object('0x8'), // random
-      ],
-    });
-
+    setMinting(true);
     try {
-      tx = await WalrusService.sponsorTransaction(tx, activeAddress);
-      
-      signAndExecuteTransaction({ transaction: tx }, {
-        onSuccess: async (response) => {
-          try {
-            const txRes = await suiClient.waitForTransaction({
-              digest: response.digest,
-              options: { showEffects: true }
-            });
-            const status = txRes.effects?.status?.status;
-            if (status === 'success') {
-              alert(t('custom.alerts.mint_success'));
-              navigate('/market');
-            } else {
-              const errorReason = txRes.effects?.status?.error || 'Unknown Move abort';
-              alert(t('custom.alerts.mint_failed', { error: errorReason }));
-            }
-          } catch (e: any) {
-            console.error(e);
-            alert(t('custom.alerts.mint_failed', { error: e.message || e.toString() }));
-          }
-        },
-        onError: (err) => {
-          console.error('Mint failed:', err);
-          alert(t('custom.alerts.mint_failed', { error: err.message || err.toString() }));
-        }
+      // Find the slot object
+      const objects = await suiClient.getOwnedObjects({
+        owner: activeAddress,
+        filter: { StructType: `${PACKAGE_ID}::${MODULES.PET_NFT}::MintSlot` }
       });
-    } catch (err) {
-      console.error('Sponsorship failed:', err);
-      alert(t('custom.alerts.sponsor_unavailable'));
+      
+      if (objects.data.length === 0) {
+        setMinting(false);
+        return;
+      }
+      const slotId = objects.data[0].data?.objectId;
+
+      let imageBlobId = petData.imageBlob;
+      let imageObjId = petData.imageObjId;
+      let spriteBlobId = petData.spriteBlob;
+      let spriteObjId = petData.spriteObjId;
+
+      // Upload staged files to Walrus on mint click
+      if (avatarFile || spritesheetFile) {
+        try {
+          setUploading({ image: avatarFile !== null, sprite: spritesheetFile !== null });
+          const signature = await getUploadSignature();
+
+          if (avatarFile) {
+            const { blobId, blobObjectId } = await WalrusService.uploadFile(avatarFile, activeAddress, true, signature);
+            imageBlobId = blobId;
+            imageObjId = blobObjectId;
+          }
+
+          if (spritesheetFile) {
+            const { blobId, blobObjectId } = await WalrusService.uploadFile(spritesheetFile, activeAddress, true, signature);
+            spriteBlobId = blobId;
+            spriteObjId = blobObjectId;
+          }
+        } catch (error: any) {
+          console.error('File upload failed during mint:', error);
+          alert(error.message || t('custom.alerts.upload_failed') || 'Upload failed');
+          setMinting(false);
+          return;
+        } finally {
+          setUploading({ image: false, sprite: false });
+        }
+      }
+
+      const tx = new Transaction();
+      tx.setSender(activeAddress);
+      tx.setGasOwner('0xb11e94346f20fe9a83a17f0bff621836551c0a9004794b377f101bdb68e42902');
+      
+      tx.moveCall({
+        target: `${PACKAGE_ID}::${MODULES.PET_NFT}::${FUNCTIONS.MINT_CUSTOM}`,
+        arguments: [
+          tx.object(GLOBAL_CONFIG_ID),
+          tx.object(slotId!),
+          tx.pure.string(petData.name),
+          tx.pure.string(WalrusService.getBlobUrl(imageBlobId)),
+          tx.pure.id(imageObjId),
+          tx.pure.string(WalrusService.getBlobUrl(spriteBlobId)),
+          tx.pure.id(spriteObjId),
+          tx.pure.string(petData.name.toLowerCase().replace(/\s+/g, '-')),
+          tx.object('0x6'), // clock
+          tx.object('0x8'), // random
+        ],
+      });
+
+      let txBytesBase64 = '';
+      let userSignature = '';
+
+      // Check if zkLogin
+      const isZkLogin = !!activeAddress && sessionStorage.getItem('zklogin_address') === activeAddress && !account;
+
+      if (isZkLogin) {
+        console.log('[useCustomPet] Signing using zkLogin...');
+        const jwt = sessionStorage.getItem('zklogin_jwt') || localStorage.getItem('zklogin_jwt');
+        const privateKeyBase64 = sessionStorage.getItem('zklogin_ephemeral_private_key') || localStorage.getItem('zklogin_ephemeral_private_key');
+        const randomness = sessionStorage.getItem('zklogin_randomness') || localStorage.getItem('zklogin_randomness');
+        const maxEpoch = sessionStorage.getItem('zklogin_max_epoch') || localStorage.getItem('zklogin_max_epoch');
+
+        if (!jwt || !privateKeyBase64 || !randomness || !maxEpoch) {
+          throw new Error('zkLogin session data missing from storage. Please log in again.');
+        }
+
+        const ephemeralKeypair = Ed25519Keypair.fromSecretKey(privateKeyBase64);
+
+        // Fetch ZK Proof
+        const proverUrl = 'https://prover-dev.mystenlabs.com/v1';
+        const salt = sessionStorage.getItem('zklogin_salt') || localStorage.getItem('zklogin_salt') || '0';
+        const proverResponse = await fetch(proverUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            jwt,
+            extendedEphemeralPublicKey: getExtendedEphemeralPublicKey(ephemeralKeypair.getPublicKey()),
+            maxEpoch: parseInt(maxEpoch),
+            jwtRandomness: randomness,
+            salt: salt,
+            keyClaimName: 'sub'
+          })
+        });
+
+        if (!proverResponse.ok) {
+          const errMsg = await proverResponse.text();
+          throw new Error(`ZK Prover request failed: ${errMsg}`);
+        }
+
+        const zkProof = await proverResponse.json();
+
+        // Build Transaction (Fetch sponsor gas coin first to enable building for 0 SUI users)
+        console.log('[useCustomPet] Fetching sponsor SUI gas coin from backend...');
+        const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:10000';
+        const gasCoinResponse = await fetch(`${backendUrl}/sponsor-gas-coin`);
+        if (!gasCoinResponse.ok) {
+          const errText = await gasCoinResponse.text();
+          throw new Error(`Failed to fetch sponsor gas coin: ${errText}`);
+        }
+        const { sponsorAddress, gasCoin } = await gasCoinResponse.json();
+
+        tx.setSender(activeAddress);
+        tx.setGasOwner(sponsorAddress);
+        tx.setGasPayment([gasCoin]);
+        tx.setGasBudget(30000000); // 0.03 SUI
+
+        const txBytes = await tx.build({ client: suiClient });
+        txBytesBase64 = toBase64(txBytes);
+
+        // Sign with ephemeral keypair
+        const { signature: ephemeralSignature } = await ephemeralKeypair.signTransaction(txBytes);
+
+        // Combine into final zkLogin signature
+        userSignature = getZkLoginSignature({
+          inputs: zkProof,
+          maxEpoch: parseInt(maxEpoch),
+          userSignature: ephemeralSignature,
+        });
+      } else {
+        // Standard extension wallet
+        console.log('[useCustomPet] Signing using Extension Wallet...');
+        const signedTx = await signTransaction({
+          transaction: tx,
+          chain: 'sui:testnet'
+        });
+        txBytesBase64 = (signedTx as any).bytes || (signedTx as any).transactionBlockBytes;
+        userSignature = signedTx.signature;
+      }
+
+      // Send to backend sponsor and execute
+      const result = await WalrusService.sponsorAndExecuteTransaction(txBytesBase64, activeAddress, userSignature);
+
+      if (result.success && result.digest) {
+        // Wait for transaction effects
+        try {
+          const txRes = await suiClient.waitForTransaction({
+            digest: result.digest,
+            options: { showEffects: true }
+          });
+          const status = txRes.effects?.status?.status;
+          if (status === 'success') {
+            alert(t('custom.alerts.mint_success'));
+            navigate('/market');
+          } else {
+            const errorReason = txRes.effects?.status?.error || 'Unknown Move abort';
+            alert(t('custom.alerts.mint_failed', { error: errorReason }));
+          }
+        } catch (e: any) {
+          console.error(e);
+          alert(t('custom.alerts.mint_failed', { error: e.message || e.toString() }));
+        }
+      } else {
+        alert(t('custom.alerts.mint_failed', { error: 'Execution failed without digest' }));
+      }
+    } catch (err: any) {
+      console.error('Sponsorship/Mint failed:', err);
+      alert(t('custom.alerts.mint_failed', { error: err.message || err.toString() }));
+    } finally {
+      setMinting(false);
     }
   };
 
@@ -294,6 +386,7 @@ export const useCustomPet = () => {
     generationStep,
     setGenerationStep,
     t,
-    navigate
+    navigate,
+    minting
   };
 };

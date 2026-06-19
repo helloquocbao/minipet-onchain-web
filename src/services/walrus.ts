@@ -1,5 +1,3 @@
-import { toBase64 } from '@mysten/sui/utils';
-import { suiClient } from './blockchain/sui';
 
 const PUBLISHER_URL = process.env.NEXT_PUBLIC_WALRUS_PUBLISHER_URL || 'https://publisher.walrus-testnet.walrus.space';
 const AGGREGATOR_URL = process.env.NEXT_PUBLIC_WALRUS_AGGREGATOR_URL || 'https://aggregator.walrus-testnet.walrus.space';
@@ -35,7 +33,7 @@ export const WalrusService = {
     targetAddress?: string,
     isCustom: boolean = false,
     signature?: string,
-    epochs: number = 5
+    epochs: number = 40
   ): Promise<{ blobId: string; blobObjectId: string }> {
     // Nếu không truyền targetAddress, thực hiện tải trực tiếp lên Walrus (chế độ Testnet công cộng hoặc thử nghiệm cục bộ)
     if (!targetAddress) {
@@ -66,7 +64,9 @@ export const WalrusService = {
     };
 
     const jwt = typeof window !== 'undefined' ? sessionStorage.getItem('zklogin_jwt') : null;
-    if (jwt) {
+    const zkAddress = typeof window !== 'undefined' ? sessionStorage.getItem('zklogin_address') : null;
+
+    if (jwt && zkAddress && targetAddress.toLowerCase() === zkAddress.toLowerCase()) {
       headers['Authorization'] = `Bearer ${jwt}`;
     } else if (signature) {
       headers['x-sui-signature'] = signature;
@@ -102,20 +102,16 @@ export const WalrusService = {
   },
 
   /**
-   * 2. SPONSORSHIP (Admin ký giao dịch để trả phí gas và lưu trữ cho User)
-   * Gọi đến MiniPet Backend để nhận chữ ký tài trợ.
+   * 2. SPONSORSHIP & EXECUTION (Admin ký gas và lưu trữ cho User và thực thi giao dịch)
+   * Gửi transaction bytes và chữ ký của user đến MiniPet Backend để tài trợ và thực thi.
    */
-  async sponsorTransaction(tx: any, userAddress: string): Promise<any> {
-    console.log(`[Sponsor] Requesting sponsorship for ${userAddress}...`);
-
-    // Chuyển đổi Transaction sang bytes để gửi qua API
-    const txBytes = await tx.build({ client: suiClient });
-    const txBase64 = toBase64(txBytes);
+  async sponsorAndExecuteTransaction(txBytesBase64: string, userAddress: string, userSignature: string): Promise<any> {
+    console.log(`[Sponsor] Requesting sponsorship and execution for ${userAddress}...`);
 
     const response = await fetch(`${BACKEND_URL}/sponsor`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ txBytes: txBase64, userAddress }),
+      body: JSON.stringify({ txBytes: txBytesBase64, userAddress, userSignature }),
     });
 
     if (!response.ok) {
@@ -123,12 +119,7 @@ export const WalrusService = {
       throw new Error(error.error || 'Sponsorship failed');
     }
 
-    const { signature } = await response.json();
-
-    // Thêm chữ ký của Sponsor vào Transaction
-    tx.addSignature(signature);
-
-    return tx;
+    return await response.json();
   },
 
   getBlobUrl(blobId: string): string {

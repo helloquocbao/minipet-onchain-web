@@ -28,6 +28,7 @@ interface CustomPetFormProps {
   setGenerationStep: (step: 'upload' | 'review') => void;
   t: (key: string, options?: any) => string;
   navigate: (path: string | number) => void;
+  minting: boolean;
 }
 
 export const CustomPetForm: React.FC<CustomPetFormProps> = ({
@@ -45,7 +46,8 @@ export const CustomPetForm: React.FC<CustomPetFormProps> = ({
   generationStep,
   setGenerationStep,
   t,
-  navigate
+  navigate,
+  minting
 }) => {
   const [creationMode, setCreationMode] = useState<'manual' | 'ai'>('manual');
   const isVi = t('locale') === 'vi';
@@ -235,11 +237,20 @@ export const CustomPetForm: React.FC<CustomPetFormProps> = ({
             {/* Direct Mint Button for Manual Upload */}
             <button 
               onClick={handleMint}
-              disabled={!hasSlot || !petData.name || !petData.imageBlob || !petData.spriteBlob || uploading.image || uploading.sprite}
+              disabled={minting || !hasSlot || !petData.name || !petData.imageBlob || !petData.spriteBlob || uploading.image || uploading.sprite}
               className="w-full bg-indigo-600 hover:bg-indigo-700 text-white rounded-2xl py-4.5 font-black text-base shadow-xl hover:shadow-indigo-500/20 hover:scale-[1.01] active:scale-[0.99] transition-all disabled:opacity-50 disabled:hover:scale-100 flex items-center justify-center gap-2 cursor-pointer"
             >
-              <Sparkles size={18} />
-              {isVi ? 'Đúc Custom Pet NFT (MIPET)' : 'Mint Custom Pet NFT'}
+              {minting ? (
+                <>
+                  <Loader2 className="animate-spin" size={18} />
+                  {isVi ? 'Đang đúc...' : 'Minting...'}
+                </>
+              ) : (
+                <>
+                  <Sparkles size={18} />
+                  {isVi ? 'Đúc Custom Pet NFT (MIPET)' : 'Mint Custom Pet NFT'}
+                </>
+              )}
             </button>
           </div>
         )}
@@ -387,11 +398,20 @@ export const CustomPetForm: React.FC<CustomPetFormProps> = ({
                   
                   <button 
                     onClick={handleMint}
-                    disabled={!hasSlot || !petData.name || !petData.imageBlob || !petData.spriteBlob || uploading.image || uploading.sprite}
+                    disabled={minting || !hasSlot || !petData.name || !petData.imageBlob || !petData.spriteBlob || uploading.image || uploading.sprite}
                     className="w-2/3 bg-black dark:bg-white dark:text-black text-white rounded-2xl py-5 font-black text-lg shadow-xl hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-50 disabled:hover:scale-100 flex items-center justify-center gap-3 cursor-pointer"
                   >
-                    <Sparkles size={24} />
-                    {t('custom.form.mint_btn')}
+                    {minting ? (
+                      <>
+                        <Loader2 className="animate-spin" size={24} />
+                        {isVi ? 'Đang đúc...' : 'Minting...'}
+                      </>
+                    ) : (
+                      <>
+                        <Sparkles size={24} />
+                        {t('custom.form.mint_btn')}
+                      </>
+                    )}
                   </button>
                 </div>
               </div>

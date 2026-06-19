@@ -6,7 +6,7 @@ import { useTransactionExecutor } from '../../hooks/useTransactionExecutor';
 import { Transaction } from '@mysten/sui/transactions';
 import { PACKAGE_ID, FUNCTIONS, MODULES, suiClient, GLOBAL_CONFIG_ID, PET_TOKEN_TYPE } from '../../services/blockchain/sui';
 import { WalrusService } from '../../services/walrus';
-import { ShoppingBag, Sparkles, ArrowRight, Search, X } from 'lucide-react';
+import { ShoppingBag, Sparkles, ArrowRight, Search, X, Coins, Info } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useTranslation } from 'react-i18next';
 
@@ -21,11 +21,41 @@ interface PetTemplate {
 export function MarketClient() {
   const router = useRouter();
   const activeAddress = useActiveAddress();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { execute: signAndExecuteTransaction } = useTransactionExecutor();
   const [templates, setTemplates] = useState<PetTemplate[]>([]);
   const [slotPrice, setSlotPrice] = useState('10000000000000'); // Default 10,000 MIPET
   const [, setLoading] = useState(true);
+  const [claimingMipet, setClaimingMipet] = useState(false);
+  const [buyingPetId, setBuyingPetId] = useState<string | null>(null);
+
+  const handleClaimMipet = async () => {
+    if (!activeAddress) {
+      alert('Please connect your wallet first.');
+      return;
+    }
+    setClaimingMipet(true);
+    try {
+      const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:10000';
+      const response = await fetch(`${backendUrl}/faucet`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ recipient: activeAddress }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({ error: 'Faucet request failed' }));
+        throw new Error(errorData.error || 'Faucet request failed');
+      }
+
+      alert('Successfully claimed 10,000 MIPET testnet tokens!');
+    } catch (err: any) {
+      console.error(err);
+      alert(err.message || 'Faucet claim failed');
+    } finally {
+      setClaimingMipet(false);
+    }
+  };
 
   const [searchQuery, setSearchQuery] = useState('');
   const [filterType, setFilterType] = useState<'all' | 'official' | 'custom'>('all');
@@ -130,46 +160,63 @@ export function MarketClient() {
       return;
     }
 
-    const tx = new Transaction();
-    
-    // We send SUI coin for payment
-    const [feeCoin] = tx.splitCoins(tx.gas, [price]);
-
-    tx.moveCall({
-      target: `${PACKAGE_ID}::${MODULES.PET_NFT}::${FUNCTIONS.BUY_PET}`,
-      arguments: [
-        tx.object(GLOBAL_CONFIG_ID),
-        tx.object(templateId),
-        feeCoin,
-        tx.object('0x6'), // Clock
-        tx.object('0x8'), // Random
-      ],
-    });
-
-    signAndExecuteTransaction({ transaction: tx }, {
-      onSuccess: async (response) => {
-        try {
-          const txRes = await suiClient.waitForTransaction({
-            digest: response.digest,
-            options: { showEffects: true }
-          });
-          const status = txRes.effects?.status?.status;
-          if (status === 'success') {
-            alert(t('market.alerts.buy_pet_success'));
-          } else {
-            const errorReason = txRes.effects?.status?.error || 'Unknown Move abort';
-            alert(t('market.alerts.buy_failed', { error: errorReason }));
-          }
-        } catch (e: any) {
-          console.error(e);
-          alert(t('market.alerts.buy_failed', { error: e.message || e.toString() }));
-        }
-      },
-      onError: (err) => {
-        console.error(err);
-        alert(t('market.alerts.buy_failed', { error: err.message || err.toString() }));
+    setBuyingPetId(templateId);
+    try {
+      const tx = new Transaction();
+      const userCoins = await suiClient.getCoins({ owner: activeAddress, coinType: '0x2::sui::SUI' });
+      const paymentCoin = userCoins.data.find(c => BigInt(c.balance) >= BigInt(price));
+      if (!paymentCoin) {
+        alert(t('market.alerts.insufficient_sui') || 'You do not have a SUI coin with enough balance to buy this petCompanion!');
+        setBuyingPetId(null);
+        return;
       }
-    });
+
+      const [feeCoin] = tx.splitCoins(tx.object(paymentCoin.coinObjectId), [price]);
+
+      tx.moveCall({
+        target: `${PACKAGE_ID}::${MODULES.PET_NFT}::${FUNCTIONS.BUY_PET}`,
+        arguments: [
+          tx.object(GLOBAL_CONFIG_ID),
+          tx.object(templateId),
+          feeCoin,
+          tx.object('0x6'), // Clock
+          tx.object('0x8'), // Random
+        ],
+      });
+
+      tx.transferObjects([feeCoin], tx.pure.address(activeAddress));
+
+      signAndExecuteTransaction({ transaction: tx }, {
+        onSuccess: async (response) => {
+          try {
+            const txRes = await suiClient.waitForTransaction({
+              digest: response.digest,
+              options: { showEffects: true }
+            });
+            const status = txRes.effects?.status?.status;
+            if (status === 'success') {
+              alert(t('market.alerts.buy_pet_success'));
+            } else {
+              const errorReason = txRes.effects?.status?.error || 'Unknown Move abort';
+              alert(t('market.alerts.buy_failed', { error: errorReason }));
+            }
+          } catch (e: any) {
+            console.error(e);
+            alert(t('market.alerts.buy_failed', { error: e.message || e.toString() }));
+          }
+        },
+        onError: (err) => {
+          console.error(err);
+          alert(t('market.alerts.buy_failed', { error: err.message || err.toString() }));
+        },
+        onSettled: () => {
+          setBuyingPetId(null);
+        }
+      });
+    } catch (e: any) {
+      alert(e.message || 'Error');
+      setBuyingPetId(null);
+    }
   };
 
   const handleBuyMintSlot = async () => {
@@ -250,63 +297,74 @@ export function MarketClient() {
       return;
     }
 
-    const hasSlot = await checkUserHasSlot();
-    if (hasSlot) {
-      alert(t('market.alerts.has_slot_custom'));
-      navigateToCustomizer(pet);
-      return;
-    }
-
-    const tx = new Transaction();
-    
-    const coins = await suiClient.getCoins({
-      owner: activeAddress,
-      coinType: PET_TOKEN_TYPE,
-    });
-
-    if (coins.data.length === 0) {
-      alert(t('market.alerts.need_mipet') || 'You need MIPET tokens to buy a Mint Slot!');
-      return;
-    }
-
-    const coinObjects = coins.data.map((c) => tx.object(c.coinObjectId));
-    if (coinObjects.length > 1) {
-       tx.mergeCoins(coinObjects[0], coinObjects.slice(1));
-    }
-
-    tx.moveCall({
-      target: `${PACKAGE_ID}::${MODULES.PET_NFT}::${FUNCTIONS.BUY_MINT_SLOT}`,
-      arguments: [
-        tx.object(GLOBAL_CONFIG_ID),
-        coinObjects[0],
-      ],
-    });
-
-    signAndExecuteTransaction({ transaction: tx }, {
-      onSuccess: async (response) => {
-        try {
-          const txRes = await suiClient.waitForTransaction({
-            digest: response.digest,
-            options: { showEffects: true }
-          });
-          const status = txRes.effects?.status?.status;
-          if (status === 'success') {
-            alert(t('market.alerts.buy_custom_slot_success'));
-            navigateToCustomizer(pet);
-          } else {
-            const errorReason = txRes.effects?.status?.error || 'Unknown Move abort';
-            alert(t('market.alerts.buy_failed', { error: errorReason }));
-          }
-        } catch (e: any) {
-          console.error(e);
-          alert(t('market.alerts.buy_failed', { error: e.message || e.toString() }));
-        }
-      },
-      onError: (err) => {
-        console.error("Failed to buy slot:", err);
-        alert(t('market.alerts.buy_failed', { error: err.message || err.toString() }));
+    setBuyingPetId(pet.id);
+    try {
+      const hasSlot = await checkUserHasSlot();
+      if (hasSlot) {
+        alert(t('market.alerts.has_slot_custom'));
+        navigateToCustomizer(pet);
+        setBuyingPetId(null);
+        return;
       }
-    });
+
+      const tx = new Transaction();
+      
+      const coins = await suiClient.getCoins({
+        owner: activeAddress,
+        coinType: PET_TOKEN_TYPE,
+      });
+
+      if (coins.data.length === 0) {
+        alert(t('market.alerts.need_mipet') || 'You need MIPET tokens to buy a Mint Slot!');
+        setBuyingPetId(null);
+        return;
+      }
+
+      const coinObjects = coins.data.map((c) => tx.object(c.coinObjectId));
+      if (coinObjects.length > 1) {
+         tx.mergeCoins(coinObjects[0], coinObjects.slice(1));
+      }
+
+      tx.moveCall({
+        target: `${PACKAGE_ID}::${MODULES.PET_NFT}::${FUNCTIONS.BUY_MINT_SLOT}`,
+        arguments: [
+          tx.object(GLOBAL_CONFIG_ID),
+          coinObjects[0],
+        ],
+      });
+
+      signAndExecuteTransaction({ transaction: tx }, {
+        onSuccess: async (response) => {
+          try {
+            const txRes = await suiClient.waitForTransaction({
+              digest: response.digest,
+              options: { showEffects: true }
+            });
+            const status = txRes.effects?.status?.status;
+            if (status === 'success') {
+              alert(t('market.alerts.buy_custom_slot_success'));
+              navigateToCustomizer(pet);
+            } else {
+              const errorReason = txRes.effects?.status?.error || 'Unknown Move abort';
+              alert(t('market.alerts.buy_failed', { error: errorReason }));
+            }
+          } catch (e: any) {
+            console.error(e);
+            alert(t('market.alerts.buy_failed', { error: e.message || e.toString() }));
+          }
+        },
+        onError: (err) => {
+          console.error("Failed to buy slot:", err);
+          alert(t('market.alerts.buy_failed', { error: err.message || err.toString() }));
+        },
+        onSettled: () => {
+          setBuyingPetId(null);
+        }
+      });
+    } catch (err: any) {
+      alert(err.message || 'Error');
+      setBuyingPetId(null);
+    }
   };
 
   return (
@@ -393,6 +451,27 @@ export function MarketClient() {
             <Sparkles size={12} className="text-indigo-200" />
             <span>{t('market.custom_slot.title')}</span>
           </button>
+
+          {/* Faucet Claim button */}
+          <div className="flex items-center gap-2">
+            <button 
+              onClick={handleClaimMipet}
+              disabled={claimingMipet}
+              className="bg-amber-500 hover:bg-amber-600 disabled:bg-amber-500/50 disabled:cursor-not-allowed text-white font-bold py-1.5 px-3 rounded-xl flex items-center gap-1.5 text-xs transition-all shadow-md shadow-amber-500/15 hover:shadow-amber-500/25 hover:-translate-y-0.5 cursor-pointer"
+            >
+              <Coins size={12} className="text-amber-100 animate-pulse" />
+              <span>{claimingMipet ? 'Claiming...' : 'Claim 10,000 MIPET'}</span>
+            </button>
+            
+            {/* Tooltip Info Icon */}
+            <div className="relative group flex items-center">
+              <Info size={14} className="text-gray-400 hover:text-amber-500 transition-colors cursor-help" />
+              <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover:block w-48 p-2 bg-slate-900 dark:bg-slate-800 text-white text-[10px] rounded-lg shadow-lg text-center z-30 pointer-events-none border border-slate-700/50">
+                Faucet Testnet: Nhận 10,000 MIPET miễn phí để mua Mint Slot & trải nghiệm đầy đủ tính năng.
+                <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-slate-900 dark:border-t-slate-800" />
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -469,7 +548,7 @@ export function MarketClient() {
                 <img
                   src={pet.image_url.startsWith('http') ? pet.image_url : WalrusService.getBlobUrl(pet.image_url)}
                   alt={pet.name}
-                  className="w-24 h-24 sm:w-28 sm:h-28 object-contain pixel-art group-hover:scale-105 transition-transform duration-300"
+                  className="w-full h-full object-cover rounded-xl pixel-art group-hover:scale-105 transition-transform duration-300"
                 />
                 <div className="absolute top-2 right-2 bg-white/80 dark:bg-slate-950/85 backdrop-blur-md shadow-sm border border-white/60 dark:border-slate-800/80 px-2 py-0.5 rounded-full text-[10px] font-extrabold text-indigo-600 dark:text-indigo-400">
                   {isCustom ? `${Number(slotPrice) / 1000000000} MIPET` : `${Number(pet.price) / 1000000000} SUI`}
@@ -491,14 +570,27 @@ export function MarketClient() {
                 </div>
                 <button
                   onClick={() => isCustom ? handleBuyCustomPetSlot(pet) : handleBuyPet(pet.id, pet.price)}
+                  disabled={buyingPetId !== null}
                   className={`w-full py-1.5 px-3 rounded-lg text-xs transition-all font-bold cursor-pointer flex items-center justify-between group/btn ${
                     isCustom
-                      ? 'bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white shadow-md shadow-indigo-500/10 border-none'
-                      : 'bg-indigo-50/50 hover:bg-indigo-100/80 dark:bg-indigo-950/20 dark:hover:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 border border-indigo-100/30 dark:border-indigo-900/30'
+                      ? 'bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 disabled:from-indigo-400 disabled:to-purple-400 text-white shadow-md shadow-indigo-500/10 border-none'
+                      : 'bg-indigo-50/50 hover:bg-indigo-100/80 disabled:bg-slate-100 dark:bg-indigo-950/20 dark:hover:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 border border-indigo-100/30 dark:border-indigo-900/30'
                   }`}
                 >
-                  <span>{isCustom ? 'Customize' : t('market.pet_card.adopt_btn')}</span>
-                  <ArrowRight size={12} className="group-hover/btn:translate-x-0.5 transition-transform" />
+                  {buyingPetId === pet.id ? (
+                    <>
+                      <span className="flex items-center gap-1.5">
+                        <div className="w-3.5 h-3.5 border-2 border-indigo-600 dark:border-indigo-400 border-t-transparent rounded-full animate-spin" />
+                        {i18n.language === 'vi' ? 'Đang xử lý...' : 'Processing...'}
+                      </span>
+                      <ArrowRight size={12} className="opacity-0" />
+                    </>
+                  ) : (
+                    <>
+                      <span>{isCustom ? 'Customize' : t('market.pet_card.adopt_btn')}</span>
+                      <ArrowRight size={12} className="group-hover/btn:translate-x-0.5 transition-transform" />
+                    </>
+                  )}
                 </button>
               </div>
             </div>
