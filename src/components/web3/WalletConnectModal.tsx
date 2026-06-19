@@ -14,7 +14,7 @@ interface WalletConnectModalProps {
 }
 
 export function WalletConnectModal({ isOpen, onClose }: WalletConnectModalProps) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const wallets = useWallets();
   const { mutate: connectWallet } = useConnectWallet();
   const [googleClientId, setGoogleClientId] = React.useState<string>('');
@@ -66,7 +66,7 @@ export function WalletConnectModal({ isOpen, onClose }: WalletConnectModalProps)
       const maxEpoch = Number(epoch) + 2;
 
       // Fixed salt stored in sessionStorage for consistency
-      const salt = '0';
+      const salt = '30041975020919453004197502091945';
       sessionStorage.setItem('zklogin_salt', salt);
 
       const ephemeralKeypair = new Ed25519Keypair();
@@ -141,6 +141,22 @@ export function WalletConnectModal({ isOpen, onClose }: WalletConnectModalProps)
                 <span className="text-[10px] text-indigo-400 font-bold uppercase tracking-wider block">
                   {t('wallet.social_login_a')}
                 </span>
+
+                {/* Highly Recommended Badge & Explanation */}
+                <div className="bg-indigo-500/10 border border-indigo-500/20 rounded-xl p-3 text-xs text-indigo-300 space-y-1">
+                  <div className="font-extrabold flex items-center gap-1.5 text-indigo-200">
+                    <span className="relative flex h-2 w-2">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75"></span>
+                      <span className="relative inline-flex rounded-full h-2 w-2 bg-indigo-500"></span>
+                    </span>
+                    {i18n.language === 'vi' ? 'Ưu Tiên Khuyên Dùng (100% Free Gas!)' : 'Highly Recommended (100% Sponsored Gas!)'}
+                  </div>
+                  <div className="text-[10.5px] text-slate-400 leading-normal font-medium">
+                    {i18n.language === 'vi'
+                      ? 'Đăng nhập Google để nhận tài trợ 100% phí gas cho mọi giao dịch (Mint slot, Custom Pet, Faucet...). Trải nghiệm ứng dụng hoàn toàn miễn phí!'
+                      : 'Login with Google to get 100% gas fees sponsored for all transactions (Mint slot, Custom Pet, Faucet...). Enjoy a fully free experience!'}
+                  </div>
+                </div>
                 
                 {showClientInput && (
                   <div className="space-y-2 text-left bg-slate-950/50 p-3 rounded-xl border border-indigo-500/30 mb-3">

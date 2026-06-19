@@ -57,7 +57,7 @@ export const Navbar = () => {
       }
     };
     document.addEventListener('mousedown', handleClickOutside);
-    setZkLoginAddress(sessionStorage.getItem('zklogin_address'));
+    setZkLoginAddress(sessionStorage.getItem('zklogin_address') || localStorage.getItem('zklogin_address'));
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
@@ -188,7 +188,14 @@ export const Navbar = () => {
                     <button 
                       onClick={() => { 
                         disconnect(); 
-                        sessionStorage.removeItem('zklogin_address');
+                        const zkKeys = [
+                          'zklogin_address', 'zklogin_jwt', 'zklogin_ephemeral_private_key', 
+                          'zklogin_randomness', 'zklogin_max_epoch', 'zklogin_salt'
+                        ];
+                        zkKeys.forEach(k => {
+                          sessionStorage.removeItem(k);
+                          localStorage.removeItem(k);
+                        });
                         setZkLoginAddress(null);
                         setUserDropdownOpen(false);
                         router.push('/'); 

@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ConnectButton } from '@mysten/dapp-kit';
+import { ConnectButton, useSignPersonalMessage } from '@mysten/dapp-kit';
 import { useActiveAddress } from '../../hooks/useActiveAddress';
 import { useTransactionExecutor } from '../../hooks/useTransactionExecutor';
 import { Transaction } from '@mysten/sui/transactions';
@@ -23,6 +23,7 @@ export default function AdminPage() {
   const activeAddress = useActiveAddress();
   const { t } = useTranslation();
   const { execute: signAndExecuteTransaction } = useTransactionExecutor();
+  const { mutateAsync: signPersonalMessage } = useSignPersonalMessage();
   const [activeTab, setActiveTab] = useState<'dashboard' | 'store' | 'economy' | 'settings'>('dashboard');
 
   const [isAdmin, setIsAdmin] = useState<boolean | null>(null);
@@ -42,6 +43,34 @@ export default function AdminPage() {
     sprite_url_legendary: '',
     sprite_blob_id_legendary: '',
     price: '1000000000'
+  });
+
+  const [selectedFiles, setSelectedFiles] = useState<{
+    image: File | null;
+    sprite_normal: File | null;
+    sprite_rare: File | null;
+    sprite_super_rare: File | null;
+    sprite_legendary: File | null;
+  }>({
+    image: null,
+    sprite_normal: null,
+    sprite_rare: null,
+    sprite_super_rare: null,
+    sprite_legendary: null,
+  });
+
+  const [previews, setPreviews] = useState<{
+    image: string;
+    sprite_normal: string;
+    sprite_rare: string;
+    sprite_super_rare: string;
+    sprite_legendary: string;
+  }>({
+    image: '',
+    sprite_normal: '',
+    sprite_rare: '',
+    sprite_super_rare: '',
+    sprite_legendary: '',
   });
 
   const [uploading, setUploading] = useState({
@@ -145,99 +174,159 @@ export default function AdminPage() {
     verifyAdmin();
   }, [activeAddress]);
 
-  const handleFileUpload = async (file: File, type: 'image' | 'sprite_normal' | 'sprite_rare' | 'sprite_super_rare' | 'sprite_legendary') => {
-    if (!activeAddress) {
-      alert(t('admin.alerts.connect_wallet') || 'Please connect your wallet first');
-      return;
-    }
-    try {
-      setUploading(prev => ({ ...prev, [type]: true }));
-      setUploadDone(prev => ({ ...prev, [type]: false }));
-      const { blobId, blobObjectId } = await WalrusService.uploadFile(file, activeAddress, false);
-      setTemplate(prev => ({
-        ...prev,
-        [type === 'image' ? 'image_url' : `${type}_url`]: WalrusService.getBlobUrl(blobId),
-        [type === 'image' ? 'image_blob_id' : `${type}_blob_id`]: blobObjectId
-      }));
-      setUploadDone(prev => ({ ...prev, [type]: true }));
-    } catch (error: any) {
-      console.error('Upload failed:', error);
-      alert(error.message || 'File upload failed');
-    } finally {
-      setUploading(prev => ({ ...prev, [type]: false }));
-    }
+  const handleFileSelect = (file: File, type: 'image' | 'sprite_normal' | 'sprite_rare' | 'sprite_super_rare' | 'sprite_legendary') => {
+    setSelectedFiles(prev => ({ ...prev, [type]: file }));
+    setPreviews(prev => ({ ...prev, [type]: URL.createObjectURL(file) }));
+    setUploadDone(prev => ({ ...prev, [type]: false }));
   };
 
-  const handleCreateTemplate = () => {
+  const handleCreateTemplate = async () => {
     if (!activeAddress) return;
-    const tx = new Transaction();
+    if (
+      !template.name ||
+      !selectedFiles.image ||
+      !selectedFiles.sprite_normal ||
+      !selectedFiles.sprite_rare ||
+      !selectedFiles.sprite_super_rare ||
+      !selectedFiles.sprite_legendary
+    ) {
+      alert('Please fill in the template name and select all 5 files first.');
+      return;
+    }
 
-    // Gửi ID template sang global_config luôn để quản lý tập trung
-    tx.moveCall({
-      target: `${PACKAGE_ID}::${MODULES.PET_NFT}::${FUNCTIONS.CREATE_TEMPLATE}`,
-      arguments: [
-        tx.object(ADMIN_CAP_ID),
-        tx.object(GLOBAL_CONFIG_ID),
-        tx.pure.string(template.name),
-        tx.pure.string(template.image_url),
-        tx.pure.id(template.image_blob_id),
-        tx.pure.string(template.sprite_url_normal),
-        tx.pure.id(template.sprite_blob_id_normal),
-        tx.pure.string(template.sprite_url_rare),
-        tx.pure.id(template.sprite_blob_id_rare),
-        tx.pure.string(template.sprite_url_super_rare),
-        tx.pure.id(template.sprite_blob_id_super_rare),
-        tx.pure.string(template.sprite_url_legendary),
-        tx.pure.id(template.sprite_blob_id_legendary),
-        tx.pure.u64(template.price),
-      ],
-    });
+    try {
+      const jwt = sessionStorage.getItem('zklogin_jwt');
+      let signature: string | undefined = undefined;
+      if (!jwt) {
+        const message = `MiniPet Upload: ${activeAddress}`;
+        const messageBytes = new TextEncoder().encode(message);
+        const signRes = await signPersonalMessage({ message: messageBytes });
+        signature = signRes.signature;
+      }
 
-    signAndExecuteTransaction({ transaction: tx }, {
-      onSuccess: async (response) => {
+      const updatedTemplate = { ...template };
+
+      const uploadOne = async (
+        file: File,
+        type: 'image' | 'sprite_normal' | 'sprite_rare' | 'sprite_super_rare' | 'sprite_legendary'
+      ) => {
+        setUploading(prev => ({ ...prev, [type]: true }));
         try {
-          const txRes = await suiClient.waitForTransaction({
-            digest: response.digest,
-            options: { showEffects: true }
-          });
-          if (txRes.effects?.status?.status === 'success') {
-            alert(t('admin.alerts.template_created') || 'Template created successfully!');
-            setTemplate({
-              name: '',
-              image_url: '',
-              image_blob_id: '',
-              sprite_url_normal: '',
-              sprite_blob_id_normal: '',
-              sprite_url_rare: '',
-              sprite_blob_id_rare: '',
-              sprite_url_super_rare: '',
-              sprite_blob_id_super_rare: '',
-              sprite_url_legendary: '',
-              sprite_blob_id_legendary: '',
-              price: '1000000000'
-            });
-            setUploadDone({
-              image: false,
-              sprite_normal: false,
-              sprite_rare: false,
-              sprite_super_rare: false,
-              sprite_legendary: false
-            });
-            fetchGlobalConfig();
+          const { blobId, blobObjectId } = await WalrusService.uploadFile(file, activeAddress, false, signature);
+          
+          let urlKey = '';
+          let idKey = '';
+          if (type === 'image') {
+            urlKey = 'image_url';
+            idKey = 'image_blob_id';
           } else {
-            const errorReason = txRes.effects?.status?.error || 'Unknown Move abort';
-            alert(`Failed: ${errorReason}`);
+            const rarity = type.replace('sprite_', ''); // 'normal', 'rare', etc.
+            urlKey = `sprite_url_${rarity}`;
+            idKey = `sprite_blob_id_${rarity}`;
           }
-        } catch (e: any) {
-          console.error(e);
-          alert(`Error: ${e.message || e.toString()}`);
+
+          (updatedTemplate as any)[urlKey] = WalrusService.getBlobUrl(blobId);
+          (updatedTemplate as any)[idKey] = blobObjectId;
+
+          setUploadDone(prev => ({ ...prev, [type]: true }));
+        } finally {
+          setUploading(prev => ({ ...prev, [type]: false }));
         }
-      },
-      onError: (error) => {
-        console.error('Error:', error);
-        alert(`Error: ${error.message || error.toString()}`);
-      },
-    });
+      };
+
+      // Sequentially upload all 5 files
+      await uploadOne(selectedFiles.image, 'image');
+      await uploadOne(selectedFiles.sprite_normal, 'sprite_normal');
+      await uploadOne(selectedFiles.sprite_rare, 'sprite_rare');
+      await uploadOne(selectedFiles.sprite_super_rare, 'sprite_super_rare');
+      await uploadOne(selectedFiles.sprite_legendary, 'sprite_legendary');
+
+      const tx = new Transaction();
+
+      // Gửi ID template sang global_config luôn để quản lý tập trung
+      tx.moveCall({
+        target: `${PACKAGE_ID}::${MODULES.PET_NFT}::${FUNCTIONS.CREATE_TEMPLATE}`,
+        arguments: [
+          tx.object(ADMIN_CAP_ID),
+          tx.object(GLOBAL_CONFIG_ID),
+          tx.pure.string(updatedTemplate.name),
+          tx.pure.string(updatedTemplate.image_url),
+          tx.pure.id(updatedTemplate.image_blob_id),
+          tx.pure.string(updatedTemplate.sprite_url_normal),
+          tx.pure.id(updatedTemplate.sprite_blob_id_normal),
+          tx.pure.string(updatedTemplate.sprite_url_rare),
+          tx.pure.id(updatedTemplate.sprite_blob_id_rare),
+          tx.pure.string(updatedTemplate.sprite_url_super_rare),
+          tx.pure.id(updatedTemplate.sprite_blob_id_super_rare),
+          tx.pure.string(updatedTemplate.sprite_url_legendary),
+          tx.pure.id(updatedTemplate.sprite_blob_id_legendary),
+          tx.pure.u64(updatedTemplate.price),
+        ],
+      });
+
+      signAndExecuteTransaction({ transaction: tx }, {
+        onSuccess: async (response) => {
+          try {
+            const txRes = await suiClient.waitForTransaction({
+              digest: response.digest,
+              options: { showEffects: true }
+            });
+            if (txRes.effects?.status?.status === 'success') {
+              alert(t('admin.alerts.template_created') || 'Template created successfully!');
+              setTemplate({
+                name: '',
+                image_url: '',
+                image_blob_id: '',
+                sprite_url_normal: '',
+                sprite_blob_id_normal: '',
+                sprite_url_rare: '',
+                sprite_blob_id_rare: '',
+                sprite_url_super_rare: '',
+                sprite_blob_id_super_rare: '',
+                sprite_url_legendary: '',
+                sprite_blob_id_legendary: '',
+                price: '1000000000'
+              });
+              setSelectedFiles({
+                image: null,
+                sprite_normal: null,
+                sprite_rare: null,
+                sprite_super_rare: null,
+                sprite_legendary: null,
+              });
+              setPreviews({
+                image: '',
+                sprite_normal: '',
+                sprite_rare: '',
+                sprite_super_rare: '',
+                sprite_legendary: '',
+              });
+              setUploadDone({
+                image: false,
+                sprite_normal: false,
+                sprite_rare: false,
+                sprite_super_rare: false,
+                sprite_legendary: false
+              });
+              fetchGlobalConfig();
+            } else {
+              const errorReason = txRes.effects?.status?.error || 'Unknown Move abort';
+              alert(`Failed: ${errorReason}`);
+            }
+          } catch (e: any) {
+            console.error(e);
+            alert(`Error: ${e.message || e.toString()}`);
+          }
+        },
+        onError: (error) => {
+          console.error('Error:', error);
+          alert(`Error: ${error.message || error.toString()}`);
+        }
+      });
+    } catch (err: any) {
+      console.error('Upload or process failed:', err);
+      alert(err.message || 'Processing failed');
+    }
   };
 
   const handleMintToken = () => {
@@ -622,23 +711,23 @@ export default function AdminPage() {
                       <div className="relative group">
                         <input
                           type="file"
-                          onChange={(e) => e.target.files && handleFileUpload(e.target.files[0], 'image')}
+                          onChange={(e) => e.target.files && handleFileSelect(e.target.files[0], 'image')}
                           className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
                         />
-                        <div className={`p-4 rounded-xl border-2 border-dashed transition-all flex flex-col items-center justify-center gap-2 ${uploadDone.image ? 'border-green-500 bg-green-50 dark:bg-green-950/20' : 'border-gray-200 dark:border-gray-800 hover:border-indigo-500'
+                        <div className={`p-4 rounded-xl border-2 border-dashed transition-all flex flex-col items-center justify-center gap-2 ${previews.image ? 'border-green-500 bg-green-50 dark:bg-green-950/20' : 'border-gray-200 dark:border-gray-800 hover:border-indigo-500'
                           }`}>
                           {uploading.image ? (
                             <Loader2 className="animate-spin text-indigo-500" />
-                          ) : uploadDone.image && template.image_url ? (
+                          ) : previews.image ? (
                             <div className="flex flex-col items-center gap-2">
                               <img
-                                src={template.image_url.startsWith('http') ? template.image_url : WalrusService.getBlobUrl(template.image_url)}
+                                src={previews.image}
                                 alt="Main Image Preview"
                                 className="max-h-24 object-contain rounded-lg"
                               />
                               <div className="flex items-center gap-1 text-green-600 dark:text-green-400">
-                                <Check size={14} />
-                                <span className="text-xs font-bold">{t('admin.store.uploaded')}</span>
+                                {uploadDone.image ? <Check size={14} /> : null}
+                                <span className="text-xs font-bold">{uploadDone.image ? t('admin.store.uploaded') : 'Selected'}</span>
                               </div>
                             </div>
                           ) : (
@@ -665,23 +754,23 @@ export default function AdminPage() {
                         <div className="relative group">
                           <input
                             type="file"
-                            onChange={(e) => e.target.files && handleFileUpload(e.target.files[0], 'sprite_normal')}
+                            onChange={(e) => e.target.files && handleFileSelect(e.target.files[0], 'sprite_normal')}
                             className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
                           />
-                          <div className={`p-4 rounded-xl border-2 border-dashed transition-all flex flex-col items-center justify-center gap-2 text-center ${uploadDone.sprite_normal ? 'border-green-500 bg-green-50 dark:bg-green-950/20' : 'border-gray-200 dark:border-gray-800 hover:border-indigo-500'
+                          <div className={`p-4 rounded-xl border-2 border-dashed transition-all flex flex-col items-center justify-center gap-2 text-center ${previews.sprite_normal ? 'border-green-500 bg-green-50 dark:bg-green-950/20' : 'border-gray-200 dark:border-gray-800 hover:border-indigo-500'
                             }`}>
                             {uploading.sprite_normal ? (
                               <Loader2 className="animate-spin text-indigo-500" />
-                            ) : uploadDone.sprite_normal && template.sprite_url_normal ? (
+                            ) : previews.sprite_normal ? (
                               <div className="flex flex-col items-center gap-2">
                                 <img
-                                  src={template.sprite_url_normal.startsWith('http') ? template.sprite_url_normal : WalrusService.getBlobUrl(template.sprite_url_normal)}
+                                  src={previews.sprite_normal}
                                   alt="Normal Sprite Preview"
                                   className="max-h-16 object-contain rounded-lg"
                                 />
                                 <div className="flex items-center gap-1 text-green-600 dark:text-green-400">
-                                  <Check size={12} />
-                                  <span className="text-[10px] font-bold">{t('admin.store.uploaded')}</span>
+                                  {uploadDone.sprite_normal ? <Check size={12} /> : null}
+                                  <span className="text-[10px] font-bold">{uploadDone.sprite_normal ? t('admin.store.uploaded') : 'Selected'}</span>
                                 </div>
                               </div>
                             ) : (
@@ -703,23 +792,23 @@ export default function AdminPage() {
                         <div className="relative group">
                           <input
                             type="file"
-                            onChange={(e) => e.target.files && handleFileUpload(e.target.files[0], 'sprite_rare')}
+                            onChange={(e) => e.target.files && handleFileSelect(e.target.files[0], 'sprite_rare')}
                             className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
                           />
-                          <div className={`p-4 rounded-xl border-2 border-dashed transition-all flex flex-col items-center justify-center gap-2 text-center ${uploadDone.sprite_rare ? 'border-green-500 bg-green-50 dark:bg-green-950/20' : 'border-gray-200 dark:border-gray-850 hover:border-indigo-500'
+                          <div className={`p-4 rounded-xl border-2 border-dashed transition-all flex flex-col items-center justify-center gap-2 text-center ${previews.sprite_rare ? 'border-green-500 bg-green-50 dark:bg-green-950/20' : 'border-gray-200 dark:border-gray-850 hover:border-indigo-500'
                             }`}>
                             {uploading.sprite_rare ? (
                               <Loader2 className="animate-spin text-indigo-500" />
-                            ) : uploadDone.sprite_rare && template.sprite_url_rare ? (
+                            ) : previews.sprite_rare ? (
                               <div className="flex flex-col items-center gap-2">
                                 <img
-                                  src={template.sprite_url_rare.startsWith('http') ? template.sprite_url_rare : WalrusService.getBlobUrl(template.sprite_url_rare)}
+                                  src={previews.sprite_rare}
                                   alt="Rare Sprite Preview"
                                   className="max-h-16 object-contain rounded-lg"
                                 />
                                 <div className="flex items-center gap-1 text-green-600 dark:text-green-400">
-                                  <Check size={12} />
-                                  <span className="text-[10px] font-bold">{t('admin.store.uploaded')}</span>
+                                  {uploadDone.sprite_rare ? <Check size={12} /> : null}
+                                  <span className="text-[10px] font-bold">{uploadDone.sprite_rare ? t('admin.store.uploaded') : 'Selected'}</span>
                                 </div>
                               </div>
                             ) : (
@@ -741,23 +830,23 @@ export default function AdminPage() {
                         <div className="relative group">
                           <input
                             type="file"
-                            onChange={(e) => e.target.files && handleFileUpload(e.target.files[0], 'sprite_super_rare')}
+                            onChange={(e) => e.target.files && handleFileSelect(e.target.files[0], 'sprite_super_rare')}
                             className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
                           />
-                          <div className={`p-4 rounded-xl border-2 border-dashed transition-all flex flex-col items-center justify-center gap-2 text-center ${uploadDone.sprite_super_rare ? 'border-green-500 bg-green-50 dark:bg-green-950/20' : 'border-gray-200 dark:border-gray-850 hover:border-indigo-500'
+                          <div className={`p-4 rounded-xl border-2 border-dashed transition-all flex flex-col items-center justify-center gap-2 text-center ${previews.sprite_super_rare ? 'border-green-500 bg-green-50 dark:bg-green-950/20' : 'border-gray-200 dark:border-gray-850 hover:border-indigo-500'
                             }`}>
                             {uploading.sprite_super_rare ? (
                               <Loader2 className="animate-spin text-indigo-500" />
-                            ) : uploadDone.sprite_super_rare && template.sprite_url_super_rare ? (
+                            ) : previews.sprite_super_rare ? (
                               <div className="flex flex-col items-center gap-2">
                                 <img
-                                  src={template.sprite_url_super_rare.startsWith('http') ? template.sprite_url_super_rare : WalrusService.getBlobUrl(template.sprite_url_super_rare)}
+                                  src={previews.sprite_super_rare}
                                   alt="Super Rare Sprite Preview"
                                   className="max-h-16 object-contain rounded-lg"
                                 />
                                 <div className="flex items-center gap-1 text-green-600 dark:text-green-400">
-                                  <Check size={12} />
-                                  <span className="text-[10px] font-bold">{t('admin.store.uploaded')}</span>
+                                  {uploadDone.sprite_super_rare ? <Check size={12} /> : null}
+                                  <span className="text-[10px] font-bold">{uploadDone.sprite_super_rare ? t('admin.store.uploaded') : 'Selected'}</span>
                                 </div>
                               </div>
                             ) : (
@@ -779,23 +868,23 @@ export default function AdminPage() {
                         <div className="relative group">
                           <input
                             type="file"
-                            onChange={(e) => e.target.files && handleFileUpload(e.target.files[0], 'sprite_legendary')}
+                            onChange={(e) => e.target.files && handleFileSelect(e.target.files[0], 'sprite_legendary')}
                             className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
                           />
-                          <div className={`p-4 rounded-xl border-2 border-dashed transition-all flex flex-col items-center justify-center gap-2 text-center ${uploadDone.sprite_legendary ? 'border-green-500 bg-green-50 dark:bg-green-950/20' : 'border-gray-200 dark:border-gray-850 hover:border-indigo-500'
+                          <div className={`p-4 rounded-xl border-2 border-dashed transition-all flex flex-col items-center justify-center gap-2 text-center ${previews.sprite_legendary ? 'border-green-500 bg-green-50 dark:bg-green-950/20' : 'border-gray-200 dark:border-gray-850 hover:border-indigo-500'
                             }`}>
                             {uploading.sprite_legendary ? (
                               <Loader2 className="animate-spin text-indigo-500" />
-                            ) : uploadDone.sprite_legendary && template.sprite_url_legendary ? (
+                            ) : previews.sprite_legendary ? (
                               <div className="flex flex-col items-center gap-2">
                                 <img
-                                  src={template.sprite_url_legendary.startsWith('http') ? template.sprite_url_legendary : WalrusService.getBlobUrl(template.sprite_url_legendary)}
+                                  src={previews.sprite_legendary}
                                   alt="Legendary Sprite Preview"
                                   className="max-h-16 object-contain rounded-lg"
                                 />
                                 <div className="flex items-center gap-1 text-green-600 dark:text-green-400">
-                                  <Check size={12} />
-                                  <span className="text-[10px] font-bold">{t('admin.store.uploaded')}</span>
+                                  {uploadDone.sprite_legendary ? <Check size={12} /> : null}
+                                  <span className="text-[10px] font-bold">{uploadDone.sprite_legendary ? t('admin.store.uploaded') : 'Selected'}</span>
                                 </div>
                               </div>
                             ) : (
@@ -814,16 +903,17 @@ export default function AdminPage() {
                 <button
                   onClick={handleCreateTemplate}
                   disabled={
-                    !uploadDone.image ||
-                    !uploadDone.sprite_normal ||
-                    !uploadDone.sprite_rare ||
-                    !uploadDone.sprite_super_rare ||
-                    !uploadDone.sprite_legendary ||
-                    !template.name
+                    !selectedFiles.image ||
+                    !selectedFiles.sprite_normal ||
+                    !selectedFiles.sprite_rare ||
+                    !selectedFiles.sprite_super_rare ||
+                    !selectedFiles.sprite_legendary ||
+                    !template.name ||
+                    Object.values(uploading).some(Boolean)
                   }
                   className="btn-dark w-full !justify-center !py-4 mt-10 shadow-xl shadow-indigo-500/20 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  {t('admin.store.confirm_btn')}
+                  {Object.values(uploading).some(Boolean) ? 'Uploading to Walrus...' : t('admin.store.confirm_btn')}
                 </button>
               </div>
             </div>

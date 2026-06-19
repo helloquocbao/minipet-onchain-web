@@ -17,7 +17,12 @@ export default function SyncLoginPage() {
   const searchParams = useSearchParams();
   const account = useCurrentAccount();
   const isConnectOnly = searchParams.get('action') === 'connect' || (typeof window !== 'undefined' && window.location.hash.includes('state=connect'));
-  const [zkLoginAddress, setZkLoginAddress] = useState<string | null>(null);
+  const [zkLoginAddress, setZkLoginAddress] = useState<string | null>(() => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('zklogin_address') || null;
+    }
+    return null;
+  });
   const [googleClientId, setGoogleClientId] = useState<string>('');
   const [showClientInput, setShowClientInput] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
@@ -44,11 +49,23 @@ export default function SyncLoginPage() {
         (async () => {
           try {
             // Derive zkLogin address client-side — no backend needed
-            const salt = sessionStorage.getItem('zklogin_salt') || '0';
+            const salt = sessionStorage.getItem('zklogin_salt') || localStorage.getItem('zklogin_salt') || '0';
             const address = jwtToAddress(idToken, BigInt(salt), false);
             setZkLoginAddress(address);
             sessionStorage.setItem('zklogin_address', address);
+            localStorage.setItem('zklogin_address', address);
             sessionStorage.setItem('zklogin_jwt', idToken);
+            localStorage.setItem('zklogin_jwt', idToken);
+
+            // Copy ephemeral session items from localStorage to sessionStorage if needed
+            const epk = localStorage.getItem('zklogin_ephemeral_private_key');
+            if (epk) sessionStorage.setItem('zklogin_ephemeral_private_key', epk);
+            const rand = localStorage.getItem('zklogin_randomness');
+            if (rand) sessionStorage.setItem('zklogin_randomness', rand);
+            const maxEpoch = localStorage.getItem('zklogin_max_epoch');
+            if (maxEpoch) sessionStorage.setItem('zklogin_max_epoch', maxEpoch);
+            if (salt) sessionStorage.setItem('zklogin_salt', salt);
+
             // Clear hash from address bar
             window.history.replaceState(null, '', window.location.pathname);
             
@@ -67,22 +84,10 @@ export default function SyncLoginPage() {
 
   const handleSyncAddress = (addressToSync: string, isManual: boolean = false) => {
     try {
-      if (isManual) {
-        try {
-          if (navigator.clipboard && navigator.clipboard.writeText) {
-            navigator.clipboard.writeText(addressToSync)
-              .then(() => console.log('[Sync] Wallet address copied to clipboard.'))
-              .catch(err => console.warn('[Sync] Failed to write clipboard:', err));
-          }
-        } catch (clipErr) {
-          console.warn('[Sync] Browser blocked clipboard write:', clipErr);
-        }
-      }
-
       let syncUrl = `minipet://sync?address=${addressToSync}`;
 
       // Check if we have a zkLogin session
-      const jwt = sessionStorage.getItem('zklogin_jwt');
+      const jwt = sessionStorage.getItem('zklogin_jwt') || localStorage.getItem('zklogin_jwt');
       if (jwt) {
         const epk = sessionStorage.getItem('zklogin_ephemeral_private_key') || localStorage.getItem('zklogin_ephemeral_private_key');
         const rand = sessionStorage.getItem('zklogin_randomness') || localStorage.getItem('zklogin_randomness');
@@ -97,7 +102,12 @@ export default function SyncLoginPage() {
       }
 
       console.log('Syncing to app with URL:', syncUrl);
-      window.location.href = syncUrl;
+      // Copy to clipboard FIRST (synchronously start), then redirect
+      if (isManual && navigator.clipboard?.writeText) {
+        navigator.clipboard.writeText(syncUrl).catch(err => console.warn('[Sync] Clipboard write failed:', err));
+      }
+      // Delay redirect slightly to let clipboard write complete
+      setTimeout(() => { window.location.href = syncUrl; }, 200);
     } catch (err) {
       console.error(err);
     }
@@ -123,18 +133,23 @@ export default function SyncLoginPage() {
       const maxEpoch = Number(epoch) + 2; // valid for ~2 epochs
 
       // 2. Generate fixed salt and save it consistently
-      const salt = '0'; // Using 0 as fixed salt (can be user-specific later)
+      const salt = '0';
       sessionStorage.setItem('zklogin_salt', salt);
+      localStorage.setItem('zklogin_salt', salt);
 
       // 3. Generate Ephemeral Keypair
       const ephemeralKeypair = new Ed25519Keypair();
-      sessionStorage.setItem('zklogin_ephemeral_private_key', ephemeralKeypair.getSecretKey());
+      const epkSecret = ephemeralKeypair.getSecretKey();
+      sessionStorage.setItem('zklogin_ephemeral_private_key', epkSecret);
+      localStorage.setItem('zklogin_ephemeral_private_key', epkSecret);
       const ephemeralPublicKey = ephemeralKeypair.getPublicKey();
       
       // 4. Generate Randomness and Max Epoch
       const randomness = generateRandomness();
       sessionStorage.setItem('zklogin_randomness', randomness);
+      localStorage.setItem('zklogin_randomness', randomness);
       sessionStorage.setItem('zklogin_max_epoch', maxEpoch.toString());
+      localStorage.setItem('zklogin_max_epoch', maxEpoch.toString());
       
       // 5. Generate Nonce using actual maxEpoch
       const nonce = generateNonce(ephemeralPublicKey, maxEpoch, randomness);
@@ -156,7 +171,10 @@ export default function SyncLoginPage() {
     }
   };
 
-  const activeAddress = account?.address || zkLoginAddress;
+  const activeAddress = zkLoginAddress || account?.address;
+  
+  // For sync: ALWAYS prefer zkLogin if available (has signing session)
+  const syncAddress = zkLoginAddress || account?.address;
 
   // Nếu người dùng chỉ muốn Đăng nhập (Connect) từ Web App, ta không hiện giao diện Sync
   if (isConnectOnly && !error) {
@@ -291,7 +309,7 @@ export default function SyncLoginPage() {
                 </div>
               )}
               <button
-                onClick={() => handleSyncAddress(activeAddress, true)}
+                onClick={() => handleSyncAddress(syncAddress!, true)}
                 className="w-full mt-2 py-3 px-6 bg-gradient-to-r from-indigo-500 to-blue-600 hover:from-indigo-600 hover:to-blue-700 active:scale-[0.98] font-bold text-white rounded-xl shadow-lg hover:shadow-indigo-500/20 transition-all duration-200 cursor-pointer border-none"
               >
                 {t('sync.sync_desktop_btn')}

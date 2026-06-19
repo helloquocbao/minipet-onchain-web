@@ -23,7 +23,8 @@ export function CustomPetClient() {
     generationStep,
     setGenerationStep,
     t,
-    navigate
+    navigate,
+    minting
   } = useCustomPet();
 
   return (
@@ -54,6 +55,7 @@ export function CustomPetClient() {
             setGenerationStep={setGenerationStep}
             t={t}
             navigate={navigate}
+            minting={minting}
           />
 
           {/* RIGHT COLUMN: LIVE ANIMATION PREVIEW & GUIDE */}

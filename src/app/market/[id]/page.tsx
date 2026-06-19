@@ -58,6 +58,7 @@ export default function PetDetailPage({ params }: { params: Promise<{ id: string
   const [slotPrice, setSlotPrice] = useState('10000000000000');
   const [loading, setLoading] = useState(true);
   const [copied, setCopied] = useState(false);
+  const [buying, setBuying] = useState(false);
 
   // Animation States
   const [activeAction, setActiveAction] = useState<number>(0);
@@ -204,70 +205,89 @@ export default function PetDetailPage({ params }: { params: Promise<{ id: string
       return;
     }
 
-    const tx = new Transaction();
-    const [feeCoin] = tx.splitCoins(tx.gas, [pet.price]);
+    setBuying(true);
+    try {
+      const tx = new Transaction();
+      const userCoins = await suiClient.getCoins({ owner: activeAddress, coinType: '0x2::sui::SUI' });
+      const paymentCoin = userCoins.data.find(c => BigInt(c.balance) >= BigInt(pet.price));
+      if (!paymentCoin) {
+        alert(t('market.alerts.insufficient_sui') || 'You do not have a SUI coin with enough balance to buy this pet Companion!');
+        setBuying(false);
+        return;
+      }
 
-    tx.moveCall({
-      target: `${PACKAGE_ID}::${MODULES.PET_NFT}::${FUNCTIONS.BUY_PET}`,
-      arguments: [
-        tx.object(GLOBAL_CONFIG_ID),
-        tx.object(pet.id),
-        feeCoin,
-        tx.object('0x6'), // Clock
-        tx.object('0x8'), // Random
-      ],
-    });
+      const [feeCoin] = tx.splitCoins(tx.object(paymentCoin.coinObjectId), [pet.price]);
 
-    signAndExecuteTransaction({ transaction: tx }, {
-      onSuccess: async (response) => {
-        try {
-          const txRes = await suiClient.waitForTransaction({
-            digest: response.digest,
-            options: { showEffects: true }
-          });
-          const status = txRes.effects?.status?.status;
-          if (status === 'success') {
-            const createdObjectIds = (txRes.effects?.created || []).map(o => o.reference.objectId);
-            if (createdObjectIds.length > 0) {
-              const objsDetails = await suiClient.multiGetObjects({
-                ids: createdObjectIds,
-                options: { showContent: true, showType: true }
-              });
-              const petNftObj = objsDetails.find(o => 
-                o.data?.type?.includes('::pet_nft::PetNFT')
-              );
-              if (petNftObj && petNftObj.data?.content?.dataType === 'moveObject') {
-                const fields = (petNftObj.data.content.fields as any);
-                const mintedRarity = fields.rarity || 'Normal';
-                const petName = fields.name || pet.name;
-                const spriteUrl = fields.sprite_url || pet.sprite_url_normal;
-                const perfectionScore = fields.perfection_score || '0';
-                
-                setMintedPetInfo({
-                  id: petNftObj.data.objectId,
-                  name: petName,
-                  rarity: mintedRarity,
-                  spriteUrl: spriteUrl,
-                  perfectionScore: perfectionScore
+      tx.moveCall({
+        target: `${PACKAGE_ID}::${MODULES.PET_NFT}::${FUNCTIONS.BUY_PET}`,
+        arguments: [
+          tx.object(GLOBAL_CONFIG_ID),
+          tx.object(pet.id),
+          feeCoin,
+          tx.object('0x6'), // Clock
+          tx.object('0x8'), // Random
+        ],
+      });
+
+      tx.transferObjects([feeCoin], tx.pure.address(activeAddress));
+
+      signAndExecuteTransaction({ transaction: tx }, {
+        onSuccess: async (response) => {
+          try {
+            const txRes = await suiClient.waitForTransaction({
+              digest: response.digest,
+              options: { showEffects: true }
+            });
+            const status = txRes.effects?.status?.status;
+            if (status === 'success') {
+              const createdObjectIds = (txRes.effects?.created || []).map(o => o.reference.objectId);
+              if (createdObjectIds.length > 0) {
+                const objsDetails = await suiClient.multiGetObjects({
+                  ids: createdObjectIds,
+                  options: { showContent: true, showType: true }
                 });
-                setShowCongratsModal(true);
+                const petNftObj = objsDetails.find(o => 
+                  o.data?.type?.includes('::pet_nft::PetNFT')
+                );
+                if (petNftObj && petNftObj.data?.content?.dataType === 'moveObject') {
+                  const fields = (petNftObj.data.content.fields as any);
+                  const mintedRarity = fields.rarity || 'Normal';
+                  const petName = fields.name || pet.name;
+                  const spriteUrl = fields.sprite_url || pet.sprite_url_normal;
+                  const perfectionScore = fields.perfection_score || '0';
+                  
+                  setMintedPetInfo({
+                    id: petNftObj.data.objectId,
+                    name: petName,
+                    rarity: mintedRarity,
+                    spriteUrl: spriteUrl,
+                    perfectionScore: perfectionScore
+                  });
+                  setShowCongratsModal(true);
+                } else {
+                  alert(t('market.alerts.buy_pet_success') || 'Congratulations! You adopted this pet successfully!');
+                }
               } else {
                 alert(t('market.alerts.buy_pet_success') || 'Congratulations! You adopted this pet successfully!');
               }
             } else {
-              alert(t('market.alerts.buy_pet_success') || 'Congratulations! You adopted this pet successfully!');
+              alert(t('market.alerts.buy_failed', { error: 'Transaction failed' }));
             }
-          } else {
-            alert(t('market.alerts.buy_failed', { error: 'Transaction failed' }));
+          } catch (e: any) {
+            alert(t('market.alerts.buy_failed', { error: e.message || e.toString() }));
           }
-        } catch (e: any) {
-          alert(t('market.alerts.buy_failed', { error: e.message || e.toString() }));
+        },
+        onError: (err) => {
+          alert(t('market.alerts.buy_failed', { error: err.message || err.toString() }));
+        },
+        onSettled: () => {
+          setBuying(false);
         }
-      },
-      onError: (err) => {
-        alert(t('market.alerts.buy_failed', { error: err.message || err.toString() }));
-      }
-    });
+      });
+    } catch (e: any) {
+      alert(e.message || 'Error');
+      setBuying(false);
+    }
   };
 
   if (loading) {
@@ -472,10 +492,20 @@ export default function PetDetailPage({ params }: { params: Promise<{ id: string
               ) : (
                 <button
                   onClick={handleBuyPet}
-                  className="w-full py-4 px-6 rounded-2xl bg-indigo-600 hover:bg-indigo-700 text-white font-black shadow-lg shadow-indigo-600/20 border-none transition-all duration-300 active:scale-[0.99] cursor-pointer flex items-center justify-center gap-2"
+                  disabled={buying}
+                  className="w-full py-4 px-6 rounded-2xl bg-indigo-600 hover:bg-indigo-700 disabled:bg-indigo-400 text-white font-black shadow-lg shadow-indigo-600/20 border-none transition-all duration-300 active:scale-[0.99] cursor-pointer flex items-center justify-center gap-2"
                 >
-                  <ShoppingBag size={16} />
-                  <span>{isVi ? "Nhận nuôi Pet" : "Adopt Companion"}</span>
+                  {buying ? (
+                    <>
+                      <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                      <span>{isVi ? "Đang xử lý..." : "Processing..."}</span>
+                    </>
+                  ) : (
+                    <>
+                      <ShoppingBag size={16} />
+                      <span>{isVi ? "Nhận nuôi Pet" : "Adopt Companion"}</span>
+                    </>
+                  )}
                 </button>
               )}
             </div>
