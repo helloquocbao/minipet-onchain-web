@@ -277,7 +277,7 @@ export const useCustomPet = () => {
         const ephemeralKeypair = Ed25519Keypair.fromSecretKey(privateKeyBase64);
 
         // Fetch ZK Proof from Enoki
-        const salt = sessionStorage.getItem('zklogin_salt') || localStorage.getItem('zklogin_salt');
+        const _salt = sessionStorage.getItem('zklogin_salt') || localStorage.getItem('zklogin_salt');
         const proverResponse = await fetch('https://api.enoki.mystenlabs.com/v1/zklogin/zkp', {
           method: 'POST',
           headers: {

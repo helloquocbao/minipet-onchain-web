@@ -37,7 +37,7 @@ export function useTransactionExecutor() {
 
         // 1. Fetch ZK Proof from Enoki
         console.log('[TransactionExecutor] Fetching ZK Proof from Enoki...');
-        const salt = sessionStorage.getItem('zklogin_salt') || localStorage.getItem('zklogin_salt');
+        const _salt = sessionStorage.getItem('zklogin_salt') || localStorage.getItem('zklogin_salt');
         const proverResponse = await fetch('https://api.enoki.mystenlabs.com/v1/zklogin/zkp', {
           method: 'POST',
           headers: {

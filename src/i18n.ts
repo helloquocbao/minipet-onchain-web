@@ -65,6 +65,8 @@ const resources = {
       profile: {
         title: 'Personal Profile',
         subtitle: 'Manage your pet\'s mood according to how you feel.',
+        pets_owned: 'Pets',
+        status: 'Status',
         need_connect: 'Please connect wallet',
         need_connect_desc: 'Connect your wallet to view and interact with MiniPet.',
         no_pets: 'No Pets found',
@@ -499,6 +501,8 @@ const resources = {
       profile: {
         title: 'Profile Cá Nhân',
         subtitle: 'Quản lý trạng thái và cảm xúc của Pet theo tâm trạng của bạn.',
+        pets_owned: 'Thú cưng',
+        status: 'Trạng thái',
         need_connect: 'Vui lòng kết nối ví',
         need_connect_desc: 'Kết nối ví của bạn để xem và tương tác với MiniPet.',
         no_pets: 'Chưa có Pet nào',

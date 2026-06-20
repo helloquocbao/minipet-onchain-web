@@ -696,6 +696,29 @@ export default function AdminPage() {
                       />
                     </div>
                     <div>
+                      <label className="block text-xs font-black text-gray-400 mb-2 uppercase">Trade Style</label>
+                      <select
+                        className="w-full bg-gray-50 dark:bg-gray-800 border-none rounded-xl p-3.5 font-bold focus:ring-2 focus:ring-indigo-500 text-gray-900 dark:text-white"
+                        value={template.pet_type}
+                        onChange={(e) => setTemplate({ ...template, pet_type: e.target.value })}
+                      >
+                        <option value="conservative">Conservative (Thận trọng)</option>
+                        <option value="balanced">Balanced (Cân bằng)</option>
+                        <option value="aggressive">Aggressive (Tấn công)</option>
+                        <option value="scalper">Scalper (Lướt sóng)</option>
+                        <option value="degen">Degen (Liều)</option>
+                      </select>
+                    </div>
+                    <div className="col-span-2">
+                      <label className="block text-xs font-black text-gray-400 mb-2 uppercase">Description</label>
+                      <textarea
+                        placeholder="Describe this pet's personality and trade behavior..."
+                        className="w-full bg-gray-50 dark:bg-gray-800 border-none rounded-xl p-3.5 font-bold focus:ring-2 focus:ring-indigo-500 text-gray-900 dark:text-white resize-none h-20"
+                        value={template.description}
+                        onChange={(e) => setTemplate({ ...template, description: e.target.value })}
+                      />
+                    </div>
+                    <div>
                       <label className="block text-xs font-black text-gray-400 mb-2 uppercase">{t('admin.store.price')} (SUI)</label>
                       <input
                         type="number"
