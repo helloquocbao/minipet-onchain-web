@@ -133,9 +133,11 @@ const resources = {
       download: {
         title: 'Ready to meet your companion?',
         desc: 'Choose your platform and start your journey with MiniPet today. It\'s free and always will be.',
-        macDesc: 'Supports Intel & Apple Silicon',
+        macDesc: 'For M1/M2/M3/M4 Mac',
         winExeDesc: 'Standard installer for Windows',
         winZipDesc: 'Portable version (No install)',
+        winDevDesc: 'Under development, coming soon!',
+        intelDevDesc: 'Under development, coming soon!',
         btn: 'Download',
         coming_soon: 'Coming Soon',
         version: 'Version',
@@ -569,9 +571,11 @@ const resources = {
       download: {
         title: 'Sẵn sàng gặp gỡ bạn đồng hành?',
         desc: 'Chọn nền tảng của bạn và bắt đầu hành trình với MiniPet ngay hôm nay. Hoàn toàn miễn phí.',
-        macDesc: 'Hỗ trợ Intel & Apple Silicon',
+        macDesc: 'Dành cho Mac M1/M2/M3/M4',
         winDesc: 'Bản cài đặt tiêu chuẩn cho Windows',
         winZipDesc: 'Bản Portable (Không cần cài đặt)',
+        winDevDesc: 'Đang phát triển, sắp ra mắt!',
+        intelDevDesc: 'Đang phát triển, sắp ra mắt!',
         btn: 'Tải về',
         coming_soon: 'Sắp ra mắt',
         version: 'Phiên bản',
@@ -937,10 +941,14 @@ const resources = {
       download: {
         title: '准备好迎接你的伙伴了吗？',
         desc: '选择您的平台，立即开始您的 MiniPet 之旅。它是免费的，而且永远都是。',
-        macDesc: '支持 Intel 和 Apple Silicon',
+        macDesc: '适用于 M1/M2/M3/M4 Mac',
         winExeDesc: 'Windows 标准安装程序',
         winZipDesc: '便携版（无需安装）',
-        btn: '下载'
+        winDevDesc: '正在开发中，敬请期待！',
+        intelDevDesc: '正在开发中，敬请期待！',
+        btn: '下载',
+        coming_soon: '即将推出',
+        version: '版本'
       },
       docs: {
         back: '返回首页',
@@ -1069,10 +1077,14 @@ const resources = {
       download: {
         title: 'Pronto a incontrare il tuo compagno?',
         desc: 'Scegli la tua piattaforma e inizia oggi il tuo viaggio con MiniPet. È gratis e lo sarà sempre.',
-        macDesc: 'Supporta Intel e Apple Silicon',
+        macDesc: 'Per Mac M1/M2/M3/M4',
         winExeDesc: 'Installatore standard per Windows',
         winZipDesc: 'Versione portatile (nessuna installazione)',
-        btn: 'Scarica'
+        winDevDesc: 'In fase di sviluppo, in arrivo!',
+        intelDevDesc: 'In fase di sviluppo, in arrivo!',
+        btn: 'Scarica',
+        coming_soon: 'In arrivo',
+        version: 'Versione'
       },
       docs: {
         back: 'Torna alla Home',
@@ -1201,10 +1213,14 @@ const resources = {
       download: {
         title: 'Prêt à rencontrer votre compagnon ?',
         desc: 'Choisissez votre plateforme et commencez votre voyage avec MiniPet aujourd\'hui. C\'est gratuit et le sera toujours.',
-        macDesc: 'Support Intel et Apple Silicon',
+        macDesc: 'Pour Mac M1/M2/M3/M4',
         winExeDesc: 'Installateur standard pour Windows',
         winZipDesc: 'Version portable (sans installation)',
-        btn: 'Télécharger'
+        winDevDesc: 'En cours de développement, bientôt disponible !',
+        intelDevDesc: 'En cours de développement, bientôt disponible !',
+        btn: 'Télécharger',
+        coming_soon: 'Bientôt',
+        version: 'Version'
       },
       docs: {
         back: 'Retour à l\'Accueil',
@@ -1333,10 +1349,14 @@ const resources = {
       download: {
         title: '동반자를 만날 준비가 되셨나요?',
         desc: '플랫폼을 선택하고 오늘 MiniPet과 함께 여정을 시작하세요. 무료이며 앞으로도 계속 무료입니다.',
-        macDesc: 'Intel 및 Apple Silicon 지원',
+        macDesc: 'M1/M2/M3/M4 Mac 전용',
         winExeDesc: 'Windows용 표준 설치 프로그램',
         winZipDesc: '포터블 버전 (설치 불필요)',
-        btn: '다운로드'
+        winDevDesc: '개발 중, 곧 출시 예정!',
+        intelDevDesc: '개발 중, 곧 출시 예정!',
+        btn: '다운로드',
+        coming_soon: '곧 출시',
+        version: '버전'
       },
       docs: {
         back: '홈으로 돌아가기',

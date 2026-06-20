@@ -15,32 +15,33 @@ export const DownloadSection = () => {
 
   const downloads = [
     {
-      platform: 'macOS',
+      platform: 'macOS (Apple Silicon)',
       icon: <FaApple size={22} />,
       version: 'v1.0.0',
       ext: '.dmg',
-      link: 'https://github.com/helloquocbao/mini-pet/releases/download/v1.0.0/MiniPet-v1.0.0.dmg',
+      link: 'https://github.com/helloquocbao/minipet-app/releases/latest',
       desc: t('download.macDesc'),
       color: 'bg-slate-500/10 text-slate-700 dark:text-slate-350 border-slate-500/20'
     },
     {
       platform: 'Windows',
       icon: <FaWindows size={22} />,
-      version: 'v1.0.0',
-      ext: '.exe',
+      version: '',
+      ext: '',
       link: '#',
-      desc: t('download.winExeDesc'),
+      desc: t('download.winDevDesc'),
       color: 'bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/20',
       disabled: true
     },
     {
-      platform: 'Windows',
-      icon: <FaWindows size={22} />,
-      version: 'v1.0.0',
-      ext: '.zip',
-      link: 'https://github.com/helloquocbao/mini-pet/releases/download/v1.0.0/MiniPet-v1.0.0-Portable.zip',
-      desc: t('download.winZipDesc'),
-      color: 'bg-indigo-500/10 text-indigo-650 dark:text-indigo-400 border-indigo-500/20'
+      platform: 'macOS (Intel)',
+      icon: <FaApple size={22} />,
+      version: '',
+      ext: '',
+      link: '#',
+      desc: t('download.intelDevDesc'),
+      color: 'bg-indigo-500/10 text-indigo-650 dark:text-indigo-400 border-indigo-500/20',
+      disabled: true
     }
   ];
 
@@ -94,7 +95,7 @@ export const DownloadSection = () => {
                   <span>{d.disabled ? t('download.coming_soon') : `${t('download.btn')} ${d.ext}`}</span>
                 </a>
                 <div className="mt-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest font-mono">
-                  {t('download.version')} {d.version}
+                  {d.version ? `${t('download.version')} ${d.version}` : t('download.coming_soon')}
                 </div>
               </div>
             </div>
