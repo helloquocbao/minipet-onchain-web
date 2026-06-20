@@ -6,57 +6,57 @@ import React from 'react';
 
 const aiFeatures = [
   {
-    icon: Bot,
-    color: 'bg-indigo-50 text-indigo-600 border-indigo-100',
-    title: { vi: 'On-Chain Task Agent', en: 'On-Chain Task Agent' },
-    desc: {
-      vi: 'Ra lệnh bằng ngôn ngữ tự nhiên: "Swap 10 SUI sang USDC". Agent tự phân tích ý định, tạo PTB và thực thi on-chain.',
-      en: 'Command in natural language: "Swap 10 SUI to USDC". Agent parses intent, builds PTB, and executes on-chain.',
-    },
-  },
-  {
-    icon: Workflow,
-    color: 'bg-orange-50 text-orange-600 border-orange-100',
-    title: { vi: 'Auto-Trade Agent', en: 'Auto-Trade Agent' },
-    desc: {
-      vi: 'Thiết lập chiến lược DCA, limit order. AI Agent tự động thực hiện giao dịch 24/7 theo điều kiện bạn đặt.',
-      en: 'Set DCA strategies, limit orders. AI Agent autonomously executes trades 24/7 based on your conditions.',
-    },
-  },
-  {
     icon: Brain,
     color: 'bg-purple-50 text-purple-600 border-purple-100',
-    title: { vi: 'Wallet Health Monitor', en: 'Wallet Health Monitor' },
+    title: { vi: 'Local AI Chat (Offline LLM)', en: 'Local AI Chat (Offline LLM)' },
     desc: {
-      vi: 'Agent liên tục audit ví: phát hiện token rác, approve đáng ngờ, cảnh báo rủi ro và đề xuất hành động bảo vệ.',
-      en: 'Agent continuously audits wallet: detects spam tokens, suspicious approvals, alerts risks and suggests protective actions.',
+      vi: 'AI chạy 100% offline trên máy qua llama-server + Qwen 2.5 0.5B (train trên SUI docs). Không cần API key, không gửi dữ liệu ra ngoài.',
+      en: 'AI runs 100% offline via llama-server + Qwen 2.5 0.5B (trained on SUI docs). No API keys, zero data leakage.',
     },
   },
   {
     icon: ShieldCheck,
     color: 'bg-rose-50 text-rose-600 border-rose-100',
-    title: { vi: 'Scam Detection Agent', en: 'Scam Detection Agent' },
+    title: { vi: 'Security Agent (Token Scanner)', en: 'Security Agent (Token Scanner)' },
     desc: {
-      vi: 'Mỗi giao dịch được AI quét real-time. Phát hiện contract độc hại, phishing link, rug pull trước khi bạn ký.',
-      en: 'Every transaction is AI-scanned in real-time. Detects malicious contracts, phishing links, rug pulls before you sign.',
-    },
-  },
-  {
-    icon: Cpu,
-    color: 'bg-teal-50 text-teal-600 border-teal-100',
-    title: { vi: 'Local LLM Engine', en: 'Local LLM Engine' },
-    desc: {
-      vi: 'AI chạy hoàn toàn offline trên máy qua llama-server. Không gửi dữ liệu ra ngoài, bảo mật tuyệt đối.',
-      en: 'AI runs fully offline on-device via llama-server. Zero data leakage, absolute privacy.',
+      vi: 'Tự động phát hiện khi bạn copy địa chỉ SUI. Quét TreasuryCap, UpgradeCap, supply — cảnh báo scam/honeypot real-time.',
+      en: 'Auto-detects when you copy a SUI address. Scans TreasuryCap, UpgradeCap, supply — warns about scams/honeypots in real-time.',
     },
   },
   {
     icon: Eye,
     color: 'bg-sky-50 text-sky-600 border-sky-100',
-    title: { vi: 'Portfolio Insight Agent', en: 'Portfolio Insight Agent' },
+    title: { vi: 'Blockchain Monitor (5 Agents)', en: 'Blockchain Monitor (5 Agents)' },
     desc: {
-      vi: 'Agent phân tích danh mục đầu tư, theo dõi P&L, đề xuất rebalance dựa trên biến động thị trường.',
-      en: 'Agent analyzes your portfolio, tracks P&L, suggests rebalancing based on market movements.',
+      vi: '5 agent chạy song song: theo dõi số dư, phát hiện NFT lừa đảo, cảnh báo gas thấp, nhắc nhở idle, và quản lý event cursor.',
+      en: '5 agents run concurrently: balance tracking, phishing NFT detection, low-gas alerts, idle reminders, and event cursor management.',
+    },
+  },
+  {
+    icon: Workflow,
+    color: 'bg-orange-50 text-orange-600 border-orange-100',
+    title: { vi: 'Agent Trade Engine', en: 'Agent Trade Engine' },
+    desc: {
+      vi: 'Agent tự tạo ví Ed25519, theo dõi giá SUI/USD, tính EMA crossover và tự ký + submit giao dịch on-chain.',
+      en: 'Agent generates its own Ed25519 wallet, monitors SUI/USD price, calculates EMA crossover, and autonomously signs + submits on-chain tx.',
+    },
+  },
+  {
+    icon: Bot,
+    color: 'bg-indigo-50 text-indigo-600 border-indigo-100',
+    title: { vi: 'Simulated Trading Mode', en: 'Simulated Trading Mode' },
+    desc: {
+      vi: 'Chế độ paper-trading an toàn chạy song song với real execution. Cấu hình budget, cooldown, slippage riêng từng ví.',
+      en: 'Safe paper-trading mode runs alongside real execution. Configure budget, cooldown, slippage per wallet independently.',
+    },
+  },
+  {
+    icon: Cpu,
+    color: 'bg-teal-50 text-teal-600 border-teal-100',
+    title: { vi: 'Auto-Download từ HuggingFace', en: 'Auto-Download from HuggingFace' },
+    desc: {
+      vi: 'Model AI & engine tự tải từ HuggingFace lần đầu sử dụng. Không cần cài đặt gì thêm.',
+      en: 'AI model & engine auto-downloaded from HuggingFace on first use. No manual setup needed.',
     },
   },
 ];
@@ -67,8 +67,8 @@ const platformFeatures = [
     color: 'bg-emerald-50 text-emerald-600 border-emerald-100',
     title: { vi: 'Desktop Companion', en: 'Desktop Companion' },
     desc: {
-      vi: 'Pet pixel sống trên desktop. Vật lý trọng lực, kéo thả file, hoạt động offline.',
-      en: 'Pixel pet lives on desktop. Physics gravity, drag-and-drop, works offline.',
+      vi: 'Pet pixel sống trên desktop với vật lý trọng lực. Kéo thả file để "ăn" → chuyển vào thùng rác.',
+      en: 'Pixel pet lives on desktop with gravity physics. Drag files to "eat" → moves to trash.',
     },
   },
   {
@@ -76,8 +76,8 @@ const platformFeatures = [
     color: 'bg-violet-50 text-violet-600 border-violet-100',
     title: { vi: 'NFT Marketplace', en: 'NFT Marketplace' },
     desc: {
-      vi: 'Mua bán Pet NFT trên SUI. Giao dịch an toàn qua smart contract.',
-      en: 'Buy and sell Pet NFTs on SUI. Safe trading via smart contracts.',
+      vi: 'Adopt Pet NFT trên SUI. Hệ thống gacha rarity: Normal 70%, Rare 20%, Super Rare 8%, Legendary 2%.',
+      en: 'Adopt Pet NFTs on SUI. Gacha rarity system: Normal 70%, Rare 20%, Super Rare 8%, Legendary 2%.',
     },
   },
   {
@@ -85,17 +85,17 @@ const platformFeatures = [
     color: 'bg-pink-50 text-pink-600 border-pink-100',
     title: { vi: 'Custom Pet Creator', en: 'Custom Pet Creator' },
     desc: {
-      vi: 'Thiết kế spritesheet riêng, upload và mint thành NFT độc nhất.',
-      en: 'Design your own spritesheet, upload and mint as a unique NFT.',
+      vi: 'Thiết kế spritesheet riêng, upload lên Walrus và mint thành NFT độc nhất trên SUI.',
+      en: 'Design your own spritesheet, upload to Walrus and mint as a unique NFT on SUI.',
     },
   },
   {
     icon: KeyRound,
     color: 'bg-amber-50 text-amber-600 border-amber-100',
-    title: { vi: 'zkLogin (Google Sign-In)', en: 'zkLogin (Google Sign-In)' },
+    title: { vi: 'Pomodoro Focus Timer', en: 'Pomodoro Focus Timer' },
     desc: {
-      vi: 'Đăng nhập bằng Google, không cần ví crypto. Zero-Knowledge Proof trên SUI.',
-      en: 'Sign in with Google, no crypto wallet needed. ZK Proof on SUI.',
+      vi: 'Pet gõ búa khi bạn focus, ngủ khi break. Cấu hình thời gian work/break tùy ý.',
+      en: 'Pet hammers during focus, sleeps during break. Configurable work/break durations.',
     },
   },
   {
@@ -103,17 +103,17 @@ const platformFeatures = [
     color: 'bg-cyan-50 text-cyan-600 border-cyan-100',
     title: { vi: 'Walrus Storage', en: 'Walrus Storage' },
     desc: {
-      vi: 'Lưu trữ phi tập trung vĩnh viễn trên Walrus Protocol.',
-      en: 'Permanent decentralized storage on Walrus Protocol.',
+      vi: 'Lưu trữ spritesheet phi tập trung vĩnh viễn trên Walrus Protocol. Không bao giờ mất.',
+      en: 'Permanent decentralized spritesheet storage on Walrus Protocol. Never lost.',
     },
   },
   {
     icon: MessageCircle,
     color: 'bg-blue-50 text-blue-600 border-blue-100',
-    title: { vi: 'AI Chat Companion', en: 'AI Chat Companion' },
+    title: { vi: 'Wallet Sync & Deep-link', en: 'Wallet Sync & Deep-link' },
     desc: {
-      vi: 'Trò chuyện với Pet bằng AI local. Hỏi đáp, ra lệnh, tất cả offline.',
-      en: 'Chat with your Pet via local AI. Q&A, commands, all offline.',
+      vi: 'Kết nối ví web với desktop app qua deep-link (minipet://). Pet tự sync skin từ NFT bạn sở hữu.',
+      en: 'Connect web wallet to desktop app via deep-link (minipet://). Pet auto-syncs skins from your owned NFTs.',
     },
   },
 ];
