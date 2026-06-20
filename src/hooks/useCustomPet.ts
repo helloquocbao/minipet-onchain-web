@@ -276,19 +276,20 @@ export const useCustomPet = () => {
 
         const ephemeralKeypair = Ed25519Keypair.fromSecretKey(privateKeyBase64);
 
-        // Fetch ZK Proof
-        const proverUrl = 'https://prover-dev.mystenlabs.com/v1';
-        const salt = sessionStorage.getItem('zklogin_salt') || localStorage.getItem('zklogin_salt') || '30041975020919453004197502091945';
-        const proverResponse = await fetch(proverUrl, {
+        // Fetch ZK Proof from Enoki
+        const _salt = sessionStorage.getItem('zklogin_salt') || localStorage.getItem('zklogin_salt');
+        const proverResponse = await fetch('https://api.enoki.mystenlabs.com/v1/zklogin/zkp', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer enoki_public_b1c00104f51636649e30132176038cd8',
+            'zklogin-jwt': jwt,
+          },
           body: JSON.stringify({
-            jwt,
-            extendedEphemeralPublicKey: getExtendedEphemeralPublicKey(ephemeralKeypair.getPublicKey()),
+            network: 'testnet',
+            ephemeralPublicKey: getExtendedEphemeralPublicKey(ephemeralKeypair.getPublicKey()),
             maxEpoch: parseInt(maxEpoch),
-            jwtRandomness: randomness,
-            salt: salt,
-            keyClaimName: 'sub'
+            randomness: randomness,
           })
         });
 
@@ -297,7 +298,8 @@ export const useCustomPet = () => {
           throw new Error(`ZK Prover request failed: ${errMsg}`);
         }
 
-        const zkProof = await proverResponse.json();
+        const zkProofResp = await proverResponse.json();
+        const zkProof = zkProofResp.data || zkProofResp;
 
         // Build Transaction (Fetch sponsor gas coin first to enable building for 0 SUI users)
         console.log('[useCustomPet] Fetching sponsor SUI gas coin from backend...');

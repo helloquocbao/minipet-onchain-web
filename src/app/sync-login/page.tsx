@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { useCurrentAccount, ConnectButton } from '@mysten/dapp-kit';
 import { ShieldCheck, HelpCircle, Laptop } from 'lucide-react';
 import { FcGoogle } from 'react-icons/fc';
-import { generateNonce, generateRandomness, jwtToAddress } from '@mysten/sui/zklogin';
+import { generateNonce, generateRandomness } from '@mysten/sui/zklogin';
 import { Ed25519Keypair } from '@mysten/sui/keypairs/ed25519';
 import { suiClient } from '../../services/blockchain/sui';
 
@@ -48,9 +48,18 @@ export default function SyncLoginPage() {
       if (idToken) {
         (async () => {
           try {
-            // Derive zkLogin address client-side — no backend needed
-            const salt = sessionStorage.getItem('zklogin_salt') || localStorage.getItem('zklogin_salt') || '30041975020919453004197502091945';
-            const address = jwtToAddress(idToken, BigInt(salt), false);
+            // Get salt and address from Enoki API
+            const enokiRes = await fetch('https://api.enoki.mystenlabs.com/v1/zklogin', {
+              headers: {
+                'Authorization': 'Bearer enoki_public_b1c00104f51636649e30132176038cd8',
+                'zklogin-jwt': idToken,
+              },
+            });
+            if (!enokiRes.ok) throw new Error('Enoki API failed: ' + await enokiRes.text());
+            const enokiData = (await enokiRes.json()).data;
+            const salt = enokiData.salt;
+            const address = enokiData.address;
+
             setZkLoginAddress(address);
             sessionStorage.setItem('zklogin_address', address);
             localStorage.setItem('zklogin_address', address);
@@ -64,7 +73,8 @@ export default function SyncLoginPage() {
             if (rand) sessionStorage.setItem('zklogin_randomness', rand);
             const maxEpoch = localStorage.getItem('zklogin_max_epoch');
             if (maxEpoch) sessionStorage.setItem('zklogin_max_epoch', maxEpoch);
-            if (salt) sessionStorage.setItem('zklogin_salt', salt);
+            sessionStorage.setItem('zklogin_salt', salt);
+            localStorage.setItem('zklogin_salt', salt);
 
             // Clear hash from address bar
             window.history.replaceState(null, '', window.location.pathname);
@@ -92,7 +102,7 @@ export default function SyncLoginPage() {
         const epk = sessionStorage.getItem('zklogin_ephemeral_private_key') || localStorage.getItem('zklogin_ephemeral_private_key');
         const rand = sessionStorage.getItem('zklogin_randomness') || localStorage.getItem('zklogin_randomness');
         const epoch = sessionStorage.getItem('zklogin_max_epoch') || localStorage.getItem('zklogin_max_epoch');
-        const salt = sessionStorage.getItem('zklogin_salt') || localStorage.getItem('zklogin_salt') || '30041975020919453004197502091945';
+        const salt = sessionStorage.getItem('zklogin_salt') || localStorage.getItem('zklogin_salt');
         
         if (epk && rand && epoch) {
           const payloadObj = { jwt, ephemeralPrivateKey: epk, randomness: rand, maxEpoch: epoch, salt };
@@ -132,10 +142,7 @@ export default function SyncLoginPage() {
       const { epoch } = await suiClient.getLatestSuiSystemState();
       const maxEpoch = Number(epoch) + 2; // valid for ~2 epochs
 
-      // 2. Generate fixed salt and save it consistently
-      const salt = '30041975020919453004197502091945';
-      sessionStorage.setItem('zklogin_salt', salt);
-      localStorage.setItem('zklogin_salt', salt);
+      // 2. Salt will be fetched from Enoki after Google login returns JWT
 
       // 3. Generate Ephemeral Keypair
       const ephemeralKeypair = new Ed25519Keypair();

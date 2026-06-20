@@ -1,9 +1,9 @@
 "use client";
 
-import React from 'react';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import Link from 'next/link';
-import { Calendar, Sparkles, CheckCircle2, Target, Rocket, ArrowLeft, Wallet, Database, Cpu } from 'lucide-react';
+import { Calendar, Sparkles, CheckCircle2, Target, Rocket, ArrowLeft, Wallet, Database, Cpu, Coins, Flame, Lock, Users } from 'lucide-react';
 
 export default function RoadmapPage() {
   const { i18n } = useTranslation();
@@ -14,13 +14,13 @@ export default function RoadmapPage() {
                           i18n.language?.startsWith('fr') ? 'fr' :
                           i18n.language?.startsWith('ko') ? 'ko' : 'en';
 
-  const isVi = currentLangCode === 'vi';
-
   const dict: Record<string, any> = {
     en: {
       title: 'Project Roadmap',
       subtitle: 'Development milestones from June 2026 leading up to our Mainnet Launch on September 2, 2026.',
       backHome: 'Back to Home',
+      qualityTitle: 'Quality Commitment',
+      qualityDesc: 'All updates undergo rigorous performance tests. The Tauri client is built for maximum efficiency, ensuring lightweight resource consumption without impacting your workspace performance.',
       phases: [
         {
           tag: 'Phase 1',
@@ -34,7 +34,7 @@ export default function RoadmapPage() {
             'Integrate llama.cpp local sidecar and Qwen 2.5 0.5B brain offline on desktop, fine-tuned on SUI network documentation and smart contracts data.',
             'Deploy Pet NFT & MIPET Token contracts to Sui Testnet.',
             'Implement Walrus decentralized storage publisher for custom spritesheets.',
-            'Enable Google OAuth 2.0 zkLogin flow.',
+            'Enable Google OAuth 2.0 zkLogin flow via Mysten Labs Enoki platform for secure proof generation and salt management.',
             'Build AI Agentic framework: natural language intent parsing → PTB (Programmable Transaction Block) compilation → on-chain execution.',
             'Implement Scam Detection Agent: real-time transaction screening against known malicious contracts on SUI.',
             'Develop Wallet Health Monitor Agent: automated spam token detection, suspicious approval alerts, and risk scoring.'
@@ -68,7 +68,6 @@ export default function RoadmapPage() {
           bgColor: 'bg-amber-500/10',
           items: [
             'Audit Sui Move smart contracts & Gas Sponsorship backend API.',
-            'Migrate zkLogin authentication and transaction flow to Mysten Labs\' Enoki platform for optimized prover speed and secure key storage.',
             'Launch public Beta Test program with community rewards.',
             'Optimize desktop app performance and minimize background resource usage.',
             'Enable custom sponsor signatures to prevent transaction spam.'
@@ -95,6 +94,8 @@ export default function RoadmapPage() {
       title: 'Lộ Trình Phát Triển',
       subtitle: 'Các cột mốc phát triển từ tháng 6/2026 hướng tới sự kiện ra mắt Mainnet ngày 2/9/2026.',
       backHome: 'Quay lại Trang chủ',
+      qualityTitle: 'Cam kết chất lượng',
+      qualityDesc: 'Mọi bản cập nhật đều được kiểm thử hiệu năng nghiêm ngặt. Ứng dụng client Tauri được tối ưu hóa tối đa giúp tiết kiệm tài nguyên hệ thống và không làm ảnh hưởng đến không gian làm việc của bạn.',
       phases: [
         {
           tag: 'Giai đoạn 1',
@@ -108,7 +109,7 @@ export default function RoadmapPage() {
             'Tích hợp lõi llama.cpp và bộ não Qwen 2.5 0.5B chạy offline trên desktop, được huấn luyện tối ưu với dữ liệu và hợp đồng thông minh của SUI chain.',
             'Triển khai Smart Contract Pet NFT và Token MIPET lên Sui Testnet.',
             'Hoàn thiện cổng tải ảnh/spritesheet lên Walrus phi tập trung.',
-            'Tích hợp tính năng đăng nhập Google zkLogin.',
+            'Tích hợp tính năng đăng nhập Google zkLogin qua nền tảng Enoki của Mysten Labs, tối ưu hoá tốc độ tạo proof và bảo mật Salt.',
             'Xây dựng framework AI Agentic: phân tích ý định ngôn ngữ tự nhiên → biên dịch PTB (Programmable Transaction Block) → thực thi on-chain.',
             'Triển khai Scam Detection Agent: quét giao dịch real-time, đối chiếu với danh sách contract độc hại trên SUI.',
             'Phát triển Wallet Health Monitor Agent: tự động phát hiện token rác, cảnh báo approve đáng ngờ, chấm điểm rủi ro ví.'
@@ -142,7 +143,6 @@ export default function RoadmapPage() {
           bgColor: 'bg-amber-500/10',
           items: [
             'Kiểm toán bảo mật (Audit) Smart Contract Move và API Backend.',
-            'Chuyển đổi luồng đăng nhập zkLogin và giao dịch sang nền tảng Enoki của Mysten Labs nhằm tối ưu hoá tốc độ tạo proof và bảo mật Salt.',
             'Mở chương trình thử nghiệm cộng đồng (Beta Test) nhận thưởng.',
             'Tối ưu hóa hiệu năng ứng dụng desktop và giảm thiểu tài nguyên chạy nền.',
             'Cấu hình chữ ký tài trợ phí gas (Gas Sponsor) chống spam.'
@@ -440,6 +440,59 @@ export default function RoadmapPage() {
   };
 
   const text = dict[currentLangCode] || dict['en'];
+  const [activeTab, setActiveTab] = useState<'roadmap' | 'tokenomics'>('roadmap');
+
+  const tokenomicsText = {
+    en: {
+      title: 'MIPET Tokenomics',
+      subtitle: 'Fixed supply, community-first distribution.',
+      totalSupply: 'Total Supply',
+      burned: 'Burned (Dead Address)',
+      circulating: 'Circulating Supply',
+      adminRenounced: 'Admin Renounced',
+      adminDesc: 'TreasuryCap sent to 0x0 dead address. No one can mint new tokens.',
+      distribution: 'Distribution',
+      distItems: [
+        { label: 'Burned (Dead Address)', pct: '50%', color: 'bg-red-500', icon: '🔥' },
+        { label: 'Community & Ecosystem', pct: '30%', color: 'bg-indigo-500', icon: '👥' },
+        { label: 'Development & Team', pct: '2%', color: 'bg-purple-500', icon: '⚙️' },
+        { label: 'Liquidity & Partnerships', pct: '18%', color: 'bg-emerald-500', icon: '💧' },
+      ],
+      utility: 'Token Utility',
+      utilityItems: [
+        'Buy Mint Slots to create custom Pet NFTs',
+        'Rename pets on-chain',
+        'Bonk other pets (social interaction fee)',
+        'AI Agent Trade staking & rewards',
+        'Governance voting (future)',
+      ],
+    },
+    vi: {
+      title: 'Tokenomics MIPET',
+      subtitle: 'Tổng cung cố định, phân phối ưu tiên cộng đồng.',
+      totalSupply: 'Tổng Cung',
+      burned: 'Đã Đốt (Ví Dead)',
+      circulating: 'Lưu Thông',
+      adminRenounced: 'Từ Bỏ Quyền Admin',
+      adminDesc: 'TreasuryCap đã gửi vào địa chỉ 0x0. Không ai có thể mint thêm token.',
+      distribution: 'Phân Phối',
+      distItems: [
+        { label: 'Đốt (Ví Dead)', pct: '50%', color: 'bg-red-500', icon: '🔥' },
+        { label: 'Cộng đồng & Hệ sinh thái', pct: '30%', color: 'bg-indigo-500', icon: '👥' },
+        { label: 'Phát triển & Đội ngũ', pct: '2%', color: 'bg-purple-500', icon: '⚙️' },
+        { label: 'Thanh khoản & Đối tác', pct: '18%', color: 'bg-emerald-500', icon: '💧' },
+      ],
+      utility: 'Tiện Ích Token',
+      utilityItems: [
+        'Mua Mint Slot để tạo Pet NFT tuỳ chỉnh',
+        'Đổi tên pet on-chain',
+        'Bonk pet khác (phí tương tác xã hội)',
+        'Staking & phần thưởng AI Agent Trade',
+        'Bỏ phiếu quản trị (tương lai)',
+      ],
+    },
+  };
+  const tknText = (tokenomicsText as any)[currentLangCode] || tokenomicsText.en;
 
   return (
     <div className="pt-24 pb-20 min-h-screen bg-transparent relative overflow-hidden">
@@ -472,12 +525,103 @@ export default function RoadmapPage() {
             {text.title}
           </h1>
           <p className="text-gray-550 dark:text-gray-400 text-[13px] sm:text-[14.5px] max-w-xl mx-auto leading-relaxed font-medium">
-            {text.subtitle}
+            {activeTab === 'roadmap' ? text.subtitle : tknText.subtitle}
           </p>
+
+          {/* Tab Switcher */}
+          <div className="flex justify-center gap-2 mt-6">
+            <button onClick={() => setActiveTab('roadmap')} className={`px-4 py-2 rounded-full text-xs font-bold transition-all ${activeTab === 'roadmap' ? 'bg-indigo-500 text-white shadow-lg shadow-indigo-500/25' : 'bg-slate-100 dark:bg-slate-800 text-gray-600 dark:text-gray-400 hover:bg-slate-200 dark:hover:bg-slate-700'}`}>
+              <Rocket size={12} className="inline mr-1.5" />Roadmap
+            </button>
+            <button onClick={() => setActiveTab('tokenomics')} className={`px-4 py-2 rounded-full text-xs font-bold transition-all ${activeTab === 'tokenomics' ? 'bg-indigo-500 text-white shadow-lg shadow-indigo-500/25' : 'bg-slate-100 dark:bg-slate-800 text-gray-600 dark:text-gray-400 hover:bg-slate-200 dark:hover:bg-slate-700'}`}>
+              <Coins size={12} className="inline mr-1.5" />Tokenomics
+            </button>
+          </div>
         </div>
 
+        {activeTab === 'tokenomics' ? (
+          /* Tokenomics Content */
+          <div className="max-w-3xl mx-auto space-y-8 mt-12">
+            {/* Supply Overview */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div className="p-5 bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-white/10 rounded-2xl text-center">
+                <Coins size={20} className="mx-auto text-indigo-500 mb-2" />
+                <div className="text-[11px] text-gray-500 font-bold uppercase tracking-wider">{tknText.totalSupply}</div>
+                <div className="text-xl font-black text-[#111827] dark:text-white mt-1">500,000,000</div>
+              </div>
+              <div className="p-5 bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-white/10 rounded-2xl text-center">
+                <Flame size={20} className="mx-auto text-red-500 mb-2" />
+                <div className="text-[11px] text-gray-500 font-bold uppercase tracking-wider">{tknText.burned}</div>
+                <div className="text-xl font-black text-red-500 mt-1">250,000,000</div>
+              </div>
+              <div className="p-5 bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-white/10 rounded-2xl text-center">
+                <Users size={20} className="mx-auto text-emerald-500 mb-2" />
+                <div className="text-[11px] text-gray-500 font-bold uppercase tracking-wider">{tknText.circulating}</div>
+                <div className="text-xl font-black text-emerald-500 mt-1">250,000,000</div>
+              </div>
+            </div>
+
+            {/* Admin Renounced */}
+            <div className="p-4 bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-900/30 rounded-2xl flex items-center gap-3">
+              <Lock size={18} className="text-red-500 flex-shrink-0" />
+              <div>
+                <div className="text-xs font-black text-red-600 dark:text-red-400">{tknText.adminRenounced}</div>
+                <div className="text-[11px] text-red-500/80 dark:text-red-400/60 mt-0.5">{tknText.adminDesc}</div>
+              </div>
+            </div>
+
+            {/* Distribution */}
+            <div className="p-6 bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-white/10 rounded-2xl">
+              <h3 className="text-sm font-black text-[#111827] dark:text-white mb-4">{tknText.distribution}</h3>
+              {/* Pie Chart */}
+              <div className="flex flex-col sm:flex-row items-center gap-6">
+                <div className="relative w-48 h-48 flex-shrink-0">
+                  <svg viewBox="0 0 100 100" className="w-full h-full">
+                    {/* 50% Burned - red */}
+                    <circle cx="50" cy="50" r="40" fill="none" stroke="#ef4444" strokeWidth="20" strokeDasharray={`${50 * 2.512} ${100 * 2.512}`} strokeDashoffset="0" className="-rotate-90 origin-center" />
+                    {/* 30% Community - indigo */}
+                    <circle cx="50" cy="50" r="40" fill="none" stroke="#6366f1" strokeWidth="20" strokeDasharray={`${30 * 2.512} ${100 * 2.512}`} strokeDashoffset={`${-50 * 2.512}`} className="-rotate-90 origin-center" />
+                    {/* 2% Dev - purple */}
+                    <circle cx="50" cy="50" r="40" fill="none" stroke="#a855f7" strokeWidth="20" strokeDasharray={`${2 * 2.512} ${100 * 2.512}`} strokeDashoffset={`${-80 * 2.512}`} className="-rotate-90 origin-center" />
+                    {/* 18% Liquidity - emerald */}
+                    <circle cx="50" cy="50" r="40" fill="none" stroke="#10b981" strokeWidth="20" strokeDasharray={`${18 * 2.512} ${100 * 2.512}`} strokeDashoffset={`${-82 * 2.512}`} className="-rotate-90 origin-center" />
+                    {/* Center white circle */}
+                    <circle cx="50" cy="50" r="28" className="fill-white dark:fill-slate-900" />
+                  </svg>
+                  <div className="absolute inset-0 flex flex-col items-center justify-center">
+                    <span className="text-[9px] text-gray-400 font-bold uppercase tracking-wider">MIPET</span>
+                    <span className="text-xl font-black text-[#111827] dark:text-white">500M</span>
+                  </div>
+                </div>
+                <div className="grid grid-cols-1 gap-2.5 flex-1">
+                  {tknText.distItems.map((item: any, i: number) => (
+                    <div key={i} className="flex items-center gap-2.5">
+                      <span className={`w-3 h-3 rounded-full ${item.color}`} />
+                      <span className="text-[12px] text-gray-600 dark:text-gray-400 font-medium">{item.icon} {item.label}</span>
+                      <span className="text-[12px] font-bold text-[#111827] dark:text-white ml-auto">{item.pct}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Utility */}
+            <div className="p-6 bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-white/10 rounded-2xl">
+              <h3 className="text-sm font-black text-[#111827] dark:text-white mb-3">{tknText.utility}</h3>
+              <ul className="space-y-2">
+                {tknText.utilityItems.map((item: string, i: number) => (
+                  <li key={i} className="flex items-center gap-2 text-[12px] text-gray-600 dark:text-gray-400 font-medium">
+                    <CheckCircle2 size={14} className="text-indigo-500 flex-shrink-0" />
+                    {item}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        ) : (
+        <>
         {/* 2-Column Responsive Layout */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start mt-12">
           
           {/* Left Column: Vertical Timeline */}
           <div className="lg:col-span-8 relative border-l border-slate-200 dark:border-slate-800/80 ml-2 sm:ml-3 pl-6 sm:pl-8 space-y-12">
@@ -619,17 +763,17 @@ export default function RoadmapPage() {
             {/* Subtitle card */}
             <div className="p-5 bg-indigo-50/50 dark:bg-indigo-950/20 border border-indigo-100 dark:border-indigo-900/30 rounded-2xl">
               <h4 className="text-[12px] font-black text-indigo-600 dark:text-indigo-400 mb-1.5 uppercase tracking-wider">
-                {isVi ? 'Cam kết chất lượng' : 'Quality Commitment'}
+                {text.qualityTitle}
               </h4>
               <p className="text-[11px] text-gray-500 dark:text-gray-400 leading-relaxed font-medium">
-                {isVi 
-                  ? 'Mọi bản cập nhật đều được kiểm thử hiệu năng nghiêm ngặt. Ứng dụng client Tauri được tối ưu hóa tối đa giúp tiết kiệm tài nguyên hệ thống và không làm ảnh hưởng đến không gian làm việc của bạn.'
-                  : 'All updates undergo rigorous performance tests. The Tauri client is built for maximum efficiency, ensuring lightweight resource consumption without impacting your workspace performance.'}
+                {text.qualityDesc}
               </p>
             </div>
           </div>
 
         </div>
+        </>
+        )}
 
       </div>
     </div>

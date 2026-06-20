@@ -65,10 +65,7 @@ export function WalletConnectModal({ isOpen, onClose }: WalletConnectModalProps)
       const { epoch } = await suiClient.getLatestSuiSystemState();
       const maxEpoch = Number(epoch) + 2;
 
-      // Fixed salt stored in sessionStorage for consistency
-      const salt = '30041975020919453004197502091945';
-      sessionStorage.setItem('zklogin_salt', salt);
-
+      // Salt will be fetched from Enoki after Google login returns JWT
       const ephemeralKeypair = new Ed25519Keypair();
       localStorage.setItem('zklogin_ephemeral_private_key', ephemeralKeypair.getSecretKey());
       

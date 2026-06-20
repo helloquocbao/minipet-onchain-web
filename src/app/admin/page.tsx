@@ -32,6 +32,8 @@ export default function AdminPage() {
 
   const [template, setTemplate] = useState({
     name: '',
+    pet_type: 'balanced',
+    description: '',
     image_url: '',
     image_blob_id: '',
     sprite_url_normal: '',
@@ -250,6 +252,8 @@ export default function AdminPage() {
           tx.object(ADMIN_CAP_ID),
           tx.object(GLOBAL_CONFIG_ID),
           tx.pure.string(updatedTemplate.name),
+          tx.pure.string(updatedTemplate.pet_type || 'balanced'),
+          tx.pure.string(updatedTemplate.description || ''),
           tx.pure.string(updatedTemplate.image_url),
           tx.pure.id(updatedTemplate.image_blob_id),
           tx.pure.string(updatedTemplate.sprite_url_normal),
@@ -275,6 +279,8 @@ export default function AdminPage() {
               alert(t('admin.alerts.template_created') || 'Template created successfully!');
               setTemplate({
                 name: '',
+                pet_type: 'balanced',
+                description: '',
                 image_url: '',
                 image_blob_id: '',
                 sprite_url_normal: '',
@@ -687,6 +693,29 @@ export default function AdminPage() {
                         className="w-full bg-gray-50 dark:bg-gray-800 border-none rounded-xl p-3.5 font-bold focus:ring-2 focus:ring-indigo-500 text-gray-900 dark:text-white"
                         value={template.name}
                         onChange={(e) => setTemplate({ ...template, name: e.target.value })}
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-black text-gray-400 mb-2 uppercase">Trade Style</label>
+                      <select
+                        className="w-full bg-gray-50 dark:bg-gray-800 border-none rounded-xl p-3.5 font-bold focus:ring-2 focus:ring-indigo-500 text-gray-900 dark:text-white"
+                        value={template.pet_type}
+                        onChange={(e) => setTemplate({ ...template, pet_type: e.target.value })}
+                      >
+                        <option value="conservative">Conservative (Thận trọng)</option>
+                        <option value="balanced">Balanced (Cân bằng)</option>
+                        <option value="aggressive">Aggressive (Tấn công)</option>
+                        <option value="scalper">Scalper (Lướt sóng)</option>
+                        <option value="degen">Degen (Liều)</option>
+                      </select>
+                    </div>
+                    <div className="col-span-2">
+                      <label className="block text-xs font-black text-gray-400 mb-2 uppercase">Description</label>
+                      <textarea
+                        placeholder="Describe this pet's personality and trade behavior..."
+                        className="w-full bg-gray-50 dark:bg-gray-800 border-none rounded-xl p-3.5 font-bold focus:ring-2 focus:ring-indigo-500 text-gray-900 dark:text-white resize-none h-20"
+                        value={template.description}
+                        onChange={(e) => setTemplate({ ...template, description: e.target.value })}
                       />
                     </div>
                     <div>

@@ -8,11 +8,13 @@ import { useTransactionExecutor } from '../../../hooks/useTransactionExecutor';
 import { Transaction } from '@mysten/sui/transactions';
 import { PACKAGE_ID, FUNCTIONS, MODULES, suiClient, GLOBAL_CONFIG_ID } from '../../../services/blockchain/sui';
 import { WalrusService } from '../../../services/walrus';
-import { ArrowLeft, ShoppingBag, Cpu, Sparkles, Copy, Check, Info } from 'lucide-react';
+import { ArrowLeft, ShoppingBag, Cpu, Sparkles, Info } from 'lucide-react';
 
 interface PetTemplate {
   id: string;
   name: string;
+  pet_type: string;
+  description: string;
   image_url: string;
   sprite_url_normal: string;
   sprite_url_rare: string;
@@ -57,7 +59,6 @@ export default function PetDetailPage({ params }: { params: Promise<{ id: string
   const [pet, setPet] = useState<PetTemplate | null>(null);
   const [slotPrice, setSlotPrice] = useState('10000000000000');
   const [loading, setLoading] = useState(true);
-  const [copied, setCopied] = useState(false);
   const [buying, setBuying] = useState(false);
 
   // Animation States
@@ -163,6 +164,8 @@ export default function PetDetailPage({ params }: { params: Promise<{ id: string
           setPet({
             id,
             name: petFields.name || '',
+            pet_type: petFields.pet_type || '',
+            description: petFields.description || '',
             image_url: petFields.image_url || '',
             sprite_url_normal: petFields.sprite_url_normal || petFields.sprite_url || '',
             sprite_url_rare: petFields.sprite_url_rare || petFields.sprite_url || '',
@@ -191,12 +194,6 @@ export default function PetDetailPage({ params }: { params: Promise<{ id: string
       }
     }
   }, [pet]);
-
-  const handleCopyId = () => {
-    navigator.clipboard.writeText(id);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  };
 
   const handleBuyPet = async () => {
     if (!pet) return;
@@ -438,16 +435,32 @@ export default function PetDetailPage({ params }: { params: Promise<{ id: string
               <h1 className="text-3xl font-black tracking-tight text-gray-900 dark:text-white mt-4 mb-2">
                 {pet.name}
               </h1>
-              <div className="flex items-center gap-2 bg-black/[0.02] dark:bg-white/[0.02] px-3 py-1.5 rounded-xl border border-black/[0.04] dark:border-white/[0.04] max-w-fit">
+
+              {/* Type & Description */}
+              {pet.pet_type && (
+                <div className="flex items-center gap-2 mt-2 mb-2">
+                  <span className="text-[10px] font-mono font-bold text-gray-400 uppercase tracking-wider">TYPE</span>
+                  <span className="text-xs font-bold text-purple-600 dark:text-purple-400 bg-purple-500/10 px-2.5 py-1 rounded-lg capitalize">
+                    {pet.pet_type}
+                  </span>
+                </div>
+              )}
+              {pet.description && (
+                <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed mt-2">
+                  {pet.description}
+                </p>
+              )}
+
+              <a
+                href={`https://testnet.suivision.xyz/object/${id}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 bg-black/[0.02] dark:bg-white/[0.02] px-3 py-1.5 rounded-xl border border-black/[0.04] dark:border-white/[0.04] max-w-fit mt-3 no-underline hover:border-indigo-500/30 transition-colors"
+              >
                 <span className="text-[10px] font-mono text-gray-400 font-bold uppercase shrink-0">OBJECT ID</span>
                 <span className="text-xs font-mono text-gray-500 truncate max-w-[200px] sm:max-w-xs">{id}</span>
-                <button 
-                  onClick={handleCopyId} 
-                  className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 bg-transparent border-none cursor-pointer ml-1"
-                >
-                  {copied ? <Check size={14} className="text-emerald-500" /> : <Copy size={14} />}
-                </button>
-              </div>
+                <ArrowLeft size={14} className="text-gray-400 rotate-[135deg]" />
+              </a>
             </div>
 
             {/* Price section */}
