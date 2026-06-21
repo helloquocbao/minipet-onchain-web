@@ -31,7 +31,7 @@ export const Footer = () => {
             </p>
             <div className="flex gap-4">
               <a
-                href="https://github.com/helloquocbao/mini-pet"
+                href="https://github.com/helloquocbao/minipet-app"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-10 h-10 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-center text-slate-400 hover:text-slate-900 hover:border-slate-200 transition-all hover:scale-105"
@@ -58,7 +58,7 @@ export const Footer = () => {
             <ul className="space-y-3 p-0 list-none m-0">
               <li><a href="https://sui.io" target="_blank" rel="noopener noreferrer" className="text-sm font-bold text-slate-500 hover:text-indigo-600 transition-colors no-underline">Sui Blockchain</a></li>
               <li><a href="https://walrus.xyz" target="_blank" rel="noopener noreferrer" className="text-sm font-bold text-slate-500 hover:text-indigo-600 transition-colors no-underline">Walrus Storage</a></li>
-              <li><a href="https://github.com/helloquocbao/mini-pet" target="_blank" rel="noopener noreferrer" className="text-sm font-bold text-slate-500 hover:text-indigo-600 transition-colors no-underline">Open Source</a></li>
+              <li><a href="https://github.com/helloquocbao/minipet-app" target="_blank" rel="noopener noreferrer" className="text-sm font-bold text-slate-500 hover:text-indigo-600 transition-colors no-underline">Open Source</a></li>
             </ul>
           </div>
 

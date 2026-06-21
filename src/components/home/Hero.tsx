@@ -114,7 +114,7 @@ export const Hero = () => {
                 </span>
               </a>
               <a
-                href="https://github.com/helloquocbao/mini-pet"
+                href="https://github.com/helloquocbao/minipet-app"
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="View MiniPet source code on GitHub"
