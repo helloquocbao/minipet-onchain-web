@@ -240,17 +240,6 @@ export const Navbar = () => {
               )}
             </div>
 
-            {/* Github Link */}
-            <a
-              href="https://github.com/helloquocbao/mini-pet"
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="View MiniPet source code on GitHub"
-              className="w-9 h-9 rounded-full bg-slate-900 hover:bg-slate-800 text-white flex items-center justify-center transition-all hover:scale-105 shadow-md hidden sm:flex"
-            >
-              <FaGithub size={16} />
-            </a>
-
             {/* Mobile Menu Toggle */}
             <button
               onClick={() => setMenuOpen(!menuOpen)}
@@ -302,7 +291,7 @@ export const Navbar = () => {
               </Link>
               <div className="h-px bg-slate-100 my-2 mx-5" />
               <a
-                href="https://github.com/helloquocbao/mini-pet"
+                href="https://github.com/helloquocbao/minipet-app"
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Visit our GitHub repository"
